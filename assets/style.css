@@ -1,0 +1,193 @@
+body{
+    margin: 0;
+    padding: 20px;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif;
+    font-size: 1rem;
+    font-weight: 200;
+    line-height: 1.5;
+    color: #333;
+    background-color: #fff;
+}
+
+.container-qc{
+    min-width: 450px; 
+}
+.container-qc>div{
+    margin-bottom: 20px;
+}
+.check-block-title{
+    margin: 20px 0px;
+}
+.container-prj-selector{
+    max-width: 850px;
+}
+
+h1{
+    color: #10698d;
+    font-family: "IMTITLE", Sans-serif;
+    font-size: 30px;
+    line-height: 1.3em;
+}
+
+h2{
+    color: #333;
+    font-family: "IMTITLE", Sans-serif;
+    font-size: 20px;
+    line-height: 1.3em;
+    margin: 20px 0px 5px 0px;
+    font-weight: 200;
+}
+
+h3{
+    color: #5cc0cd;
+    font-family: "IMTITLE", Sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: normal;
+    /* line-height: 1.3em; */
+    margin: 10px 0px 0px 0px;
+}
+
+.h3>label{
+    color: #10698d;
+    font-family: "IMTITLE", Sans-serif;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: normal;
+    /* line-height: 1.3em; */
+    margin: 10px 0px 0px 0px;
+}
+
+.inline{
+    display: inline-block;
+}
+
+p{
+    color: #9b9b9b;
+    font-family: "IMTITLE", Sans-serif;
+    font-size: 16px;
+    font-style:italic;
+    margin: 0px 0px 5px 0px; 
+}
+
+button{
+    padding: 6px 12px;
+    margin : 20px 0px 20px 0px;
+    font-size: 14px;
+    color: #fff;
+    line-height: 1.42857143;
+    width : 140px;
+
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+
+    font-family: "IMTITLE", Sans-serif;
+    background: #10698d;
+
+    border: #10698d 1px solid;
+    border-radius: 4px;
+}
+
+
+/**********SEPARATOR**********/
+.elementor-divider-separator{
+    border-top: 3px solid #5cc0cd;
+    width: 118px;
+    height: 1px;
+    display: block;
+    margin-top: 20px;
+}
+
+/**********DROPDOWN**********/
+.Select--multi .Select-value{
+    color:#333;
+    background-color: #efefef;
+    border-color:#efefef;
+}
+
+.is-focused:not(.is-open)>.Select-control{
+    border-color:#10698d;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 0 3px #106a8d21;
+}
+
+.VirtualizedSelectFocusedOption {
+    background-color: #efefef;
+}
+
+/**********CHECKBOX**********/
+input[type=checkbox] {
+    border: 1px solid #e2e2e2;
+    color: #10698d;
+    width: 1em;
+    height: 1em;
+    outline: 0;
+    padding: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    margin-right: 5px;
+    margin: 0px 10px;
+
+}
+input[type=checkbox]:checked:before {
+    content: "✔";
+    float: left;
+    width: 1em;
+    height: 1em;
+    line-height: 1em;
+    text-align: center;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+/**********RUN IMG**********/
+.runQC-btn{
+    width: 20px;
+    height: auto;
+    cursor: pointer;
+    margin: 0px 10px;
+}
+
+
+/**********TAB**********/
+
+.custom-tabs-container {
+    width: 100%;
+}
+.custom-tabs {
+    border-top-left-radius: 3px;
+    background-color: #fff;
+    padding: 0px;
+    border-bottom: 1px solid #d6d6d6;
+}
+
+.custom-tab {
+    color:#586069;
+    border-top-left-radius: 3px;
+    border-top: 3px solid transparent !important;
+    border-left: 0px !important;
+    border-right: 0px !important;
+    border-bottom: 0px !important;
+    background-color: #fff;
+    padding: 12px !important;
+    font-family: "system-ui";
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    max-width: 200px;
+}
+.custom-tab--selected {
+    color: black;
+    box-shadow: 1px 1px 0px lightgrey;
+    border-left: 1px solid lightgrey !important;
+    border-right: 1px solid lightgrey !important;
+    border-top: 3px solid #5cc0cd !important;
+}
+
+.tab-div-common{
+    border-bottom: lightgrey solid 1px;
+    border-left: lightgrey solid 1px;
+    border-right: lightgrey solid 1px;
+}

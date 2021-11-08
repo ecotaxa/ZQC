@@ -1,9 +1,9 @@
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output
 
 from app import app
-from apps import app1, app2
+from pages import app1, app2
 
 
 app.layout = html.Div([
@@ -15,9 +15,9 @@ app.layout = html.Div([
 @app.callback(Output('page-content', 'children'),
               Input('url', 'pathname'))
 def display_page(pathname):
-    if pathname == '/apps/app1':
+    if pathname == '/pages/app1':
         return app1.layout
-    elif pathname == '/apps/app2':
+    elif pathname == '/pages/app2':
         return app2.layout
     else:
         return '404'
