@@ -45,7 +45,7 @@ h3{
     font-style: normal;
     font-weight: normal;
     /* line-height: 1.3em; */
-    margin: 10px 0px 0px 0px;
+    margin: 0px;
 }
 
 .h3>label{
@@ -56,6 +56,13 @@ h3{
     font-weight: normal;
     /* line-height: 1.3em; */
     margin: 10px 0px 0px 0px;
+}
+h5{
+    color: #333;
+    font-family: "IMTITLE", Sans-serif;
+    font-size: 16px;
+    font-weight: 200;
+    margin: 0px 0px 5px 0px; 
 }
 
 .inline{
@@ -88,6 +95,20 @@ button{
 
     border: #10698d 1px solid;
     border-radius: 4px;
+}
+
+
+/**********DETAILS PANEL**********/
+.checks-block{
+    padding: 10px 10px;
+}
+
+.sub-block{
+    padding: 10px 10px;
+}
+
+.details{
+    padding: 0px 10px;
 }
 
 
@@ -190,4 +211,6 @@ input[type=checkbox]:checked:before {
     border-bottom: lightgrey solid 1px;
     border-left: lightgrey solid 1px;
     border-right: lightgrey solid 1px;
+    min-height: 100px;
+    border-radius: 4px;
 }

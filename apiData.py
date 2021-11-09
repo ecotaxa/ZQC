@@ -22,14 +22,11 @@ def getDir(subpath) :
         # Create an instance of the API class
         api_instance = files_api.FilesApi(api_client)
         path = "/local_plankton/zooscan/"+subpath # str | 
-        print(path)
         try:
             # List Common Files
             api_response = api_instance.list_common_files(path).entries
-            print(api_response)
             dirs = [x for x in api_response if x.type=='D' and x.name.lower().startswith("zooscan")]
             dirs.sort(key=lambda x: x.name)
-            print(dirs)
         except ecotaxa_py_client.ApiException as e:
             print("Exception when calling FilesApi->list_common_files_common_files_get: %s\n" % e)
     return dirs
@@ -46,7 +43,6 @@ def getFiles(subpath):
             api_response = api_instance.list_common_files_common_files_get(path).entries
             files = [x for x in api_response if x.type=='F']
             files.sort(key=lambda x: x.name)
-            #print(dirs)
 
         except ecotaxa_py_client.ApiException as e:
             print("Exception when calling FilesApi->list_common_files_common_files_get: %s\n" % e)
