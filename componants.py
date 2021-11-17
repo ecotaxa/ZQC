@@ -22,7 +22,7 @@ def generate_project_selector(drives):
         html.H2("Project"),
         dcc.Dropdown(
             id='app-1-dropdown-projects',
-            value=drives[0].name,
+            value=[],
             multi=True
         )
     ], className="container-prj-selector")
@@ -35,7 +35,7 @@ def generate_check_block(checkBlock) :
                                     labelStyle={'display': 'block'},
                                     className="h3 inline"
                                 ),
-                                html.Img(className="runQC-btn",src="../assets/play.png", alt="Run selected QC")
+                                html.Img(className="runQC-btn", id= "runQC-btn-"+checkBlock["id"], src="../assets/play.png", alt="Run selected QC", n_clicks=0)
                             ],
                             className="check-block-title"),
                     ###-- check list tab --###   
@@ -90,8 +90,18 @@ def generate_details(checkBlock):
         sub_blocks.append(generate_sub_block(sub_block))
     return html.Div(sub_blocks,className="tab-div-common details")
 
-def generate_result(checkBlock):
+def generate_result(html_result):
+    return html.Div(html_result, className="tab-div-common results")
+
+def emptyResult(block_id, projects):
+    emptyResLayout=[]
+    if len(projects)==0 :
+        emptyResLayout.append(html.P("Select one or more projects and, "))
+    emptyResLayout.append(html.P("Run '"+block_id+"' QC to see results"))
+    return emptyResLayout
+
+def qcExecutionResult(project, qcExecutionData):
     return html.Div([
-        html.P('Tab content result'+checkBlock["id"])
-    ], className="tab-div-common")
+        html.P(project),
+    ],className="result-project-title")
 

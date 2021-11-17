@@ -62,7 +62,7 @@ h5{
     font-family: "IMTITLE", Sans-serif;
     font-size: 16px;
     font-weight: 200;
-    margin: 0px 0px 5px 0px; 
+    margin: 0px; 
 }
 
 .inline{
@@ -72,7 +72,7 @@ h5{
 p{
     color: #9b9b9b;
     font-family: "IMTITLE", Sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     font-style:italic;
     margin: 0px 0px 5px 0px; 
 }
@@ -111,6 +111,9 @@ button{
     padding: 0px 10px;
 }
 
+.results{
+    padding: 10px;
+}
 
 /**********SEPARATOR**********/
 .elementor-divider-separator{
