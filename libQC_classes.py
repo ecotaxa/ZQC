@@ -1,5 +1,6 @@
 
 import componants
+import apiData
 from enum import Enum
 
 class Mode(Enum):
@@ -16,10 +17,10 @@ class ChecksLib():
    def getBlock(self, _id):
       return next((x for x in self.blocks if x.id == _id), None)
 
-   def runCallback(self, projects, block_ids) :
+   def runCallback(self, projects, drive, block_ids) :
       for block_id in block_ids :
          print(block_id)
-         self.getBlock(block_id).runCallback(projects)
+         self.getBlock(block_id).runCallback(projects, drive)
 
    def deleteResult(self, block_id) :
        self.getBlock(block_id).deleteResult()
@@ -45,11 +46,11 @@ class Block :
    def getSubBlock(self, _id):
       return next((x for x in self.subBlocks if x.id == _id), None)
 
-   def runCallback(self, projects) :
+   def runCallback(self, projects, drive) :
       QC_execution = []
       for project in projects :
          #TODO JCE get data?
-         dataframe = []
+         dataframe = apiData.getdata(self.mode, drive+"/"+project)
          #Run blocks
          qcExecutionData = [subBlock.runCallback(self.mode, dataframe) for subBlock in self.subBlocks]
 

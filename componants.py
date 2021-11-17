@@ -102,6 +102,6 @@ def emptyResult(block_id, projects):
 
 def qcExecutionResult(project, qcExecutionData):
     return html.Div([
-        html.P(project),
+        html.P(project, className="project-sep"),
     ],className="result-project-title")
 

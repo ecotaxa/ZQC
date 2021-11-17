@@ -53,12 +53,14 @@ def render_content_before_scan(tab):
 
 ## during_analysis Tab related callbacks ##
 @app.callback([Output('tabs-content-during_analysis', 'children'),Output("runQC-btn-during_analysis", 'n_clicks'),Output('tabs-during_analysis', 'value')],
-            [Input("tabs-during_analysis", 'value'),Input("runQC-btn-during_analysis", 'n_clicks'), Input('app-1-dropdown-projects',"value")]
+            [Input("tabs-during_analysis", 'value'),Input("runQC-btn-during_analysis", 'n_clicks'), Input('app-1-dropdown-projects',"value")],
+            State('app-1-dropdown-drives', 'value')
             , prevent_initial_call=True)
-def render_content_during_analysis(tab, click, projects):
+def render_content_during_analysis(tab, click, projects, drive):
     print("Tab : ", tab)
     print("NB clicks : ", click)
     print("Projects : ", projects)
+    print("Drive : ", drive)
     #if a project where remove : block.deleteResult() #TODO JCE
     if len(projects) == 0 :
        lib_qc_zooscan.deleteResult("during_analysis")
@@ -70,8 +72,7 @@ def render_content_during_analysis(tab, click, projects):
         else : return [], 0, tab
     else :
         if len(projects)>0 :
-            print("++++++++++++++++++", projects)
-            lib_qc_zooscan.runCallback(projects, "during_analysis")
+            lib_qc_zooscan.runCallback(projects, drive, "during_analysis")
         return componants.generate_result(lib_qc_zooscan.getResult("during_analysis", projects)), 0, 'tab-result-during_analysis'
 
    

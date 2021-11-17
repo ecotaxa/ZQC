@@ -66,5 +66,5 @@ class Lib_zooscan():
    def deleteResult(self, block_id) :
       return self.lib.deleteResult(block_id)
    
-   def runCallback(self, projects, *block_ids):
-      return self.lib.runCallback(projects, block_ids)
+   def runCallback(self, projects, drive, *block_ids):
+      return self.lib.runCallback(projects, drive, block_ids)

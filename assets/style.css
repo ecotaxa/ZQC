@@ -217,3 +217,8 @@ input[type=checkbox]:checked:before {
     min-height: 100px;
     border-radius: 4px;
 }
+
+.project-sep{
+    text-align: center;
+    border-bottom: 1px solid lightgray;
+}
