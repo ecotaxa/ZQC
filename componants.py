@@ -58,7 +58,8 @@ def generate_check_block(checkBlock) :
                                     className='custom-tab',
                                     selected_className='custom-tab--selected'
                                 )
-                            ]
+                            ],
+                            persistence=True
                         ),
                         html.Div(id='tabs-content-'+checkBlock["id"])
                     ])  

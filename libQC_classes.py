@@ -17,16 +17,10 @@ class ChecksLib():
    def getBlock(self, _id):
       return next((x for x in self.blocks if x.id == _id), None)
 
-   def runCallback(self, projects, drive, block_ids) :
-      for block_id in block_ids :
-         print(block_id)
-         self.getBlock(block_id).runCallback(projects, drive)
-
-   def deleteResult(self, block_id) :
-       self.getBlock(block_id).deleteResult()
-
-   def getResult(self, block_id, projects) : 
-        return self.getBlock(block_id).getResult(projects)
+   def runCallback(self, projects, drive, block_id) :
+      block = self.getBlock(block_id)
+      QC_execution =block.runCallback(projects, drive)
+      return QC_execution
    
    ######--- Return an object containing all availables quallity checks ---######
    def listChecks(self):
@@ -38,7 +32,6 @@ class Block :
       self.title=_title
       self.id=_id
       self.mode=_mode    
-      self.result = "EMPTY"
 
    def addSubBlocks(self, *_subBlocks) :
       [self.subBlocks.append(sb) for sb in _subBlocks]
@@ -54,18 +47,9 @@ class Block :
          #Run blocks
          qcExecutionData = [subBlock.runCallback(self.mode, dataframe) for subBlock in self.subBlocks]
 
-         #TODO JCE Update result
+         #TODO JCE return result
          QC_execution.append(componants.qcExecutionResult(project, qcExecutionData))
-      self.result = QC_execution
-   
-   def getResult(self, projects) : 
-      if self.result == "EMPTY" :
-         return componants.emptyResult(self.id, projects)
-      else :
-         return self.result #because sub-blocks could be run by different block, the final result is here in block.
-
-   def deleteResult(self):
-      self.result = "EMPTY"
+      return QC_execution
 
    def listChecks(self):
       return {

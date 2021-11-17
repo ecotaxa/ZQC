@@ -59,12 +59,6 @@ class Lib_zooscan():
 
    def listChecks(self) :
       return self.lib.listChecks()
-
-   def getResult(self, block_id, projects) :
-      return self.lib.getResult(block_id, projects)
-
-   def deleteResult(self, block_id) :
-      return self.lib.deleteResult(block_id)
    
-   def runCallback(self, projects, drive, *block_ids):
-      return self.lib.runCallback(projects, drive, block_ids)
+   def runCallback(self, projects, drive, block_id):
+      return self.lib.runCallback(projects, drive, block_id)

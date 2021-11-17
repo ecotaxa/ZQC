@@ -42,51 +42,60 @@ for checkBlock in checksBlocks :
     #         elif tab == 'tab-result-'+checkBlock["id"]:
     #             return componants.generate_result(lib_qc_zooscan.getResult(checkBlock["id"]))
 
-## before_scan Tab related callbacks ##
-@app.callback(Output('tabs-content-before_scan', 'children'),
-            Input("tabs-before_scan", 'value'))
-def render_content_before_scan(tab):
-    if tab == 'tab-details-before_scan':
-        return componants.generate_details(checksBlocks[0])
-    elif tab == 'tab-result-before_scan':
-        return componants.generate_result(lib_qc_zooscan.getResult("before_scan"))
 
-## during_analysis Tab related callbacks ##
+## before_scan Tabs related callbacks ##
+@app.callback([Output('tabs-content-before_scan', 'children'),Output("runQC-btn-before_scan", 'n_clicks'),Output('tabs-before_scan', 'value')],
+            [Input("tabs-before_scan", 'value'),Input("runQC-btn-before_scan", 'n_clicks'), Input('app-1-dropdown-projects',"value")],
+            State('app-1-dropdown-drives', 'value')
+            , prevent_initial_call=True)
+def render_content_before_scan(tab, click_run, projects, drive):
+    if not click_run: 
+        if tab == 'tab-details-before_scan' :
+            return componants.generate_details(checksBlocks[0]), 0, tab
+        elif tab == 'tab-result-before_scan' :
+            return componants.generate_result(componants.emptyResult("before_scan", projects)), 0, tab
+        else : return [], 0, tab
+    else :
+        if len(projects)>0 :
+            QC_execution = lib_qc_zooscan.runCallback(projects, drive, "before_scan")
+            return componants.generate_result(QC_execution), 0, 'tab-result-before_scan'
+    return componants.generate_result(componants.emptyResult("before_scan", projects)), 0, 'tab-result-before_scan'
+
+## during_analysis Tabs related callbacks ##
 @app.callback([Output('tabs-content-during_analysis', 'children'),Output("runQC-btn-during_analysis", 'n_clicks'),Output('tabs-during_analysis', 'value')],
             [Input("tabs-during_analysis", 'value'),Input("runQC-btn-during_analysis", 'n_clicks'), Input('app-1-dropdown-projects',"value")],
             State('app-1-dropdown-drives', 'value')
             , prevent_initial_call=True)
-def render_content_during_analysis(tab, click, projects, drive):
-    print("Tab : ", tab)
-    print("NB clicks : ", click)
-    print("Projects : ", projects)
-    print("Drive : ", drive)
-    #if a project where remove : block.deleteResult() #TODO JCE
-    if len(projects) == 0 :
-       lib_qc_zooscan.deleteResult("during_analysis")
-    if not click: 
+def render_content_during_analysis(tab, click_run, projects, drive):
+    if not click_run: 
         if tab == 'tab-details-during_analysis' :
             return componants.generate_details(checksBlocks[1]), 0, tab
         elif tab == 'tab-result-during_analysis' :
-            return componants.generate_result(lib_qc_zooscan.getResult("during_analysis", projects)), 0, tab
+            return componants.generate_result(componants.emptyResult("during_analysis", projects)), 0, tab
         else : return [], 0, tab
     else :
         if len(projects)>0 :
-            lib_qc_zooscan.runCallback(projects, drive, "during_analysis")
-        return componants.generate_result(lib_qc_zooscan.getResult("during_analysis", projects)), 0, 'tab-result-during_analysis'
+            QC_execution = lib_qc_zooscan.runCallback(projects, drive, "during_analysis")
+            return componants.generate_result(QC_execution), 0, 'tab-result-during_analysis'
+    return componants.generate_result(componants.emptyResult("during_analysis", projects)), 0, 'tab-result-during_analysis'
 
-   
-    
-
-## after_ecotaxa_classif Tab related callbacks ##
-@app.callback(Output('tabs-content-after_ecotaxa_classif', 'children'),
-            Input("tabs-after_ecotaxa_classif", 'value'))
-def render_content_after_ecotaxa_classif(tab):
-    if tab == 'tab-details-after_ecotaxa_classif':
-        return componants.generate_details(checksBlocks[2])
-    elif tab == 'tab-result-after_ecotaxa_classif':
-        return componants.generate_result(lib_qc_zooscan.getResult("after_ecotaxa_classif"))
-
+## after_ecotaxa_classif Tabs related callbacks ##
+@app.callback([Output('tabs-content-after_ecotaxa_classif', 'children'),Output("runQC-btn-after_ecotaxa_classif", 'n_clicks'),Output('tabs-after_ecotaxa_classif', 'value')],
+            [Input("tabs-after_ecotaxa_classif", 'value'),Input("runQC-btn-after_ecotaxa_classif", 'n_clicks'), Input('app-1-dropdown-projects',"value")],
+            State('app-1-dropdown-drives', 'value')
+            , prevent_initial_call=True)
+def render_content_after_ecotaxa_classif(tab, click_run, projects, drive):
+    if not click_run: 
+        if tab == 'tab-details-after_ecotaxa_classif' :
+            return componants.generate_details(checksBlocks[2]), 0, tab
+        elif tab == 'tab-result-after_ecotaxa_classif' :
+            return componants.generate_result(componants.emptyResult("after_ecotaxa_classif", projects)), 0, tab
+        else : return [], 0, tab
+    else :
+        if len(projects)>0 :
+            QC_execution = lib_qc_zooscan.runCallback(projects, drive, "after_ecotaxa_classif")
+            return componants.generate_result(QC_execution), 0, 'tab-result-after_ecotaxa_classif'
+    return componants.generate_result(componants.emptyResult("after_ecotaxa_classif", projects)), 0, 'tab-result-after_ecotaxa_classif'
 
 checksSelector = html.Div([
     html.H2("Project checks", className="inline"),
