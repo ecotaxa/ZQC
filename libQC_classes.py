@@ -76,13 +76,19 @@ class SubBlock :
       return next((x for x in self.checks if x.id == _id), None)
 
    def runCallback(self, mode, dataframe):
-      
+      # For eatch checks of this sub block, run its callback and store the result in frames array.
       frames = [ check.callback(check.id, mode, dataframe) for check in self.checks ]
 
+      # Concat all frame to create a unique result dataframe for this sub block.
       result = pd.concat(frames)
       result = result.groupby(["List samples ID"]).first().reset_index() #TODO JCE first_valid_index
 
+      # Save the result of the execution as html in the project folder
+      localData.save_qc_execution(self.title, result)
+
+      # Generate the dash layout of the execution 
       resultLayout = componants.sub_block_execution_result(self.title, result)
+
       return resultLayout
 
    def listChecks(self):

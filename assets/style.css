@@ -125,19 +125,19 @@ button{
 }
 
 /**********DROPDOWN**********/
-.Select--multi .Select-value{
-    color:#333;
-    background-color: #efefef;
-    border-color:#efefef;
+.Select--multi .Select-value{ 
+    color:#333 !important;
+    background-color: #efefef !important;
+    border-color:#efefef !important;
 }
 
 .is-focused:not(.is-open)>.Select-control{
-    border-color:#10698d;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 0 3px #106a8d21;
+    border-color:#10698d !important;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 0 3px #106a8d21 !important;
 }
 
 .VirtualizedSelectFocusedOption {
-    background-color: #efefef;
+    background-color: #efefef !important;
 }
 
 /**********CHECKBOX**********/
@@ -221,4 +221,9 @@ input[type=checkbox]:checked:before {
 .project-sep{
     text-align: center;
     border-bottom: 1px solid lightgray;
+}
+
+/**********DATA TABLE**********/
+.sub-block-div{
+    margin-bottom: 10px;
 }

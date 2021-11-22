@@ -15,7 +15,7 @@ def generate_project_selector(drives):
         html.H2("Drive"),
         dcc.Dropdown(
             id='app-1-dropdown-drives',
-            value= "zooscan_embrc",
+            value= "zooscan_k",
             options=[
                 {'label': drive.name, 'value': drive.name} for drive in drives
             ]
@@ -23,7 +23,8 @@ def generate_project_selector(drives):
         html.H2("Project"),
         dcc.Dropdown(
             id='app-1-dropdown-projects',
-            value=[],
+            value=["Zooscan_ptb_jb_2021_sn001"],
+            #value=["Zooscan_ptb_wp2_2021_journee"],
             multi=True
         )
     ], className="container-prj-selector")
@@ -113,15 +114,26 @@ def sub_block_execution_result(subBlock, dataframe):
             filter_action="native",     # allow filtering of data by user ('native') or not ('none')
             sort_action="native",       # enables data to be sorted per-column by user or not ('none')
             sort_mode="single",         # sort across 'multi' or 'single' columns
-            style_cell={                # ensure adequate header width when text is shorter than cell's text
-            'minWidth': 95, 'maxWidth': 95, 'width': 95, 'textAlign' : 'left'
+            style_data_conditional=[{
+                'if': {'state': 'active'},
+                'backgroundColor': 'lightgrey',
+                'border-left' : 'lightgrey',
+                'border-right' : 'lightgrey',
+                'border-top' : 'lightgrey',
+                'border-bottom' : 'lightgrey',
+                'z-index' : '200'
+            }],
+            fixed_rows={'headers' : True},
+            style_cell={                # ensure adequate header width when text is shorter than cell's text, and allign the text to left (default right)
+                'minWidth': 95, 'maxWidth': 95, 'width': 95, 'textAlign' : 'left', 'font-family' : '"IMTITLE", Sans-serif'
             },
             style_data={                # overflow cells' content into multiple lines
                 'whiteSpace': 'normal',
                 'height': 'auto'
             }
         )
-    ])
+    ],
+    className = "sub-block-div")
 def qc_execution_result(project, qcExecutionLayout):
     return html.Div([
         html.P(project, className="project-sep"),
