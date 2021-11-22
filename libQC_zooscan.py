@@ -21,7 +21,7 @@ class Lib_zooscan():
       
 
       #Create checks
-      check_frame_type = Check("FRAME type", "", "frame_type", libQC_zooscan_implementation.check_frame_type)
+      check_frame_type = Check("FRAME type", 'Displays information about the size of the frame used for scanning: "large" or "narrow".', "frame_type", libQC_zooscan_implementation.check_frame_type)
       check_raw_files = Check("RAW files", "scan de l’échantillon", "raw_files", libQC_zooscan_implementation.noCb)
       check_scan_weight = Check("SCAN weight", "qualité du scan", "scan_weight", libQC_zooscan_implementation.noCb)
       check_process_post_scan = Check("Process POST SCAN", "", "process_post_scan", libQC_zooscan_implementation.noCb)

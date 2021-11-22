@@ -1,6 +1,7 @@
 from dash import dcc
-from dash import html
+from dash import html, dash_table
 from dash.dependencies import Input, Output
+
 
 def generate_header():
     return html.Div([
@@ -101,8 +102,28 @@ def emptyResult(block_id, projects):
     emptyResLayout.append(html.P("Run '"+block_id+"' QC to see results"))
     return emptyResLayout
 
-def qcExecutionResult(project, qcExecutionData):
+def sub_block_execution_result(subBlock, dataframe):
+    print(dataframe)
+    return html.Div([
+        html.H3(subBlock),
+        dash_table.DataTable(
+            id='tbl-'+subBlock, 
+            data=dataframe.to_dict('records'), # the contents of the table
+            columns=[{"name": i, "id": i} for i in dataframe.columns],
+            filter_action="native",     # allow filtering of data by user ('native') or not ('none')
+            sort_action="native",       # enables data to be sorted per-column by user or not ('none')
+            sort_mode="single",         # sort across 'multi' or 'single' columns
+            style_cell={                # ensure adequate header width when text is shorter than cell's text
+            'minWidth': 95, 'maxWidth': 95, 'width': 95, 'textAlign' : 'left'
+            },
+            style_data={                # overflow cells' content into multiple lines
+                'whiteSpace': 'normal',
+                'height': 'auto'
+            }
+        )
+    ])
+def qc_execution_result(project, qcExecutionLayout):
     return html.Div([
         html.P(project, className="project-sep"),
+        html.Div(qcExecutionLayout)
     ],className="result-project-title")
-

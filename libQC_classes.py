@@ -1,11 +1,15 @@
 
 import componants
-import apiData
+import localData
 from enum import Enum
-
+import pandas as pd
 class Mode(Enum):
    TSV = "TSV"
    HEADER = "HEADER"
+class EXECUTION_STATUS(Enum):
+   SUCESS="Sucess"
+   ERROR="Error"
+   KNOWN_ERROR="Known error"
 
 class ChecksLib():
    def __init__(self):
@@ -43,12 +47,12 @@ class Block :
       QC_execution = []
       for project in projects :
          #TODO JCE get data?
-         dataframe = apiData.getdata(self.mode, drive+"/"+project)
+         dataframe = localData.getdata(self.mode, drive+"/"+project)
          #Run blocks
          qcExecutionData = [subBlock.runCallback(self.mode, dataframe) for subBlock in self.subBlocks]
 
          #TODO JCE return result
-         QC_execution.append(componants.qcExecutionResult(project, qcExecutionData))
+         QC_execution.append(componants.qc_execution_result(project, qcExecutionData))
       return QC_execution
 
    def listChecks(self):
@@ -71,8 +75,15 @@ class SubBlock :
    def getCheck(self, _id):
       return next((x for x in self.checks if x.id == _id), None)
 
-   def runCallback(self, mode, dataframe) :
-      [check.callback(check.id, mode, dataframe) for check in self.checks]
+   def runCallback(self, mode, dataframe):
+      
+      frames = [ check.callback(check.id, mode, dataframe) for check in self.checks ]
+
+      result = pd.concat(frames)
+      result = result.groupby(["List samples ID"]).first().reset_index() #TODO JCE first_valid_index
+
+      resultLayout = componants.sub_block_execution_result(self.title, result)
+      return resultLayout
 
    def listChecks(self):
       return {
@@ -96,3 +107,7 @@ class Check :
          "id" : self.id
       }
 
+class result :
+   def __init__(self, _status, _dataframe):
+      self.status=_status
+      self.dataframe=_dataframe
