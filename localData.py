@@ -25,12 +25,13 @@ def  getTsv(subpath):
     for folder_name in listFolder("../local_plankton/zooscan/"+subpath+"/Zooscan_scan/_work/") :
             try: 
                 df = pd.read_csv("../local_plankton/zooscan/"+subpath+"/Zooscan_scan/_work/"+folder_name+"/ecotaxa_"+folder_name+".tsv", encoding = "ISO-8859-1", usecols=['sample_id','process_img_background_img'],sep="\t")
-                #df['STATUS']="Ecotaxa table OK"
+                df['STATUS']="Ecotaxa table OK"
+                df['scan_id'] = folder_name
                 tsv_files.append(df.drop(0))  
             except IOError as e:
                 #si on a pas le .tsv on a pas les samples id : que faire? #TODO JCE
-                # df = pd.DataFrame(data={'sample_id': [folder_name], 'STATUS': ["MISSING ecotaxa table"]})            
-                # tsv_files.append(df)
+                df = pd.DataFrame(data={'scan_id': [folder_name], 'STATUS': errors_labels.errors["global.missing_ecotaxa_table"]})            
+                tsv_files.append(df)
                 print(e)
     return tsv_files
 
@@ -58,9 +59,9 @@ def listFolder(path) :
 def tsvToGlobalData(tsv_files) : 
     """Generate from tsv a common structure of dataframe"""
     dataframe = pd.concat(tsv_files)
-    # for col in dataframe.columns :
-    #     dataframe[col].fillna(dataframe.STATUS, inplace=True)
-    #     print(col, " : ", dataframe[col].unique())
+    for col in dataframe.columns :
+        dataframe[col].fillna(dataframe.STATUS, inplace=True)
+        print(col, " : ", dataframe[col].unique())
 
     #Do not work
     #dataframe.fillna(dataframe["STATUS"], inplace=True)

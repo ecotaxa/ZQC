@@ -81,7 +81,7 @@ class SubBlock :
 
       # Concat all frame to create a unique result dataframe for this sub block.
       result = pd.concat(frames)
-      result = result.groupby(["List samples ID"]).first().reset_index() #TODO JCE first_valid_index
+      result = result.groupby([result.columns[0]]).first().reset_index() #TODO JCE first_valid_index
 
       # Save the result of the execution as html in the project folder
       localData.saveQcExecution(self.title, result)
