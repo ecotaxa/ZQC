@@ -1,7 +1,7 @@
 from dash import dcc
 from dash import html, dash_table
 from dash.dependencies import Input, Output
-
+import errors_labels
 
 def generate_header():
     return html.Div([
@@ -114,18 +114,14 @@ def sub_block_execution_result(subBlock, dataframe):
             filter_action="native",     # allow filtering of data by user ('native') or not ('none')
             sort_action="native",       # enables data to be sorted per-column by user or not ('none')
             sort_mode="single",         # sort across 'multi' or 'single' columns
-            style_data_conditional=[{
-                'if': {'state': 'active'},
-                'backgroundColor': 'lightgrey',
-                'border-left' : 'lightgrey',
-                'border-right' : 'lightgrey',
-                'border-top' : 'lightgrey',
-                'border-bottom' : 'lightgrey',
-                'z-index' : '200'
-            }],
+            style_data_conditional=style_table(dataframe),
             fixed_rows={'headers' : True},
             style_cell={                # ensure adequate header width when text is shorter than cell's text, and allign the text to left (default right)
-                'minWidth': 95, 'maxWidth': 95, 'width': 95, 'textAlign' : 'left', 'font-family' : '"IMTITLE", Sans-serif'
+                'minWidth': 95, 'maxWidth': 95, 'width': 95, 'textAlign' : 'left', 'font-family' : '"IMTITLE", Sans-serif', 'padding' : '5px'
+            },
+            style_header={                # ensure adequate header width when text is shorter than cell's text, and allign the text to left (default right)
+                'padding' : '5px',
+                'textAlign' : 'center',
             },
             style_data={                # overflow cells' content into multiple lines
                 'whiteSpace': 'normal',
@@ -134,8 +130,30 @@ def sub_block_execution_result(subBlock, dataframe):
         )
     ],
     className = "sub-block-div")
+    
 def qc_execution_result(project, qcExecutionLayout):
     return html.Div([
         html.P(project, className="project-sep"),
         html.Div(qcExecutionLayout)
     ],className="result-project-title")
+
+def style_table(dataframe) :
+    ret = [{
+                'if': {'state': 'active'},
+                'backgroundColor': 'lightgrey',
+                'border-left' : 'lightgrey',
+                'border-right' : 'lightgrey',
+                'border-top' : 'lightgrey',
+                'border-bottom' : 'lightgrey',
+                'z-index' : '200'
+            }]
+    for errors_label in errors_labels.errors.values() :
+        ret +=  [{
+                    'if': {
+                        'filter_query': '{{{}}} contains "{}"'.format(col, errors_label),
+                        'column_id': col
+                    },
+                    'color': '#ED4337'
+                }for col in dataframe.columns
+                ]
+    return ret 

@@ -26,8 +26,8 @@ class ChecksLib():
       QC_execution =block.runCallback(projects, drive)
       return QC_execution
    
-   ######--- Return an object containing all availables quallity checks ---######
    def listChecks(self):
+      """Return an object containing all availables quallity checks"""
       return [b.listChecks() for b in self.blocks]
 
 class Block :
@@ -84,7 +84,7 @@ class SubBlock :
       result = result.groupby(["List samples ID"]).first().reset_index() #TODO JCE first_valid_index
 
       # Save the result of the execution as html in the project folder
-      localData.save_qc_execution(self.title, result)
+      localData.saveQcExecution(self.title, result)
 
       # Generate the dash layout of the execution 
       resultLayout = componants.sub_block_execution_result(self.title, result)
