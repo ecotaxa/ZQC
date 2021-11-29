@@ -1,4 +1,4 @@
-import errors_labels
+import labels
 
 #TODO DOC
 def is_float(value):
@@ -19,7 +19,7 @@ def noCb(_id, _mode, dataframe) :
     """Returns information by samples about the absence of implementation of this QC"""
     print(_id, " : ", _mode," : WIP callback not implemented yet")
     result = dataframe[['scan_id']].drop_duplicates()
-    result[_id]=errors_labels.errors["global.qc_not_implemented"]
+    result[_id]=labels.errors["global.qc_not_implemented"]
     result.rename(columns={'scan_id' : 'List scan ID'}, inplace=True)
     return result
 
@@ -32,8 +32,8 @@ def check_frame_type(_id, _mode, dataframe) :
     #Replace by large or narrow or associated error code
     result.process_img_background_img=result.process_img_background_img.map(lambda x: "large" if x.find("large")>=0 
                                                                                  else "narrow" if x.find("narrow")>=0 
-                                                                                 else x if errors_labels.errors["global.missing_ecotaxa_table"]==x
-                                                                                 else errors_labels.errors["frame_type.not_large_or_narrow"])
+                                                                                 else x if labels.errors["global.missing_ecotaxa_table"]==x
+                                                                                 else labels.errors["frame_type.not_large_or_narrow"])
 
     #Keep only one line by couples : id / frame type
     result = result.drop_duplicates()
@@ -53,9 +53,9 @@ def check_bw_ratio(_id, _mode, dataframe) :
     result = dataframe[['scan_id','process_particle_bw_ratio']]
     
     #Replace by ratio OK or associated error code
-    result.process_particle_bw_ratio=result.process_particle_bw_ratio.map(lambda x: x if errors_labels.errors["global.missing_ecotaxa_table"]==x
-                                                                                    else errors_labels.sucess["bw_ratio.ok"] if is_float(x) and float(x)<0.25 and float(x)>0
-                                                                                    else errors_labels.errors["bw_ratio.not_ok"])
+    result.process_particle_bw_ratio=result.process_particle_bw_ratio.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"]==x
+                                                                                    else labels.sucess["bw_ratio.ok"] if is_float(x) and float(x)<0.25 and float(x)>0
+                                                                                    else labels.errors["bw_ratio.not_ok"])
 
     #Keep only one line by couples : id / ratio
     result = result.drop_duplicates()
@@ -89,7 +89,7 @@ def check_pixel_size(_id, _mode, dataframe) :
             case "0.0053", "4800": 
                 data.append(size)
             case _: 
-                data.append(errors_labels.errors["global.missing_ecotaxa_table"] if size==errors_labels.errors["global.missing_ecotaxa_table"] else errors_labels.errors["pixel_size.not_ok"])
+                data.append(labels.errors["global.missing_ecotaxa_table"] if size==labels.errors["global.missing_ecotaxa_table"] else labels.errors["pixel_size.not_ok"])
 
     result["pixel_size"]=data
 

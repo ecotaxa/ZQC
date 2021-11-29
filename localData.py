@@ -1,7 +1,7 @@
 import libQC_classes 
 import pandas as pd
 import os
-import errors_labels
+import labels
 
 def getdata(mode, subpath) :
     """Read, format, and return usefull data for the selected project"""
@@ -30,7 +30,7 @@ def  getTsv(subpath):
                 tsv_files.append(df.drop(0))  
             except IOError as e:
                 #si on a pas le .tsv on a pas les samples id : que faire? #TODO JCE
-                df = pd.DataFrame(data={'scan_id': [folder_name], 'STATUS': errors_labels.errors["global.missing_ecotaxa_table"]})            
+                df = pd.DataFrame(data={'scan_id': [folder_name], 'STATUS': labels.errors["global.missing_ecotaxa_table"]})            
                 tsv_files.append(df)
                 print(e)
     return tsv_files
