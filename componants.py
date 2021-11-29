@@ -1,7 +1,7 @@
 from dash import dcc
 from dash import html, dash_table
 from dash.dependencies import Input, Output
-import errors_labels
+import labels
 
 def generate_header():
     return html.Div([
@@ -72,7 +72,7 @@ def generate_checks_block(checks):
     for check in checks :
         checks_layout.append(
             html.Div([
-                html.H5(check["title"]),
+                html.H5(check["title"]+" :"),
                 html.P(check["description"])
             ])
         )
@@ -148,7 +148,7 @@ def style_table(dataframe) :
                 'border-bottom' : 'lightgrey',
                 'z-index' : '200'
             }]
-    for errors_label in errors_labels.errors.values() :
+    for errors_label in labels.errors.values() :
         ret +=  [{
                     'if': {
                         'filter_query': '{{{}}} contains "{}"'.format(col, errors_label),

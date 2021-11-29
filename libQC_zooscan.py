@@ -38,7 +38,7 @@ class Lib_zooscan():
       check_motoda_quality = Check("MOTODA quality", "Nombre de vignettes", "motoda_quality", libQC_zooscan_implementation.noCb)
       check_ortographe= Check("Orthographe", "Sur champ récurrent", "ortographe", libQC_zooscan_implementation.noCb)
 
-      checks_gps = Check("GPS : ", "Carte interactive, sous forme d’un Tableau, sous forme de Graphs", "GPS", libQC_zooscan_implementation.noCb)
+      checks_gps = Check("GPS", "Carte interactive, sous forme d’un Tableau, sous forme de Graphs", "GPS", libQC_zooscan_implementation.noCb)
       checks_date = Check("Check dates de prélèvements", "", "Dates", libQC_zooscan_implementation.noCb)
       checks_other_data = Check("Check other data", "", "other data", libQC_zooscan_implementation.noCb)
       checks_distance_parcourue = Check("Distance parcourue par le filet", "", "distance", libQC_zooscan_implementation.noCb)
@@ -50,8 +50,8 @@ class Lib_zooscan():
 
       #Fill blocks with subblocks
       block_before_scan.addSubBlocks(subBlock_sample)
-      #block_during_analysis.addSubBlocks(subBlock_sample,subBlock_acquisition,subBlock_process)
-      block_during_analysis.addSubBlocks(subBlock_process)
+      block_during_analysis.addSubBlocks(subBlock_sample,subBlock_acquisition,subBlock_process)
+      #TEST block_during_analysis.addSubBlocks(subBlock_process)
       block_after_ecotaxa_classif.addSubBlocks(subBlock_multiples)
 
       #Fill sub blocks with checks
