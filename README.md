@@ -1,8 +1,10 @@
 # AQC
 
 ### Install requirements :
+python3.10 or newer
+
 ```python
-pip3 install requirements.txt
+pip3 install -r requirements.txt
 ```
 ### Run the app :
 ```python

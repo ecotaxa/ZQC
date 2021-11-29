@@ -26,8 +26,8 @@ class Lib_zooscan():
       check_raw_files = Check("RAW files", "scan de l’échantillon", "raw_files", libQC_zooscan_implementation.noCb)
       check_scan_weight = Check("SCAN weight", "qualité du scan", "scan_weight", libQC_zooscan_implementation.noCb)
       check_process_post_scan = Check("Process POST SCAN", "", "process_post_scan", libQC_zooscan_implementation.noCb)
-      check_bw_ratio = Check("B/W ratio", "qualité du process", "bw_ratio", libQC_zooscan_implementation.noCb)
-      check_pixel_size = Check("PIXEL size", "", "pixel_size", libQC_zooscan_implementation.noCb)
+      check_bw_ratio = Check("B/W ratio", "In order to ensure the quality of the process, the value of the B/W ratio must be strictly less than 0.25.", "bw_ratio", libQC_zooscan_implementation.check_bw_ratio)
+      check_pixel_size = Check("PIXEL size", "The idea here is to reveal an old zooprocess bug that was mistaken about the pixel size to apply for morphometric calculations. The purpose is to check that the pixel_size is consistent with the process_img_resolution.", "pixel_size", libQC_zooscan_implementation.check_pixel_size)
       check_sep_mask = Check("SEP MASK", "étape de séparation des multiples", "sep_mask", libQC_zooscan_implementation.noCb)
       check_process_post_sep = Check("Process POST SEP", "process incluant le masque de séparation", "process_post_sep", libQC_zooscan_implementation.noCb)
    

@@ -24,7 +24,7 @@ def  getTsv(subpath):
     tsv_files = []
     for folder_name in listFolder("../local_plankton/zooscan/"+subpath+"/Zooscan_scan/_work/") :
             try: 
-                df = pd.read_csv("../local_plankton/zooscan/"+subpath+"/Zooscan_scan/_work/"+folder_name+"/ecotaxa_"+folder_name+".tsv", encoding = "ISO-8859-1", usecols=['sample_id','process_img_background_img'],sep="\t")
+                df = pd.read_csv("../local_plankton/zooscan/"+subpath+"/Zooscan_scan/_work/"+folder_name+"/ecotaxa_"+folder_name+".tsv", encoding = "ISO-8859-1", usecols=['sample_id','process_img_background_img', 'process_particle_bw_ratio', "process_particle_pixel_size_mm", "process_img_resolution"],sep="\t")
                 df['STATUS']="Ecotaxa table OK"
                 df['scan_id'] = folder_name
                 tsv_files.append(df.drop(0))  

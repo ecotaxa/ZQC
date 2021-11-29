@@ -125,7 +125,8 @@ def sub_block_execution_result(subBlock, dataframe):
             },
             style_data={                # overflow cells' content into multiple lines
                 'whiteSpace': 'normal',
-                'height': 'auto'
+                'height': 'auto',
+                'font-size' : '14px'
             }
         )
     ],
