@@ -3,6 +3,8 @@ import componants
 import localData
 from enum import Enum
 import pandas as pd
+import time
+
 class Mode(Enum):
    TSV = "TSV"
    HEADER = "HEADER"
@@ -44,14 +46,16 @@ class Block :
       return next((x for x in self.subBlocks if x.id == _id), None)
 
    def runCallback(self, projects, drive) :
+      """Run block's QC, and return execution result as dash componants"""
       QC_execution = []
       for project in projects :
-         #TODO JCE get data?
-         dataframe = localData.getdata(self.mode, drive+"/"+project)
+         start_time = time.time()
+         #Get data 
+         local_data = localData.getdata(self.mode, drive+"/"+project)
+         print("--- Get local data : %s seconds ---" % (time.time() - start_time))
          #Run blocks
-         qcExecutionData = [subBlock.runCallback(self.mode, dataframe) for subBlock in self.subBlocks]
-
-         #TODO JCE return result
+         qcExecutionData = [subBlock.runCallback(self.mode, local_data) for subBlock in self.subBlocks]
+         #Generate and agregate dash componants
          QC_execution.append(componants.qc_execution_result(project, qcExecutionData))
       return QC_execution
 
@@ -75,18 +79,19 @@ class SubBlock :
    def getCheck(self, _id):
       return next((x for x in self.checks if x.id == _id), None)
 
-   def runCallback(self, mode, dataframe):
+   def runCallback(self, mode, local_data):
+      """Run sub block's QC, save the result in project forlder and return execution result as dash componants"""
       # For eatch checks of this sub block, run its callback and store the result in frames array.
-      frames = [ check.callback(check.id, mode, dataframe) for check in self.checks ]
+      frames = [ check.callback(check.id, mode, local_data) for check in self.checks ]
 
-      # Concat all frame to create a unique result dataframe for this sub block.
+      # Concat all frame to create a unique result dataframe for this sub block. #TODO JCE 
       result = pd.concat(frames)
       result = result.groupby([result.columns[0]]).first().reset_index() #TODO JCE first_valid_index
 
       # Save the result of the execution as html in the project folder
       localData.saveQcExecution(self.title, result)
 
-      # Generate the dash layout of the execution 
+      # Generate the dash layout, depending on execution result type 
       resultLayout = componants.sub_block_execution_result(self.title, result)
 
       return resultLayout

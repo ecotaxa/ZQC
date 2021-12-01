@@ -104,7 +104,6 @@ def emptyResult(block_id, projects):
     return emptyResLayout
 
 def sub_block_execution_result(subBlock, dataframe):
-    print(dataframe)
     return html.Div([
         html.H3(subBlock),
         dash_table.DataTable(

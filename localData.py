@@ -10,7 +10,9 @@ def getdata(mode, subpath) :
         tsv_files = getTsv(subpath)
         # Format given data 
         dataframe = tsvToGlobalData(tsv_files)
-        return dataframe
+        
+        fsData = getFileSystem(subpath)
+        return {"dataframe" : dataframe, "fs" : fsData}
 
     elif mode==libQC_classes.Mode.HEADER :
         # Get all header files 
@@ -29,7 +31,6 @@ def  getTsv(subpath):
                 df['scan_id'] = folder_name
                 tsv_files.append(df.drop(0))  
             except IOError as e:
-                #si on a pas le .tsv on a pas les samples id : que faire? #TODO JCE
                 df = pd.DataFrame(data={'scan_id': [folder_name], 'STATUS': labels.errors["global.missing_ecotaxa_table"]})            
                 tsv_files.append(df)
                 print(e)
@@ -52,6 +53,49 @@ def  getHeader(subpath):
         print(e)
     return header_files
 
+def _recursive_folderstats(folderpath, items=None,
+                            depth=0, idx=1):
+    """Helper function that recursively collects folder statistics and returns current id, foldersize and number of files traversed."""
+    items = items if items is not None else []
+    foldersize, num_files = 0, 0
+    current_idx = idx
+
+    if os.access(folderpath, os.R_OK):
+        for f in os.listdir(folderpath):
+
+            filepath = os.path.join(folderpath, f)
+            stats = os.stat(filepath)
+            foldersize += stats.st_size
+            idx += 1
+
+            if os.path.isdir(filepath):
+                idx, items, _foldersize, _num_files = _recursive_folderstats(filepath, items, depth + 1, idx)
+                foldersize += _foldersize
+                num_files += _num_files
+            else:
+                filename, extension = os.path.splitext(f)
+                extension = extension[1:] if extension else None
+                item = [idx, filepath, filename, extension, stats.st_size,
+                        False, None, depth]
+                items.append(item)
+                num_files += 1
+
+    stats = os.stat(folderpath)
+    foldername = os.path.basename(folderpath)
+    item = [current_idx, folderpath, foldername, None, foldersize,
+            True, num_files, depth]
+
+    return idx, items, foldersize, num_files
+
+def getFileSystem(subpath):
+    """Function that returns a Pandas dataframe from the folders and files from a selected folder."""
+    columns = ['id', 'path', 'name', 'extension', 'size',
+               'folder', 'num_files', 'depth']
+    path = "../local_plankton/zooscan/"+subpath+"/Zooscan_scan"
+    idx, items, foldersize, num_files = _recursive_folderstats(path)
+    df = pd.DataFrame(items, columns=columns)
+    return df
+
 def listFolder(path) :
     """List folder for the given path"""
     return os.listdir(path)
@@ -61,7 +105,6 @@ def tsvToGlobalData(tsv_files) :
     dataframe = pd.concat(tsv_files)
     for col in dataframe.columns :
         dataframe[col].fillna(dataframe.STATUS, inplace=True)
-        print(col, " : ", dataframe[col].unique())
 
     #Do not work
     #dataframe.fillna(dataframe["STATUS"], inplace=True)
