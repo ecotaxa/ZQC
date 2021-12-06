@@ -2,6 +2,8 @@ import libQC_classes
 import pandas as pd
 import os
 import labels
+from zipfile import ZipFile
+
 
 def getdata(mode, subpath) :
     """Read, format, and return usefull data for the selected project"""
@@ -75,22 +77,24 @@ def _recursive_folderstats(folderpath, items=None,
             else:
                 filename, extension = os.path.splitext(f)
                 extension = extension[1:] if extension else None
+                inside_name = ZipFile(filepath, 'r').namelist() if extension=="zip" else "None"
+                inside_name = inside_name[0] if inside_name else "None"
                 item = [idx, filepath, filename, extension, stats.st_size,
-                        False, None, depth]
+                        False, None, depth, inside_name]
                 items.append(item)
                 num_files += 1
 
     stats = os.stat(folderpath)
     foldername = os.path.basename(folderpath)
     item = [current_idx, folderpath, foldername, None, foldersize,
-            True, num_files, depth]
+            True, num_files, depth, "None"]
 
     return idx, items, foldersize, num_files
 
 def getFileSystem(subpath):
     """Function that returns a Pandas dataframe from the folders and files from a selected folder."""
     columns = ['id', 'path', 'name', 'extension', 'size',
-               'folder', 'num_files', 'depth']
+               'folder', 'num_files', 'depth', "inside_name"]
     path = "../local_plankton/zooscan/"+subpath+"/Zooscan_scan"
     idx, items, foldersize, num_files = _recursive_folderstats(path)
     df = pd.DataFrame(items, columns=columns)
@@ -105,9 +109,6 @@ def tsvToGlobalData(tsv_files) :
     dataframe = pd.concat(tsv_files)
     for col in dataframe.columns :
         dataframe[col].fillna(dataframe.STATUS, inplace=True)
-
-    #Do not work
-    #dataframe.fillna(dataframe["STATUS"], inplace=True)
     return dataframe
 
 def headerToGlobalData(header_files) : 

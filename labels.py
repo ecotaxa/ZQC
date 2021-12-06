@@ -6,11 +6,11 @@ errors = {
 
     "bw_ratio.not_ok" : "#Ratio NOK",
 
-    "pixel_size.not_ok":"#size NOK",
+    "pixel_size.not_ok":"#Size NOK",
 
     "raw_files.missing" : "#MISSING FILE",
     "raw_files.duplicate" : "#DUPLICATE FILE",
-    "raw_files.rename_zip" : "#bug RENAME ZIP FILE",
+    "raw_files.rename_zip" : "#BUG rename zip file",
 
     "scan_weight.bug" : "#BUG weight"
 
@@ -19,6 +19,6 @@ errors = {
 sucess = {
         "bw_ratio.ok" : "Ratio OK",
         "raw_files.ok" : "Files OK",
-        "scan_weight.ok" : "weight OK"
+        "scan_weight.ok" : "Weight OK"
 }
 
