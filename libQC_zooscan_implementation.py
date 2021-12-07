@@ -66,7 +66,12 @@ def check_bw_ratio(_id, _mode, local_data) :
     return result
 
 def check_pixel_size(_id, _mode, local_data) : 
-    """The idea here is to reveal an old zooprocess bug that was mistaken about the pixel size to apply for morphometric calculations. The purpose is to check that the pixel_size is consistent with the process_img_resolution."""
+    """The idea here is to reveal an old zooprocess bug that was mistaken about the pixel size to apply for morphometric calculations. 
+        The purpose is to check that the pixel_size is consistent with the process_img_resolution.
+    Potential cases : 
+        "pixel_size.not_ok":"#Size NOK",
+        if ok show : pixel size value
+    """
     print(_id, " : ", _mode," : callback check_pixel_size")
     #Get only usefull columns
     dataToTest = local_data.get("dataframe")[['scan_id','process_particle_pixel_size_mm', 'process_img_resolution']]
@@ -143,7 +148,7 @@ def check_raw_files(_id, _mode, local_data):
         raw_zip = datascanId.loc[datascanId.extension == "zip", ['name','inside_name']]
         count_raw_zip = raw_zip['name'].str.count("_raw").sum()
 
-        #TODO
+        #if a zip is present, check that the inside name is the same as the zip name
         if count_raw_zip==1 and raw_zip['name'].values!=raw_zip['inside_name'].values : 
             result.loc[result["scan_id"] == id+"_1", 'raw_files'] += labels.errors["raw_files.rename_zip"]
 
@@ -166,6 +171,24 @@ def check_raw_files(_id, _mode, local_data):
     result.rename(columns={'scan_id' : 'List scan ID', 'raw_files' : 'RAW files'}, inplace=True)
 
     return result
+
+def check_process_post_scan (_id, _mode, local_data):  
+    """ Checks the file system structure post scan generated.
+    In the _raw directory of Zooscan_scan :
+        N images named : scanID_X.jpg (images go from 1 to infinity)
+        1 table ecotaxa_scanID.tsv	
+        1 file of the following types dat1.pid, msk1.gif, out1.gif
+        1 zipped image vis1.zip
+    Potential cases : 
+        "process_post_scan.unprocessed" : "#UNPROCESSED"
+        "process_post_scan.ok" : "Process OK"
+    """
+
+    print(_id, " : ", _mode," : WIP callback check_raw_files")
+
+    #Get only usefull column size : where path contains /_raw/
+    fs = local_data.get("fs")
+    #TODO
 
 def check_scan_weight(_id, _mode, local_data):
     """All image files _raw_1.tif inside the _raw directory must be the same size.
@@ -207,11 +230,9 @@ def check_sep_mask(_id, _mode, local_data):
     #Get only usefull column :  where path contains /_work/ and extension == .gif
     fs = local_data.get("fs")
     dataToTest = fs.loc[([True if "/_work/" in i and "_sep"in i else False for i in fs['path'].values ]) & (fs['extension'].values=="gif"), ["name", "extension"]].name.values
-    print(dataToTest)
     
     result = local_data.get("dataframe")[['scan_id', 'acq_sub_part']].groupby('scan_id').first().reset_index()
     result["sep_mask"]=""
-    print("*****-> ", result)
     for id in result.scan_id :
         
         if id+"_sep" in dataToTest :
