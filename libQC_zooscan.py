@@ -28,8 +28,8 @@ class Lib_zooscan():
       check_process_post_scan = Check("Process POST SCAN", "", "process_post_scan", libQC_zooscan_implementation.noCb)
       check_bw_ratio = Check("B/W ratio", "In order to ensure the quality of the process, the value of the B/W ratio must be strictly less than 0.25.", "bw_ratio", libQC_zooscan_implementation.check_bw_ratio)
       check_pixel_size = Check("PIXEL size", "The idea here is to reveal an old zooprocess bug that was mistaken about the pixel size to apply for morphometric calculations. The purpose is to check that the pixel_size is consistent with the process_img_resolution.", "pixel_size", libQC_zooscan_implementation.check_pixel_size)
-      check_sep_mask = Check("SEP MASK", "étape de séparation des multiples", "sep_mask", libQC_zooscan_implementation.noCb)
-      check_process_post_sep = Check("Process POST SEP", "process incluant le masque de séparation", "process_post_sep", libQC_zooscan_implementation.noCb)
+      check_sep_mask = Check("SEP MASK", "Checking the presence of a sep.gif mask in the subdirectory of the _work. If it is not present, indicate the motoda fraction associated with the scan to eliminate the situation where there was no multiple to separate because the sample was very poor and therefore motoda = 1", "sep_mask", libQC_zooscan_implementation.check_sep_mask)
+      check_process_post_sep = Check("Process POST SEP", "This second process must include the separation mask (if any) created in the previous step.", "process_post_sep", libQC_zooscan_implementation.check_process_post_sep)
    
       check_sieve_bug = Check("Sieve Bug", "", "sieve_bug", libQC_zooscan_implementation.noCb)
       check_motoda_fraction = Check("MOTODA fraction", "", "motoda_fraction", libQC_zooscan_implementation.noCb)
@@ -50,8 +50,8 @@ class Lib_zooscan():
 
       #Fill blocks with subblocks
       block_before_scan.addSubBlocks(subBlock_sample)
-      block_during_analysis.addSubBlocks(subBlock_sample,subBlock_acquisition,subBlock_process)
-      #TEST block_during_analysis.addSubBlocks(subBlock_process)
+      #block_during_analysis.addSubBlocks(subBlock_sample,subBlock_acquisition,subBlock_process)
+      block_during_analysis.addSubBlocks(subBlock_process)
       block_after_ecotaxa_classif.addSubBlocks(subBlock_multiples)
 
       #Fill sub blocks with checks

@@ -143,9 +143,10 @@ def check_raw_files(_id, _mode, local_data):
         raw_zip = datascanId.loc[datascanId.extension == "zip", ['name','inside_name']]
         count_raw_zip = raw_zip['name'].str.count("_raw").sum()
 
-        #
+        #TODO
         if count_raw_zip==1 and raw_zip['name'].values!=raw_zip['inside_name'].values : 
             result.loc[result["scan_id"] == id+"_1", 'raw_files'] += labels.errors["raw_files.rename_zip"]
+
         #if the count of files is as expected
         elif count_log==1 and count_meta==1 and (count_raw_tif==1 or count_raw_zip==1) :
             result.loc[result["scan_id"] == id+"_1", 'raw_files'] = labels.sucess["raw_files.ok"]
@@ -191,5 +192,66 @@ def check_scan_weight(_id, _mode, local_data):
 
     #Rename collums to match the desiered output
     result.rename(columns={'scan_id' : 'List scan ID', 'scan_weight' : 'SCAN weight'}, inplace=True)
+
+    return result
+
+def check_sep_mask(_id, _mode, local_data):
+    """Verification of the presence of a sep.gif mask in the subdirectory of the _work. If it is not present, indicate the motoda fraction associated with the scan to eliminate the situation where there was no multiple to separate because the sample was very poor and therefore motoda = 1
+    Potential cases : 
+       "sep_mask.missing" : "#MISSING SEP MSK = (F)"
+        "sep_mask.ok" : "Sep mask OK"
+    """
+
+    print(_id, " : ", _mode," : WIP callback check_sep_mask")
+
+    #Get only usefull column :  where path contains /_work/ and extension == .gif
+    fs = local_data.get("fs")
+    dataToTest = fs.loc[([True if "/_work/" in i and "_sep"in i else False for i in fs['path'].values ]) & (fs['extension'].values=="gif"), ["name", "extension"]].name.values
+    print(dataToTest)
+    
+    result = local_data.get("dataframe")[['scan_id', 'acq_sub_part']].groupby('scan_id').first().reset_index()
+    result["sep_mask"]=""
+    print("*****-> ", result)
+    for id in result.scan_id :
+        
+        if id+"_sep" in dataToTest :
+            result.loc[result["scan_id"] == id, 'sep_mask'] += labels.sucess["sep_mask.ok"]
+        else :
+            #if missing ecotaxa : laisser ca
+            #si nn :
+            #get motoda frac from data
+            motoda_frac = result.loc[result["scan_id"] == id, 'acq_sub_part']
+            result.loc[result["scan_id"] == id, 'sep_mask'] = labels.errors["sep_mask.missing"]+" = "+motoda_frac
+    #result["sep_mask"]="in work"
+    result.drop(columns=["acq_sub_part"], inplace=True)
+    #Rename collums to match the desiered output
+    result.rename(columns={'scan_id' : 'List scan ID', 'sep_mask' : 'SEP MASK'}, inplace=True)
+
+    return result
+
+def check_process_post_sep(_id, _mode, local_data):
+    """This second process must include the separation mask (if any) created in the previous step. 
+    Potential cases : 
+        'post_sep.unprocessed' : "UNPROCESSED",
+        'post_sep.not_included' : "SEP MSK NOT INCLUDED"
+        'post_sep.ok' : "process OK"
+    """
+
+    print(_id, " : ", _mode," : WIP callback check_process_post_sep")
+
+    #Get only usefull column : scan_id and process_particle_sep_mask
+    result = local_data.get("dataframe")[['scan_id','process_particle_sep_mask']]
+    
+    #Replace by large or narrow or associated error code
+    result.process_particle_sep_mask=result.process_particle_sep_mask.map(lambda x:   labels.sucess["post_sep.ok"] if "include" in x
+                                                                                 else labels.errors["post_sep.unprocessed"] if labels.errors["global.missing_ecotaxa_table"]==x
+                                                                                 else labels.errors["post_sep.not_included"])
+
+    #Keep only one line by couples : id / frame type
+    result = result.drop_duplicates()
+    
+    
+    #Rename collums to match the desiered output
+    result.rename(columns={'scan_id' : 'List scan ID', 'process_particle_sep_mask' : 'POST SEP'}, inplace=True)
 
     return result
