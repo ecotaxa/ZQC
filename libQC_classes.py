@@ -5,120 +5,128 @@ from enum import Enum
 import pandas as pd
 import time
 
+
 class Mode(Enum):
-   TSV = "TSV"
-   HEADER = "HEADER"
+    TSV = "TSV"
+    HEADER = "HEADER"
+
+
 class EXECUTION_STATUS(Enum):
-   SUCESS="Sucess"
-   ERROR="Error"
-   KNOWN_ERROR="Known error"
+    SUCESS = "Sucess"
+    ERROR = "Error"
+    KNOWN_ERROR = "Known error"
+
 
 class ChecksLib():
-   def __init__(self):
-      self.blocks=[]
+    def __init__(self):
+        self.blocks = []
 
-   def addBlocks(self, *_blocks) :
-      [self.blocks.append(b) for b in _blocks]
+    def addBlocks(self, *_blocks):
+        [self.blocks.append(b) for b in _blocks]
 
-   def getBlock(self, _id):
-      return next((x for x in self.blocks if x.id == _id), None)
+    def getBlock(self, _id):
+        return next((x for x in self.blocks if x.id == _id), None)
 
-   def runCallback(self, projects, drive, block_id) :
-      block = self.getBlock(block_id)
-      QC_execution =block.runCallback(projects, drive)
-      return QC_execution
-   
-   def listChecks(self):
-      """Return an object containing all availables quallity checks"""
-      return [b.listChecks() for b in self.blocks]
+    def runCallback(self, projects, drive, block_id):
+        block = self.getBlock(block_id)
+        QC_execution = block.runCallback(projects, drive)
+        return QC_execution
 
-class Block :
-   def __init__ (self, _title, _id, _mode): 
-      self.subBlocks=[]
-      self.title=_title
-      self.id=_id
-      self.mode=_mode    
+    def listChecks(self):
+        """Return an object containing all availables quallity checks"""
+        return [b.listChecks() for b in self.blocks]
 
-   def addSubBlocks(self, *_subBlocks) :
-      [self.subBlocks.append(sb) for sb in _subBlocks]
-   
-   def getSubBlock(self, _id):
-      return next((x for x in self.subBlocks if x.id == _id), None)
 
-   def runCallback(self, projects, drive) :
-      """Run block's QC, and return execution result as dash componants"""
-      QC_execution = []
-      for project in projects :
-         start_time = time.time()
-         #Get data 
-         local_data = localData.getdata(self.mode, drive+"/"+project)
-         print("--- Get local data : %s seconds ---" % (time.time() - start_time))
-         #Run blocks
-         qcExecutionData = [subBlock.runCallback(self.mode, local_data) for subBlock in self.subBlocks]
-         #Generate and agregate dash componants
-         QC_execution.append(componants.qc_execution_result(project, qcExecutionData))
-      return QC_execution
+class Block:
+    def __init__(self, _title, _id, _mode):
+        self.subBlocks = []
+        self.title = _title
+        self.id = _id
+        self.mode = _mode
 
-   def listChecks(self):
-      return {
-         "title" : self.title,
-         "id" : self.id,
-         "blocks" : [sb.listChecks() for sb in self.subBlocks]
-      }
+    def addSubBlocks(self, *_subBlocks):
+        [self.subBlocks.append(sb) for sb in _subBlocks]
 
-class SubBlock :
-   def __init__(self, _title, _description, _id):
-      self.title=_title
-      self.description=_description
-      self.id=_id
-      self.checks=[]
+    def getSubBlock(self, _id):
+        return next((x for x in self.subBlocks if x.id == _id), None)
 
-   def addChecks(self, *_checks) :
-      [self.checks.append(c) for c in _checks]
-   
-   def getCheck(self, _id):
-      return next((x for x in self.checks if x.id == _id), None)
+    def runCallback(self, projects, drive):
+        """Run block's QC, and return execution result as dash componants"""
+        QC_execution = []
+        for project in projects:
+            start_time = time.time()
+            # Get data
+            local_data = localData.getdata(self.mode, drive + "/" + project)
+            print("--- Get local data : %s seconds ---" % (time.time() - start_time))
+            # Run blocks
+            qcExecutionData = [subBlock.runCallback(self.mode, local_data) for subBlock in self.subBlocks]
+            # Generate and agregate dash componants
+            QC_execution.append(componants.qc_execution_result(project, qcExecutionData))
+        return QC_execution
 
-   def runCallback(self, mode, local_data):
-      """Run sub block's QC, save the result in project forlder and return execution result as dash componants"""
-      # For eatch checks of this sub block, run its callback and store the result in frames array.
-      frames = [ check.callback(check.id, mode, local_data) for check in self.checks ]
+    def listChecks(self):
+        return {
+            "title": self.title,
+            "id": self.id,
+            "blocks": [sb.listChecks() for sb in self.subBlocks]
+        }
 
-      # Concat all frame to create a unique result dataframe for this sub block. #TODO JCE 
-      result = pd.concat(frames)
-      result = result.groupby([result.columns[0]]).first().reset_index() #TODO JCE first_valid_index
 
-      # Save the result of the execution as html in the project folder
-      localData.saveQcExecution(self.title, result)
+class SubBlock:
+    def __init__(self, _title, _description, _id):
+        self.title = _title
+        self.description = _description
+        self.id = _id
+        self.checks = []
 
-      # Generate the dash layout, depending on execution result type 
-      resultLayout = componants.sub_block_execution_result(self.title, result)
+    def addChecks(self, *_checks):
+        [self.checks.append(c) for c in _checks]
 
-      return resultLayout
+    def getCheck(self, _id):
+        return next((x for x in self.checks if x.id == _id), None)
 
-   def listChecks(self):
-      return {
-         "title": self.title,
-         "description" : self.description,
-         "id" : self.id,
-         "checks" :[c.listChecks() for c in self.checks]
-      }
+    def runCallback(self, mode, local_data):
+        """Run sub block's QC, save the result in project forlder and return execution result as dash componants"""
+        # For eatch checks of this sub block, run its callback and store the result in frames array.
+        frames = [check.callback(check.id, mode, local_data) for check in self.checks]
 
-class Check : 
-   def __init__(self, _title, _description, _id, _callback):
-      self.title=_title
-      self.description=_description
-      self.id=_id
-      self.callback=_callback
+        # Concat all frame to create a unique result dataframe for this sub block. #TODO JCE
+        result = pd.concat(frames)
+        result = result.groupby([result.columns[0]]).first().reset_index()  # TODO JCE first_valid_index
 
-   def listChecks(self):
-      return {
-         "title": self.title,
-         "description" : self.description,
-         "id" : self.id
-      }
+        # Save the result of the execution as html in the project folder
+        localData.saveQcExecution(self.title, result)
 
-class result :
-   def __init__(self, _status, _dataframe):
-      self.status=_status
-      self.dataframe=_dataframe
+        # Generate the dash layout, depending on execution result type
+        resultLayout = componants.sub_block_execution_result(self.title, result)
+
+        return resultLayout
+
+    def listChecks(self):
+        return {
+            "title": self.title,
+            "description": self.description,
+            "id": self.id,
+            "checks": [c.listChecks() for c in self.checks]
+        }
+
+
+class Check:
+    def __init__(self, _title, _description, _id, _callback):
+        self.title = _title
+        self.description = _description
+        self.id = _id
+        self.callback = _callback
+
+    def listChecks(self):
+        return {
+            "title": self.title,
+            "description": self.description,
+            "id": self.id
+        }
+
+
+class result:
+    def __init__(self, _status, _dataframe):
+        self.status = _status
+        self.dataframe = _dataframe
