@@ -18,7 +18,8 @@ errors = {
     "process_post_scan.duplicate.tsv": "#DUPLICATE TSV",
     "process_post_scan.missing.zip": "#MISSING ZIP",
     "process_post_scan.duplicate.zip": "#DUPLICATE ZIP",
-
+    "process_post_scan.rename_zip": "#BUG rename zip file",
+    
     "sep_mask.missing": "#MISSING SEP MSK ",
 
     'post_sep.unprocessed': "#UNPROCESSED",
