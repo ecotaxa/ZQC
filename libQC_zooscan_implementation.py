@@ -221,32 +221,33 @@ def check_process_post_scan(_id, _mode, local_data):
         count_tsv = len(datascanId.loc[datascanId.extension == "tsv", 'name'])
 
         # count of scanID_vis1.zip should be 1
-        work_zip = datascanId.loc[datascanId.extension == "zip", ['name', 'inside_name']]
+        work_zip = datascanId.loc[datascanId.extension== "zip", ['name', 'inside_name']]
         count_work_zip = len(work_zip['name'])
 
-        # if a zip is present, check that the inside name is the same as the zip name
-        if count_work_zip == 1 and work_zip['name'].values+".tif" != work_zip['inside_name'].values:
-            result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.rename_zip"]
-
         # if the count of files is as expected
-        elif count_work_zip == 1 and count_tsv == 1 :
+        if count_work_zip == 1 and count_tsv == 1 :
             result.loc[result["scan_id"] == id, 'process_post_scan'] = labels.sucess["process_post_scan.ok"]
 
-        # if less tsv than expected
-        if count_tsv < 1:
-            result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.unprocessed"]
+        else :
+            # if less tsv than expected
+            if count_tsv < 1:
+                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.unprocessed"]
+                
+            # if more tsv than excepted
+            if count_tsv > 1:
+                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.duplicate.tsv"]
+                
+            # if a zip is present, check that the inside name is the same as the zip name
+            if count_work_zip == 1 and work_zip['name'].values+".tif" != work_zip['inside_name'].values:
+                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.rename_zip"]
 
-        # if more tsv than excepted
-        if count_tsv > 1:
-            result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.duplicate.tsv"]
+            # if less zip than expected
+            if count_work_zip < 1:
+                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.missing.zip"]
 
-        # if less zip than expected
-        if count_work_zip < 1:
-            result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.missing.zip"]
-
-        # if more zip than excepted
-        if count_work_zip > 1:
-            result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.duplicate.zip"]
+            # if more zip than excepted
+            if count_work_zip > 1:
+                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.duplicate.zip"]
 
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'process_post_scan': 'POST SCAN'}, inplace=True)

@@ -33,17 +33,17 @@ def generate_project_selector(drives):
 def generate_check_block(checkBlock):
     return html.Div([  # -- check list title --###
                     html.Div([
-                        dcc.Checklist(
-                            options=[{'label': checkBlock["title"], 'value': checkBlock["id"]}],
-                            labelStyle={'display': 'block'},
-                            className="h3 inline"
+                        html.Div(
+                            checkBlock["title"],
+                            className="label inline"
                         ),
                         html.Img(
                             className="runQC-btn",
                             id="runQC-btn-" +
                             checkBlock["id"],
                             src="../assets/play.png",
-                            alt="Run selected QC",
+                            alt="Run "+checkBlock["title"]+" QCs",
+                            title="Run "+checkBlock["title"]+" QCs",
                             n_clicks=0)
                     ],
                         className="check-block-title"),
@@ -56,7 +56,7 @@ def generate_check_block(checkBlock):
                             className='custom-tabs-container',
                             children=[
                                 dcc.Tab(
-                                    label='Details',
+                                    label='Infos',
                                     value='tab-details-' + checkBlock["id"],
                                     className='custom-tab',
                                     selected_className='custom-tab--selected'
