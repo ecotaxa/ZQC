@@ -73,7 +73,7 @@ p{
     color: #9b9b9b;
     font-family: "IMTITLE", Sans-serif;
     font-size: 14px;
-    font-style:italic;
+    font-style: bold;
     margin: 0px 0px 5px 0px; 
 }
 
@@ -227,10 +227,29 @@ input[type=checkbox]:checked:before {
 .project-sep{
     text-align: center;
     font-size: 18px;
-    color : #333;
-    border-bottom: 1px solid #333;
+    /* choix 1 et 2 : */
+    /* color : #123249;
+    border-bottom: 1px solid #123249; */
+    /* choix 1/2 ou3 :  */
+    color : #5cc0cd;
+    border-bottom: 1px solid #5cc0cd;
+    /* choix 3 */
+    margin-left: -15px;
+    margin-right: -15px;
 }
-
+.result-project-title{
+    /*choix 1: */
+    /* background-color: #eeeeee; */     
+    /*choix 2: */
+    /* background-color: #fafafa; */
+    /*choix 3: */
+    background-color: white;       
+    padding : 10px;
+    /* choix 1 et 2 */
+    /* margin-bottom: 40px; */
+    /* choix 3 */
+    margin-bottom: 20px;
+}
 /**********DATA TABLE**********/
 .sub-block-div{
     margin-bottom: 10px;

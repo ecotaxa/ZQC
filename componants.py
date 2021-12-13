@@ -24,7 +24,7 @@ def generate_project_selector(drives):
         html.H2("Project"),
         dcc.Dropdown(
             id='app-1-dropdown-projects',
-            value=["Zooscan_ptb_jb_2021_sn001"],
+            value=["Zooscan_ptb_jb_2021_sn001", "Zooscan_ptb_jb_2020_sn001"],
             multi=True
         )
     ], className="container-prj-selector")
@@ -145,7 +145,7 @@ def sub_block_execution_result(subBlock, dataframe):
 
 def qc_execution_result(project, qcExecutionLayout):
     return html.Div([
-        html.P(project, className="project-sep"),
+        html.P("⭐️ "+project+" ⭐️", className="project-sep"),
         html.Div(qcExecutionLayout)
     ], className="result-project-title")
 
