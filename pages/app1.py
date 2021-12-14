@@ -5,7 +5,7 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
 from app import app
-import apiData as ad
+import localData as ad
 import componants
 import libQC_zooscan
 
@@ -23,7 +23,7 @@ projectSelector = componants.generate_project_selector(drives)
 def update_projects_dropdown(value):
     projects = ad.getProjects(value)
     return [
-        {'label': project.name, 'value': project.name} for project in projects
+        {'label': project, 'value': project} for project in projects
     ]
 
 

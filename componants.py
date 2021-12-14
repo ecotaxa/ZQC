@@ -12,13 +12,14 @@ def generate_header():
 
 
 def generate_project_selector(drives):
+    print(drives)
     return html.Div([
         html.H2("Drive"),
         dcc.Dropdown(
             id='app-1-dropdown-drives',
             value="zooscan_k",
             options=[
-                {'label': drive.name, 'value': drive.name} for drive in drives
+                {'label': drive, 'value': drive} for drive in drives
             ]
         ),
         html.H2("Project"),

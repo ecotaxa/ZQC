@@ -3,48 +3,26 @@ import pandas as pd
 import os
 import labels
 from zipfile import ZipFile
+
 base_path= "../local_plankton/zooscan/"
-#TODO impl this part in local mode and then remove api data.
-# def getDrives():
-#     print("************Get drives in************")
-#     return getDir("")
 
-# def getProjects(drive):
-#     print("************Get projects in************")
-#     return getDir(drive)
+def getDrives():
+    print("************Get drives in************")
+    return getDir("")
 
-# def getDir(subpath) :
-#     print("************Get dir in************")
-#     # create a context with an instance of the API client
-#     with ecotaxa_py_client.ApiClient(app.configuration) as api_client:
-#         # Create an instance of the API class
-#         api_instance = files_api.FilesApi(api_client)
-#         path = "/local_plankton/zooscan/"+subpath # str | 
-#         try:
-#             # List Common Files
-#             api_response = api_instance.list_common_files(path).entries
-#             dirs = [x for x in api_response if x.type=='D' and x.name.lower().startswith("zooscan")]
-#             dirs.sort(key=lambda x: x.name)
-#         except ecotaxa_py_client.ApiException as e:
-#             print("Exception when calling FilesApi->list_common_files_common_files_get: %s\n" % e)
-#     return dirs
+def getProjects(drive):
+    print("************Get projects in************")
+    return getDir(drive)
 
-# def getFiles(subpath):
-#     print("************Get files in************")
-#     # create a context with an instance of the API client
-#     with ecotaxa_py_client.ApiClient(app.configuration) as api_client:
-#         # Create an instance of the API class
-#         api_instance = files_api.FilesApi(api_client)
-#         path = "/local_plankton/zooscan/"+subpath+"/Zooscan_scan/_raw/" # str | 
-#         try:
-#             # List Common Files
-#             api_response = api_instance.list_common_files_common_files_get(path).entries
-#             files = [x for x in api_response if x.type=='F']
-#             files.sort(key=lambda x: x.name)
+def getDir(subpath) :
+    print("************Get dir in************")
+    dirs = next(os.walk(base_path+subpath))[1]
+    return dirs
 
-#         except ecotaxa_py_client.ApiException as e:
-#             print("Exception when calling FilesApi->list_common_files_common_files_get: %s\n" % e)
-#     return files
+def getFiles(subpath):
+    print("************Get files in************")
+    files = next(os.walk(base_path+subpath))[2]
+    return files
 
 def getdata(mode, subpath) :
     """Read, format, and return usefull data for the selected project"""
