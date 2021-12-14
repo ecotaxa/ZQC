@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import labels
 from zipfile import ZipFile
-
+base_path= "../local_plankton/zooscan/"
 #TODO impl this part in local mode and then remove api data.
 # def getDrives():
 #     print("************Get drives in************")
@@ -67,9 +67,9 @@ def getdata(mode, subpath) :
 def  getTsv(subpath):
     """Read all ecotaxa tables (tsv files) for the given project. Return them as list of pandas dataframes"""
     tsv_files = []
-    for folder_name in listFolder("../local_plankton/zooscan/"+subpath+"/Zooscan_scan/_work/") :
+    for folder_name in listFolder(base_path+subpath+"/Zooscan_scan/_work/") :
             try: 
-                df = pd.read_csv("../local_plankton/zooscan/"+subpath+"/Zooscan_scan/_work/"+folder_name+"/ecotaxa_"+folder_name+".tsv", encoding = "ISO-8859-1", usecols=['sample_id','process_img_background_img', 'process_particle_bw_ratio', "process_particle_pixel_size_mm", "process_img_resolution", "acq_sub_part", "process_particle_sep_mask"],sep="\t")
+                df = pd.read_csv(base_path+subpath+"/Zooscan_scan/_work/"+folder_name+"/ecotaxa_"+folder_name+".tsv", encoding = "ISO-8859-1", usecols=['sample_id','process_img_background_img', 'process_particle_bw_ratio', "process_particle_pixel_size_mm", "process_img_resolution", "acq_sub_part", "process_particle_sep_mask"],sep="\t")
                 df['STATUS']="Ecotaxa table OK"
                 df['scan_id'] = folder_name
                 tsv_files.append(df.drop(0))  
@@ -84,13 +84,13 @@ def  getHeader(subpath):
     header_files = []
     # Read sample header table
     try: 
-        df = pd.read_csv("../local_plankton/zooscan/"+subpath+"/Zooscan_meta/zooscan_sample_header_table.csv", encoding = "ISO-8859-1", usecols=['sampleid', 'ship'], sep=";")
+        df = pd.read_csv(base_path+subpath+"/Zooscan_meta/zooscan_sample_header_table.csv", encoding = "ISO-8859-1", usecols=['sampleid', 'ship'], sep=";")
         header_files.append(df)  
     except IOError as e:
         print(e)
     # Read scan header table
     try: 
-        df = pd.read_csv("../local_plankton/zooscan/"+subpath+"/Zooscan_meta/zooscan_scan_header_table.csv", encoding = "ISO-8859-1", sep=";")
+        df = pd.read_csv(base_path+subpath+"/Zooscan_meta/zooscan_scan_header_table.csv", encoding = "ISO-8859-1", sep=";")
         header_files.append(df)  
     except IOError as e:
         print(e)
@@ -136,7 +136,7 @@ def getFileSystem(subpath):
     """Function that returns a Pandas dataframe from the folders and files from a selected folder."""
     columns = ['id', 'path', 'name', 'extension', 'size',
                'folder', 'num_files', 'depth', "inside_name"]
-    path = "../local_plankton/zooscan/"+subpath+"/Zooscan_scan"
+    path = base_path+subpath+"/Zooscan_scan"
     idx, items, foldersize, num_files = _recursive_folderstats(path)
     df = pd.DataFrame(items, columns=columns)
     return df

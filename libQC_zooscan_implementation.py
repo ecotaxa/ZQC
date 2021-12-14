@@ -44,7 +44,7 @@ def check_frame_type(_id, _mode, local_data):
     result.process_img_background_img = result.process_img_background_img.map(lambda x: "large" if "large" in x
                                                                               else "narrow" if "narrow" in x
                                                                               else x if labels.errors["global.missing_ecotaxa_table"] == x
-                                                                              else labels.errors["frame_type.not_large_or_narrow"])
+                                                                              else labels.errors["process.frame_type.not_large_or_narrow"])
 
     # Keep only one line by couples : id / frame type
     result = result.drop_duplicates()
@@ -68,8 +68,8 @@ def check_bw_ratio(_id, _mode, local_data):
 
     # Replace by ratio OK or associated error code
     result.process_particle_bw_ratio = result.process_particle_bw_ratio.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
-                                                                            else labels.sucess["bw_ratio.ok"] if is_float(x) and float(x) < 0.25 and float(x) > 0
-                                                                            else labels.errors["bw_ratio.not_ok"])
+                                                                            else labels.sucess["process.bw_ratio.ok"] if is_float(x) and float(x) < 0.25 and float(x) > 0
+                                                                            else labels.errors["process.bw_ratio.not_ok"])
 
     # Keep only one line by couples : id / ratio
     result = result.drop_duplicates()
@@ -111,7 +111,7 @@ def check_pixel_size(_id, _mode, local_data):
                 data.append(size)
             case _:
                 data.append(labels.errors["global.missing_ecotaxa_table"] if size ==
-                            labels.errors["global.missing_ecotaxa_table"] else labels.errors["pixel_size.not_ok"])
+                            labels.errors["global.missing_ecotaxa_table"] else labels.errors["process.pixel_size.not_ok"])
 
     result["pixel_size"] = data
 
@@ -162,19 +162,19 @@ def check_raw_files(_id, _mode, local_data):
 
         # if a zip is present, check that the inside name is the same as the zip name
         if count_raw_zip == 1 and raw_zip['name'].values != raw_zip['inside_name'].values:
-            result.loc[result["scan_id"] == id + "_1", 'raw_files'] += labels.errors["raw_files.rename_zip"]
+            result.loc[result["scan_id"] == id + "_1", 'raw_files'] += labels.errors["process.raw_files.rename_zip"]
 
         # if the count of files is as expected
         elif count_log == 1 and count_meta == 1 and (count_raw_tif == 1 or count_raw_zip == 1):
-            result.loc[result["scan_id"] == id + "_1", 'raw_files'] = labels.sucess["raw_files.ok"]
+            result.loc[result["scan_id"] == id + "_1", 'raw_files'] = labels.sucess["process.raw_files.ok"]
 
         # if less than expected
         if count_log < 1 or count_meta < 1 or (count_raw_tif < 1 and count_raw_zip < 1):
-            result.loc[result["scan_id"] == id + "_1", 'raw_files'] += labels.errors["raw_files.missing"]
+            result.loc[result["scan_id"] == id + "_1", 'raw_files'] += labels.errors["process.raw_files.missing"]
 
         # if more than excepted
         if count_log > 1 or count_meta > 1 or count_raw_tif > 1 or count_raw_zip > 1:
-            result.loc[result["scan_id"] == id + "_1", 'raw_files'] += labels.errors["raw_files.duplicate"]
+            result.loc[result["scan_id"] == id + "_1", 'raw_files'] += labels.errors["process.raw_files.duplicate"]
 
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'raw_files': 'RAW files'}, inplace=True)
@@ -226,28 +226,28 @@ def check_process_post_scan(_id, _mode, local_data):
 
         # if the count of files is as expected
         if count_work_zip == 1 and count_tsv == 1 :
-            result.loc[result["scan_id"] == id, 'process_post_scan'] = labels.sucess["process_post_scan.ok"]
+            result.loc[result["scan_id"] == id, 'process_post_scan'] = labels.sucess["process.post_scan.ok"]
 
         else :
             # if less tsv than expected
             if count_tsv < 1:
-                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.unprocessed"]
+                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process.post_scan.unprocessed"]
                 
             # if more tsv than excepted
             if count_tsv > 1:
-                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.duplicate.tsv"]
+                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process.post_scan.duplicate.tsv"]
                 
             # if a zip is present, check that the inside name is the same as the zip name
             if count_work_zip == 1 and work_zip['name'].values+".tif" != work_zip['inside_name'].values:
-                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.rename_zip"]
+                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process.post_scan.rename_zip"]
 
             # if less zip than expected
             if count_work_zip < 1:
-                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.missing.zip"]
+                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process.post_scan.missing.zip"]
 
             # if more zip than excepted
             if count_work_zip > 1:
-                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process_post_scan.duplicate.zip"]
+                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process.post_scan.duplicate.zip"]
 
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'process_post_scan': 'POST SCAN'}, inplace=True)
@@ -271,9 +271,9 @@ def check_scan_weight(_id, _mode, local_data):
 
     # check that all these tif have the same weight
     if len(dataToTest.unique()) == 1:
-        result["scan_weight"] = labels.sucess["scan_weight.ok"]
+        result["scan_weight"] = labels.sucess["process.scan_weight.ok"]
     else:
-        result["scan_weight"] = labels.errors["scan_weight.bug"]
+        result["scan_weight"] = labels.errors["process.scan_weight.bug"]
 
     # Keep only one line by couples : id / scan weight
     result = result.drop_duplicates()
@@ -303,11 +303,11 @@ def check_sep_mask(_id, _mode, local_data):
     for id in result.scan_id:
 
         if id + "_sep" in dataToTest:
-            result.loc[result["scan_id"] == id, 'sep_mask'] += labels.sucess["sep_mask.ok"]
+            result.loc[result["scan_id"] == id, 'sep_mask'] += labels.sucess["process.sep_mask.ok"]
         else:
             # get motoda frac from data
             motoda_frac = result.loc[result["scan_id"] == id, 'acq_sub_part']
-            result.loc[result["scan_id"] == id, 'sep_mask'] = labels.errors["sep_mask.missing"] + " = " + motoda_frac
+            result.loc[result["scan_id"] == id, 'sep_mask'] = labels.errors["process.sep_mask.missing"] + " = " + motoda_frac
 
     result.drop(columns=["acq_sub_part"], inplace=True)
     # Rename collums to match the desiered output
@@ -330,9 +330,9 @@ def check_process_post_sep(_id, _mode, local_data):
     result = local_data.get("dataframe")[['scan_id', 'process_particle_sep_mask']]
 
     # Replace by large or narrow or associated error code
-    result.process_particle_sep_mask = result.process_particle_sep_mask.map(lambda x: labels.sucess["post_sep.ok"] if "include" in x
-                                                                            else labels.errors["post_sep.unprocessed"] if labels.errors["global.missing_ecotaxa_table"] == x
-                                                                            else labels.errors["post_sep.not_included"])
+    result.process_particle_sep_mask = result.process_particle_sep_mask.map(lambda x: labels.sucess["process.post_sep.ok"] if "include" in x
+                                                                            else labels.errors["process.post_sep.unprocessed"] if labels.errors["global.missing_ecotaxa_table"] == x
+                                                                            else labels.errors["process.post_sep.not_included"])
 
     # Keep only one line by couples : id / frame type
     result = result.drop_duplicates()
