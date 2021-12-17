@@ -1,7 +1,6 @@
 import labels
 import time
 
-
 def is_float(value):
     try:
         float(value)
@@ -28,7 +27,7 @@ def noCb(_id, _mode, local_data):
     """Returns information by samples about the absence of implementation of this QC"""
     print(_id, " : ", _mode, " : WIP callback not implemented yet")
     result = local_data.get("dataframe")[['scan_id']].drop_duplicates()
-    result[_id] = labels.errors["global.qc_not_implemented"]
+    result[_id] = "Not impl"#labels.errors["global.qc_not_implemented"]
     result.rename(columns={'scan_id': 'List scan ID'}, inplace=True)
     return result
 
@@ -40,17 +39,20 @@ def check_frame_type(_id, _mode, local_data):
     # Get only usefull columns
     result = local_data.get("dataframe")[['scan_id', 'process_img_background_img']]
 
+    # Get only usefull file name : .ini in Zooscan_config folder
+    fs = local_data.get("fs")
+    dataToTest = fs.loc[([True if "/Zooscan_config/" in i else False for i in fs['path'].values])
+                        & (fs['extension'].values == "ini"), ["name", "extension"]].name.values
+    ini_file_name = dataToTest[0] if len(dataToTest)==1 else ""
+
     # Replace by large or narrow or associated error code
-    result.process_img_background_img = result.process_img_background_img.map(lambda x: "large" if "large" in x
-                                                                              else "narrow" if "narrow" in x
+    result.process_img_background_img = result.process_img_background_img.map(lambda x: "large" if ("large" in x) and ("large" in ini_file_name)
+                                                                              else "narrow" if ("narrow" in x) and ("large" in ini_file_name)
                                                                               else x if labels.errors["global.missing_ecotaxa_table"] == x
-                                                                              else labels.errors["process.frame_type.not_large_or_narrow"])
+                                                                              else labels.errors["process.frame_type.not_ok"])                  
 
     # Keep only one line by couples : id / frame type
     result = result.drop_duplicates()
-
-    # check that all scan in samples have the same frame type #TODO JCE demander confirmation a Amanda
-    # print(result.process_img_background_img.unique())
 
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'process_img_background_img': 'Frame type'}, inplace=True)
@@ -77,7 +79,7 @@ def check_bw_ratio(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'process_particle_bw_ratio': 'B/W ratio'}, inplace=True)
 
-    print(_id, " : ", _mode, " : callback process_particle_bw_ratio : -- TIME : %s seconds --" % (time.time() - start_time))
+    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback process_particle_bw_ratio")
     return result
 
 
@@ -205,12 +207,12 @@ def check_process_post_scan(_id, _mode, local_data):
     result = local_data.get("dataframe")[['scan_id']].drop_duplicates()
     result["process_post_scan"] = ""
 
-    print("************ data to test : ", dataToTest)
-    print("************ result : ", result)
+    # print("************ data to test : ", dataToTest)
+    # print("************ result : ", result)
 
     # Extract scan ids from _work files name
     ids = result["scan_id"].values
-    print("************ IDS : ", ids)
+    #print("************ IDS : ", ids)
 
     # foreatch scan id
     for id in ids:

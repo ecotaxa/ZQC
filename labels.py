@@ -2,7 +2,7 @@ errors = {
     "global.missing_ecotaxa_table": "#MISSING ecotaxa table",
     "global.qc_not_implemented": "#Not impl",
 
-    "process.frame_type.not_large_or_narrow": "#NOT large or narrow",
+    "process.frame_type.not_ok" : "#Frame NOT OK",
 
     "process.bw_ratio.not_ok": "#Ratio NOK",
 

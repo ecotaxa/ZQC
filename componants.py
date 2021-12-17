@@ -12,7 +12,6 @@ def generate_header():
 
 
 def generate_project_selector(drives):
-    print(drives)
     return html.Div([
         html.H2("Drive"),
         dcc.Dropdown(

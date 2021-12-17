@@ -114,7 +114,7 @@ def getFileSystem(subpath):
     """Function that returns a Pandas dataframe from the folders and files from a selected folder."""
     columns = ['id', 'path', 'name', 'extension', 'size',
                'folder', 'num_files', 'depth', "inside_name"]
-    path = base_path+subpath+"/Zooscan_scan"
+    path = base_path+subpath
     idx, items, foldersize, num_files = _recursive_folderstats(path)
     df = pd.DataFrame(items, columns=columns)
     return df
