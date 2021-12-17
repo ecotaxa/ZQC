@@ -207,12 +207,8 @@ def check_process_post_scan(_id, _mode, local_data):
     result = local_data.get("dataframe")[['scan_id']].drop_duplicates()
     result["process_post_scan"] = ""
 
-    # print("************ data to test : ", dataToTest)
-    # print("************ result : ", result)
-
     # Extract scan ids from _work files name
     ids = result["scan_id"].values
-    #print("************ IDS : ", ids)
 
     # foreatch scan id
     for id in ids:

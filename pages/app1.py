@@ -112,8 +112,8 @@ checksSelector = html.Div([
 
 
 ######--- Generate main layout ---######
-layout = html.Div([
+layout = html.Div([html.Div([
     header,
     projectSelector,
     checksSelector
-], className="container-qc")
+], className="container-qc")], className="parent-container")

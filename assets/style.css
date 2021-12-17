@@ -9,8 +9,15 @@ body{
     background-color: #fff;
 }
 
+/* center the app container */
+.parent-container{
+    display: flex;
+    justify-content: center;
+}
 .container-qc{
     min-width: 450px; 
+    max-width: 1920px;
+    width : 100%
 }
 .container-qc>div{
     margin-bottom: 20px;
