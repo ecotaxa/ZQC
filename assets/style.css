@@ -152,33 +152,6 @@ button{
     background-color: #efefef !important;
 }
 
-/* *********CHECKBOX*********
-TODO REMOVE
-input[type=checkbox] {
-    border: 1px solid #e2e2e2;
-    color: #10698d;
-    width: 1em;
-    height: 1em;
-    outline: 0;
-    padding: 0;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    margin-right: 5px;
-    margin: 0px 10px;
-
-}
-input[type=checkbox]:checked:before {
-    content: "✔";
-    float: left;
-    width: 1em;
-    height: 1em;
-    line-height: 1em;
-    text-align: center;
-}
-*, *:before, *:after {
-    box-sizing: inherit;
-} */
-
 /**********RUN IMG**********/
 .runQC-btn{
     /* width: 20px;

@@ -2,22 +2,23 @@ import labels
 import time
 
 def is_float(value):
+    """Return true if value is a float else return false"""
     try:
         float(value)
         return True
     except BaseException:
         return False
 
-
 def is_int(value):
+    """Return true if value is an int else return false"""
     try:
         int(value)
         return True
     except BaseException:
         return False
 
-
 def underscore_split(a):
+    """Split before the second underscore"""
     if a.count("_") == 1:
         return a
     return "_".join(a.split("_", 2)[:2])
@@ -33,7 +34,13 @@ def noCb(_id, _mode, local_data):
 
 
 def check_frame_type(_id, _mode, local_data):
-    """Returns information by samples about the size of the frame used for scanning: "large" or "narrow"."""
+    """Returns information by scan about the size of the frame used for scanning: "large" or "narrow".
+    Potential cases :
+        "large"
+        "narrow"
+        "global.missing_ecotaxa_table": "#MISSING ecotaxa table"
+        "process.frame_type.not_ok" : "#Frame NOT OK"
+    """
     start_time = time.time()
 
     # Get only usefull columns
@@ -62,7 +69,12 @@ def check_frame_type(_id, _mode, local_data):
 
 
 def check_bw_ratio(_id, _mode, local_data):
-    """In order to ensure the quality of the process, the value of the B/W ratio must be strictly less than 0.25."""
+    """In order to ensure the quality of the process, the value of the B/W ratio must be strictly less than 0.25.
+        Potential cases :
+        "global.missing_ecotaxa_table": "#MISSING ecotaxa table"
+        "process.bw_ratio.not_ok": "#Ratio NOK"
+        "process.bw_ratio.ok": "Ratio OK"
+    """
     start_time = time.time()
 
     # Get only usefull columns
@@ -94,26 +106,22 @@ def check_pixel_size(_id, _mode, local_data):
 
     # Get only usefull columns
     dataToTest = local_data.get("dataframe")[['scan_id', 'process_particle_pixel_size_mm', 'process_img_resolution']]
+    print(dataToTest.drop_duplicates())
     result = local_data.get("dataframe")[['scan_id']]
-
+    print(result.drop_duplicates())
     data = []
     for i in range(0, len(dataToTest.scan_id)):
         size = dataToTest.process_particle_pixel_size_mm.values[i]
         resolution = dataToTest.process_img_resolution.values[i]
-        match size, resolution:
-            case "0.0847", "300":
-                data.append(size)
-            case "0.0408", "600":
-                data.append(size)
-            case "0.0204", "1200":
-                data.append(size)
-            case "0.0106", "2400":
-                data.append(size)
-            case "0.0053", "4800":
-                data.append(size)
-            case _:
-                data.append(labels.errors["global.missing_ecotaxa_table"] if size ==
-                            labels.errors["global.missing_ecotaxa_table"] else labels.errors["process.pixel_size.not_ok"])
+        if((size == "0.0847" and resolution == "300") 
+        or (size == "0.0408" and resolution == "600") 
+        or (size == "0.0204" and resolution == "1200")
+        or (size == "0.0106" and resolution == "2400")
+        or (size == "0.0053" and resolution == "4800")) : 
+            data.append(size)
+        else :
+            data.append(labels.errors["global.missing_ecotaxa_table"] if size ==
+                        labels.errors["global.missing_ecotaxa_table"] else labels.errors["process.pixel_size.not_ok"])
 
     result["pixel_size"] = data
 

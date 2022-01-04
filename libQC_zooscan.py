@@ -1,4 +1,3 @@
-#TODO DOC
 from libQC_classes import Block, Check, ChecksLib, Mode, SubBlock
 import libQC_zooscan_implementation
 
