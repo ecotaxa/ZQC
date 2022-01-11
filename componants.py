@@ -16,7 +16,7 @@ def generate_project_selector(drives):
         html.H2("Drive"),
         dcc.Dropdown(
             id='app-1-dropdown-drives',
-            value="zooscan_k",
+            value="",
             options=[
                 {'label': drive, 'value': drive} for drive in drives
             ]
@@ -24,7 +24,7 @@ def generate_project_selector(drives):
         html.H2("Project"),
         dcc.Dropdown(
             id='app-1-dropdown-projects',
-            value=["Zooscan_ptb_jb_2021_sn001", "Zooscan_ptb_jb_2020_sn001"],
+            value=[],
             multi=True
         )
     ], className="container-prj-selector")
