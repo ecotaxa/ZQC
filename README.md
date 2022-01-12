@@ -1,7 +1,7 @@
 # AQC
 
 ### Install requirements :
-python3.10 or newer
+python3.8
 
 ```python
 pip3 install -r requirements.txt
