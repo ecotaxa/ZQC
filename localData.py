@@ -4,7 +4,8 @@ import os
 import labels
 from zipfile import ZipFile
 
-base_path= "../local_plankton/zooscan/"
+#base_path= "../local_plankton/zooscan/"
+base_path= "piqv/local_plankton/zooscan/"
 
 def getDrives():
     print("************Get drives in************")
@@ -47,7 +48,7 @@ def  getTsv(subpath):
     tsv_files = []
     for folder_name in listFolder(base_path+subpath+"/Zooscan_scan/_work/") :
             try: 
-                df = pd.read_csv(base_path+subpath+"/Zooscan_scan/_work/"+folder_name+"/ecotaxa_"+folder_name+".tsv", encoding = "ISO-8859-1", usecols=['sample_id','process_img_background_img', 'process_particle_bw_ratio', "process_particle_pixel_size_mm", "process_img_resolution", "acq_sub_part", "process_particle_sep_mask"],sep="\t")
+                df = pd.read_csv(base_path+subpath+"/Zooscan_scan/_work/"+folder_name+"/ecotaxa_"+folder_name+".tsv", encoding = "ISO-8859-1", usecols=['sample_id','process_img_background_img', 'process_particle_bw_ratio', "process_particle_pixel_size_mm", "process_img_resolution", "acq_sub_part", "process_particle_sep_mask", 'acq_min_mesh', 'acq_max_mesh'],sep="\t")
                 df['STATUS']="Ecotaxa table OK"
                 df['scan_id'] = folder_name
                 tsv_files.append(df.drop(0))  
