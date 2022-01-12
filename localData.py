@@ -5,7 +5,7 @@ import labels
 from zipfile import ZipFile
 
 #base_path= "../local_plankton/zooscan/"
-base_path= "piqv/local_plankton/zooscan/"
+base_path= "/piqv/local_plankton/zooscan/"
 
 def getDrives():
     print("************Get drives in************")
