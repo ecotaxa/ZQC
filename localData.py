@@ -9,11 +9,19 @@ base_path= "/piqv/local_plankton/zooscan/"
 
 def getDrives():
     print("************Get drives in************")
-    return getDir("")
+    drives = getDir("")
+    #Sort in alphabetical order
+    drives.sort()
+    return drives
 
 def getProjects(drive):
     print("************Get projects in************")
-    return getDir(drive)
+    projects = getDir(drive)
+    #Keep only the one that begin with Zooscan_
+    projects= [x for x in projects if x.startswith('Zooscan_')]
+    #Sort in alphabetical order
+    projects.sort()
+    return projects
 
 def getDir(subpath) :
     print("************Get dir in************")
