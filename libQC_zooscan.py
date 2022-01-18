@@ -11,7 +11,7 @@ class Lib_zooscan():
       #Create empty Blocks 
       block_before_scan = Block("Before scan", "before_scan", Mode.HEADER)
       block_during_analysis = Block("During analysis", "during_analysis", Mode.TSV)
-      block_after_ecotaxa_classif = Block("After ECOTAXA classif", "after_ecotaxa_classif", Mode.TSV)
+      block_after_ecotaxa_classif = Block("After EcoTaxa classif", "after_ecotaxa_classif", Mode.TSV)
       
       #Create empty sub blocks
       subBlock_sample = SubBlock("Sample", "This quality check gives an overview of the quality of the data related to the acquisition of the sample.", "sample")
