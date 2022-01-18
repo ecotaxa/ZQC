@@ -36,6 +36,7 @@ def noCb(_id, _mode, local_data):
     result.rename(columns={'scan_id': 'List scan ID'}, inplace=True)
     return result
 
+### PROCESS
 def check_frame_type(_id, _mode, local_data):
     """Returns information by scan about the size of the frame used for scanning: "large" or "narrow".
     Potential cases :
@@ -260,9 +261,9 @@ def check_pixel_size(_id, _mode, local_data):
 
     # Get only usefull columns
     dataToTest = local_data.get("dataframe")[['scan_id', 'process_particle_pixel_size_mm', 'process_img_resolution']]
-    print(dataToTest.drop_duplicates())
+    # print(dataToTest.drop_duplicates())
     result = local_data.get("dataframe")[['scan_id']]
-    print(result.drop_duplicates())
+    # print(result.drop_duplicates())
     data = []
     for i in range(0, len(dataToTest.scan_id)):
         size = dataToTest.process_particle_pixel_size_mm.values[i]
