@@ -39,8 +39,7 @@ def generate_check_block(checkBlock):
                         ),
                         html.Img(
                             className="runQC-btn",
-                            id="runQC-btn-" +
-                            checkBlock["id"],
+                            id="runQC-btn-" + checkBlock["id"],
                             src="../assets/play.png",
                             alt="Run "+checkBlock["title"]+" QCs",
                             title="Run "+checkBlock["title"]+" QCs",
@@ -70,9 +69,16 @@ def generate_check_block(checkBlock):
                             ],
                             persistence=True
                         ),
-                        html.Div(id='tabs-content-' + checkBlock["id"])
+                        dcc.Loading(
+                                        id="loading-1-"+checkBlock["id"],
+                                        type="default",
+                                        className="loader",
+                                        color="#10698d",
+                                        children=[html.Div(id="tabs-content-"+checkBlock["id"], 
+                                                           className="tabs-content")]
+                                    )
                     ])
-                    ])
+                ])
 
 
 def generate_checks_block(checks):

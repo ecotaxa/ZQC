@@ -45,6 +45,7 @@ for checkBlock in checksBlocks:
 
 
 ## before_scan Tabs related callbacks ##
+    
 @app.callback([Output('tabs-content-before_scan', 'children'), Output("runQC-btn-before_scan", 'n_clicks'), Output('tabs-before_scan', 'value')],
               [Input("tabs-before_scan", 'value'), Input("runQC-btn-before_scan", 'n_clicks'), Input('app-1-dropdown-projects', "value")],
               State('app-1-dropdown-drives', 'value'), prevent_initial_call=True)
@@ -62,13 +63,13 @@ def render_content_before_scan(tab, click_run, projects, drive):
             return componants.generate_result(QC_execution), 0, 'tab-result-before_scan'
     return componants.generate_result(componants.emptyResult("before_scan", projects)), 0, 'tab-result-before_scan'
 
-## during_analysis Tabs related callbacks ##
+# during_analysis Tabs related callbacks ##
 
-
-@app.callback([Output('tabs-content-during_analysis', 'children'), Output("runQC-btn-during_analysis", 'n_clicks'), Output('tabs-during_analysis', 'value')],
+@app.callback([Output('tabs-content-during_analysis', 'children'), Output("runQC-btn-during_analysis", 'n_clicks'), Output("tabs-during_analysis", 'value')],
               [Input("tabs-during_analysis", 'value'), Input("runQC-btn-during_analysis", 'n_clicks'), Input('app-1-dropdown-projects', "value")],
-              State('app-1-dropdown-drives', 'value'), prevent_initial_call=True)
-def render_content_during_analysis(tab, click_run, projects, drive):
+              [State('app-1-dropdown-drives', 'value'),State('tabs-content-during_analysis', 'is_loading')], prevent_initial_call=True)
+def render_content_during_analysis(tab, click_run, projects, drive, loading_state):
+    
     if not click_run:
         if tab == 'tab-details-during_analysis':
             return componants.generate_details(checksBlocks[1]), 0, tab
@@ -80,6 +81,7 @@ def render_content_during_analysis(tab, click_run, projects, drive):
         if len(projects) > 0:
             QC_execution = lib_qc_zooscan.runCallback(projects, drive, "during_analysis")
             return componants.generate_result(QC_execution), 0, 'tab-result-during_analysis'
+            
     return componants.generate_result(componants.emptyResult("during_analysis", projects)), 0, 'tab-result-during_analysis'
 
 ## after_ecotaxa_classif Tabs related callbacks ##
