@@ -237,7 +237,7 @@ button{
 /***********LOADER************/
 .loader{
     align-self: flex-start;
-    animation: fadeIn 1s;
+    animation: fadeIn 2s;
     margin-top: 5px;
 }
 @keyframes fadeIn {
@@ -247,7 +247,7 @@ button{
 .tabs-content{
     height:100%;
     transition: all 10ms linear;
-    transition-delay: 50ms;
+    transition-delay: 250ms;
 }
 .tabs-content[data-dash-is-loading="true"]{
     height: 50px;    
