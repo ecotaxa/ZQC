@@ -260,10 +260,8 @@ def check_pixel_size(_id, _mode, local_data):
     start_time = time.time()
 
     # Get only usefull columns
-    dataToTest = local_data.get("dataframe")[['scan_id', 'process_particle_pixel_size_mm', 'process_img_resolution']]
-    # print(dataToTest.drop_duplicates())
-    result = local_data.get("dataframe")[['scan_id']]
-    # print(result.drop_duplicates())
+    dataToTest = local_data.get("dataframe")[['scan_id', 'process_particle_pixel_size_mm', 'process_img_resolution']].groupby('scan_id').first().reset_index()
+    result = local_data.get("dataframe")[['scan_id']].drop_duplicates()
     data = []
     for i in range(0, len(dataToTest.scan_id)):
         size = dataToTest.process_particle_pixel_size_mm.values[i]

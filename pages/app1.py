@@ -67,9 +67,8 @@ def render_content_before_scan(tab, click_run, projects, drive):
 
 @app.callback([Output('tabs-content-during_analysis', 'children'), Output("runQC-btn-during_analysis", 'n_clicks'), Output("tabs-during_analysis", 'value')],
               [Input("tabs-during_analysis", 'value'), Input("runQC-btn-during_analysis", 'n_clicks'), Input('app-1-dropdown-projects', "value")],
-              [State('app-1-dropdown-drives', 'value'),State('tabs-content-during_analysis', 'is_loading')], prevent_initial_call=True)
-def render_content_during_analysis(tab, click_run, projects, drive, loading_state):
-    
+              [State('app-1-dropdown-drives', 'value')], prevent_initial_call=True)
+def render_content_during_analysis(tab, click_run, projects, drive):
     if not click_run:
         if tab == 'tab-details-during_analysis':
             return componants.generate_details(checksBlocks[1]), 0, tab
@@ -81,11 +80,9 @@ def render_content_during_analysis(tab, click_run, projects, drive, loading_stat
         if len(projects) > 0:
             QC_execution = lib_qc_zooscan.runCallback(projects, drive, "during_analysis")
             return componants.generate_result(QC_execution), 0, 'tab-result-during_analysis'
-            
     return componants.generate_result(componants.emptyResult("during_analysis", projects)), 0, 'tab-result-during_analysis'
 
 ## after_ecotaxa_classif Tabs related callbacks ##
-
 
 @app.callback([Output('tabs-content-after_ecotaxa_classif', 'children'), Output("runQC-btn-after_ecotaxa_classif", 'n_clicks'), Output('tabs-after_ecotaxa_classif', 'value')],
               [Input("tabs-after_ecotaxa_classif", 'value'), Input("runQC-btn-after_ecotaxa_classif", 'n_clicks'), Input('app-1-dropdown-projects', "value")],
