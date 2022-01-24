@@ -19,13 +19,6 @@ def is_int(value):
     except BaseException:
         return False
 
-def underscore_split(a):
-    """Split before the second underscore"""
-    if a.count("_") == 1:
-        return a
-    return "_".join(a.split("_", 2)[:2])
-
-
 #### CALLBACKS
 
 def noCb(_id, _mode, local_data):
@@ -90,17 +83,20 @@ def check_raw_files(_id, _mode, local_data):
     dataToTest = fs.loc[([True if "/_raw/" in i else False for i in fs['path'].values]), ["name", "extension", "inside_name"]]
     result = local_data.get("dataframe")[['scan_id']].drop_duplicates()
     result["raw_files"] = ""
-    # Extract scan ids from _raw files name
-    dataToTest['scan_id'] = [underscore_split(i) for i in dataToTest["name"].values]
-    ids = dataToTest.scan_id.unique()
+
+    # Extract scan ids
+    ids= [id[:-2] if id.endswith('_1') else id for id in result.scan_id.unique()]
 
     # foreatch scan id
     for id in ids:
         datascanId = dataToTest.loc[([True if id in i else False for i in dataToTest['name'].values]), ["name", "extension", "inside_name"]]
+
         # count of scanID_log.txt should be 1
         count_log = datascanId.loc[datascanId.extension == "txt", 'name'].str.count("_log").sum()
+
         # count of scanID_meta.txt should be 1
         count_meta = datascanId.loc[datascanId.extension == "txt", 'name'].str.count("_meta").sum()
+
         # count of sampleID_fracID_raw_1.tif and sampleID_fracID_raw_1.zip should be 1 and/or 1
         count_raw_tif = datascanId.loc[datascanId.extension == "tif", 'name'].str.count("_raw").sum()
         raw_zip = datascanId.loc[datascanId.extension == "zip", ['name', 'inside_name']]
@@ -263,6 +259,7 @@ def check_pixel_size(_id, _mode, local_data):
     dataToTest = local_data.get("dataframe")[['scan_id', 'process_particle_pixel_size_mm', 'process_img_resolution']].groupby('scan_id').first().reset_index()
     result = local_data.get("dataframe")[['scan_id']].drop_duplicates()
     data = []
+
     for i in range(0, len(dataToTest.scan_id)):
         size = dataToTest.process_particle_pixel_size_mm.values[i]
         resolution = dataToTest.process_img_resolution.values[i]
