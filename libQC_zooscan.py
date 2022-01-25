@@ -49,7 +49,8 @@ class Lib_zooscan():
 
       #Fill blocks with subblocks
       block_before_scan.addSubBlocks(subBlock_sample)
-      block_during_analysis.addSubBlocks(subBlock_sample,subBlock_acquisition,subBlock_process)
+      block_during_analysis.addSubBlocks(subBlock_process)
+      # block_during_analysis.addSubBlocks(subBlock_sample,subBlock_acquisition,subBlock_process)
       block_after_ecotaxa_classif.addSubBlocks(subBlock_multiples)
 
       #Fill sub blocks with checks

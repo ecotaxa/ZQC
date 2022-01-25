@@ -1,5 +1,6 @@
 import labels
 import time
+#import numpy as np
 
 #### TOOLS
 
@@ -36,6 +37,7 @@ def check_frame_type(_id, _mode, local_data):
         "large"
         "narrow"
         "global.missing_ecotaxa_table": "#MISSING ecotaxa table"
+        "global.missing_column": "#MISSING column",
         "process.frame_type.not_ok" : "#Frame NOT OK"
     """
     start_time = time.time()
@@ -53,6 +55,7 @@ def check_frame_type(_id, _mode, local_data):
     result.process_img_background_img = result.process_img_background_img.map(lambda x: "large" if ("large" in x) and ("large" in ini_file_name)
                                                                               else "narrow" if ("narrow" in x) and ("large" in ini_file_name)
                                                                               else x if labels.errors["global.missing_ecotaxa_table"] == x
+                                                                              else x if x==labels.errors["global.missing_column"]
                                                                               else labels.errors["process.frame_type.not_ok"])                  
 
     # Keep only one line by couples : id / frame type
@@ -234,6 +237,7 @@ def check_bw_ratio(_id, _mode, local_data):
 
     # Replace by ratio OK or associated error code
     result.process_particle_bw_ratio = result.process_particle_bw_ratio.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
+                                                                            else x if x==labels.errors["global.missing_column"]
                                                                             else labels.sucess["process.bw_ratio.ok"] if is_float(x) and float(x) < 0.25 and float(x) > 0
                                                                             else labels.errors["process.bw_ratio.not_ok"])
 
@@ -250,6 +254,8 @@ def check_pixel_size(_id, _mode, local_data):
     """The idea here is to reveal an old zooprocess bug that was mistaken about the pixel size to apply for morphometric calculations.
         The purpose is to check that the pixel_size is consistent with the process_img_resolution.
     Potential cases :
+        "global.missing_ecotaxa_table": "#MISSING ecotaxa table",
+        "global.missing_column": "#MISSING column",
         "pixel_size.not_ok":"#Size NOK",
         if ok show : pixel size value
     """
@@ -270,8 +276,9 @@ def check_pixel_size(_id, _mode, local_data):
         or (size == "0.0053" and resolution == "4800")) : 
             data.append(size)
         else :
-            data.append(labels.errors["global.missing_ecotaxa_table"] if size ==
-                        labels.errors["global.missing_ecotaxa_table"] else labels.errors["process.pixel_size.not_ok"])
+            data.append(labels.errors["global.missing_ecotaxa_table"] if size == labels.errors["global.missing_ecotaxa_table"]
+                        else labels.errors["global.missing_column"] if size==labels.errors["global.missing_column"]  
+                        else labels.errors["process.pixel_size.not_ok"])
 
     result["pixel_size"] = data
 
@@ -287,7 +294,7 @@ def check_pixel_size(_id, _mode, local_data):
 def check_sep_mask(_id, _mode, local_data):
     """Verification of the presence of a sep.gif mask in the subdirectory of the _work. If it is not present, indicate the motoda fraction associated with the scan to eliminate the situation where there was no multiple to separate because the sample was very poor and therefore motoda = 1
     Potential cases :
-       "sep_mask.missing" : "#MISSING SEP MSK = (F)"
+        "sep_mask.missing" : "#MISSING SEP MSK = (F)"
         "sep_mask.ok" : "Sep mask OK"
     """
     start_time = time.time()
@@ -300,15 +307,18 @@ def check_sep_mask(_id, _mode, local_data):
     result = local_data.get("dataframe")[['scan_id', 'acq_sub_part']].groupby('scan_id').first().reset_index()
     result["sep_mask"] = ""
     for id in result.scan_id:
-
         if id + "_sep" in dataToTest:
             result.loc[result["scan_id"] == id, 'sep_mask'] += labels.sucess["process.sep_mask.ok"]
+        #TODO JCE ask to amanda
+        # elif result.loc[result["scan_id"] == id, 'sep_mask']==labels.errors["global.missing_column"] :
+        #     pass
         else:
             # get motoda frac from data
             motoda_frac = result.loc[result["scan_id"] == id, 'acq_sub_part']
             result.loc[result["scan_id"] == id, 'sep_mask'] = labels.errors["process.sep_mask.missing"] + " = " + motoda_frac
 
     result.drop(columns=["acq_sub_part"], inplace=True)
+
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'sep_mask': 'SEP MASK'}, inplace=True)
 
@@ -330,6 +340,7 @@ def check_process_post_sep(_id, _mode, local_data):
     # Replace by large or narrow or associated error code
     result.process_particle_sep_mask = result.process_particle_sep_mask.map(lambda x: labels.sucess["process.post_sep.ok"] if "include" in x
                                                                             else labels.errors["process.post_sep.unprocessed"] if labels.errors["global.missing_ecotaxa_table"] == x
+                                                                            else x if x==labels.errors["global.missing_column"]
                                                                             else labels.errors["process.post_sep.not_included"])
 
     # Keep only one line by couples : id / frame type
@@ -340,3 +351,65 @@ def check_process_post_sep(_id, _mode, local_data):
 
     print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback check_process_post_sep")
     return result
+
+# ### ACQUISITION
+
+# def check_sieve_bug(_id, _mode, local_data):
+#     """This check verifies the sieve values used to prepare the scan. They must be constant in the same project and therefore NEVER be different.
+#     Potential cases :
+#         "global.missing_ecotaxa_table": "#MISSING ecotaxa table"
+#         "acquisition.sieve.bug.not_numeric": "#NOT NUMERIC",
+#         "acquisition.sieve.bug.different": "#SIEVE different from others",
+#         "acquisition.sieve.bug.min_sup_max": "#ACQ MIN > ACQ MAX",
+#         "acquisition.sieve.bug.min_equ_max": "#ACQ MIN = ACQ MAX",
+#         "acquisition.sieve.bug.": "#ACQ MIN (d1) ≠ ACQ MAX (d2)",
+#         "acquisition.sieve.bug.": "#ACQ MIN (d2) ≠ ACQ MAX (d3)"
+#         "acquisition.sieve.bug": "sieve OK"
+#     """
+#     start_time = time.time()
+
+#     # Get only usefull columns
+#     result = local_data.get("dataframe")[['scan_id', 'acq_min_mesh', 'acq_max_mesh', 'sample_id']]
+#     result['sieve_bug']=""
+
+#     # Replace by sieve OK or associated error code
+#     result.sieve_bug = result.acq_min_mesh.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
+#                                                            else labels.errors["acquisition.sieve.bug.not_numeric"] if not is_int(x)
+#                                                            else labels.sucess["acquisition.sieve.bug"]) 
+    
+#     # If acq_min_mesh == acq_max_mesh 
+#     result['sieve_bug'] = np.where((result['acq_min_mesh'] == result['acq_max_mesh']) & (result['sieve_bug'] == labels.sucess["acquisition.sieve.bug"]),labels.errors["acquisition.sieve.bug.min_equ_max"], result['sieve_bug'])
+    
+#     # If acq_min_mesh > acq_max_mesh 
+#     result['sieve_bug'] = np.where((result['acq_min_mesh'] > result['acq_max_mesh']) & (result['sieve_bug'] == labels.sucess["acquisition.sieve.bug"]),labels.errors["acquisition.sieve.bug.min_sup_max"], result['sieve_bug'])
+
+#     ## If the acq of one or more scans differs from the other scans
+#     if len(result['acq_min_mesh'].unique())>1 or len(result['acq_max_mesh'].unique())>1 :
+#         result['sieve_bug'] =  np.where(result['sieve_bug'] == labels.sucess["acquisition.sieve.bug"],labels.errors["acquisition.sieve.bug.different"], result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"])
+
+#     #pour chaque sample id if scan id contain d1,d2 d3
+#     sample_ids = result['sample_id'].unique()
+#     result = result.drop_duplicates()
+#     for id in sample_ids :
+#         data = result[result['sample_id']==id]
+#         print("************++++++", data)
+#         result['sieve_bug'] =  np.where(("d1" in data['scan_id']),result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"], labels.errors["acquisition.sieve.acquisition.sieve.bug.min_d1_dif_max_d2"], )
+        
+#         #if contain d1 et d2 :
+#         if "d1" in data and "d2" in data :
+#             #if  acq_min (d1) ≠ acq_max (d2) : 
+#             result['sieve_bug'] =  np.where(("d1" in data['scan_id'] and "d2"),result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"], labels.errors["acquisition.sieve.acquisition.sieve.bug.min_d1_dif_max_d2"], )
+        
+#                 # add error mess
+#             #if contain d3 :
+#                 #if acq_min (d2) ≠ acq_max (d3)
+#                     # add error mess
+    
+#     # Keep only one line by couples : id / frame type
+#     result = result.drop_duplicates()
+
+#     # Rename collums to match the desiered output
+#     result.rename(columns={'scan_id': 'List scan ID', 'acq_min_mesh': 'acq min mesh', 'acq_max_mesh': 'acq max mesh', 'sieve_bug' : 'Sieve Bug'}, inplace=True)
+
+#     print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback sieve_bug")
+#     return result

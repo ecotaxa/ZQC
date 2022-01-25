@@ -1,6 +1,7 @@
 errors = {
     "global.missing_ecotaxa_table": "#MISSING ecotaxa table",
     "global.qc_not_implemented": "#Not impl",
+    "global.missing_column": "#MISSING column",
 
     "process.frame_type.not_ok" : "#Frame NOT OK",
 
@@ -23,8 +24,15 @@ errors = {
     "process.sep_mask.missing": "#MISSING SEP MSK ",
 
     "process.post_sep.unprocessed": "#UNPROCESSED",
-    "process.post_sep.not_included": "#SEP MSK NOT INCLUDED"
+    "process.post_sep.not_included": "#SEP MSK NOT INCLUDED",
 
+    "acquisition.sieve.bug.not_numeric": "#NOT NUMERIC",
+    "acquisition.sieve.bug.different": "#SIEVE different from others",
+    "acquisition.sieve.bug.min_sup_max": "#ACQ MIN > ACQ MAX",
+    "acquisition.sieve.bug.min_equ_max": "#ACQ MIN = ACQ MAX",
+    #TODO JCE : talk with AMANDA
+    "acquisition.sieve.bug.min_d1_dif_max_d2": "#ACQ MIN (d1) ≠ ACQ MAX (d2)",
+    "acquisition.sieve.bug.motoda.min_d2_dif_max_d3": "#ACQ MIN (d2) ≠ ACQ MAX (d3)"
 }
 
 sucess = {
@@ -33,6 +41,7 @@ sucess = {
     "process.scan_weight.ok": "Weight OK",
     "process.post_scan.ok": "Process OK",
     "process.sep_mask.ok": "Sep mask OK",
-    "process.post_sep.ok": "process OK"
+    "process.post_sep.ok": "process OK",
 
+    "acquisition.sieve.bug": "sieve OK"
 }
