@@ -264,23 +264,23 @@ def check_pixel_size(_id, _mode, local_data):
     # Get only usefull columns
     dataToTest = local_data.get("dataframe")[['scan_id', 'process_particle_pixel_size_mm', 'process_img_resolution']].groupby('scan_id').first().reset_index()
     result = local_data.get("dataframe")[['scan_id']].drop_duplicates()
-    data = []
+    result["pixel_size"] = ""
 
     for i in range(0, len(dataToTest.scan_id)):
+        id = dataToTest.scan_id.values[i]
         size = dataToTest.process_particle_pixel_size_mm.values[i]
         resolution = dataToTest.process_img_resolution.values[i]
+        
         if((size == "0.0847" and resolution == "300") 
         or (size == "0.0408" and resolution == "600") 
         or (size == "0.0204" and resolution == "1200")
         or (size == "0.0106" and resolution == "2400")
         or (size == "0.0053" and resolution == "4800")) : 
-            data.append(size)
+            result.loc[result["scan_id"] == id, 'pixel_size'] = size
         else :
-            data.append(labels.errors["global.missing_ecotaxa_table"] if size == labels.errors["global.missing_ecotaxa_table"]
-                        else labels.errors["global.missing_column"] if size==labels.errors["global.missing_column"]  
-                        else labels.errors["process.pixel_size.not_ok"])
-
-    result["pixel_size"] = data
+            result.loc[result["scan_id"] == id, 'pixel_size'] = labels.errors["global.missing_ecotaxa_table"] if size == labels.errors["global.missing_ecotaxa_table"] \
+                                                                else labels.errors["global.missing_column"] if size==labels.errors["global.missing_column"] \
+                                                                else labels.errors["process.pixel_size.not_ok"]
 
     # Keep only one line by couples : id / is resolution coerent
     result = result.drop_duplicates()
