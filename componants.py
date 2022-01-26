@@ -16,7 +16,7 @@ def generate_project_selector(drives):
         html.H2("Drive"),
         dcc.Dropdown(
             id='app-1-dropdown-drives',
-            value="",
+            value="zooscan_k",
             options=[
                 {'label': drive, 'value': drive} for drive in drives
             ]
@@ -24,7 +24,7 @@ def generate_project_selector(drives):
         html.H2("Project"),
         dcc.Dropdown(
             id='app-1-dropdown-projects',
-            value=[],
+            value=['Zooscan_tara_med_2014_manta_335_v3_sn033_plankton'],
             multi=True
         )
     ], className="container-prj-selector")
@@ -133,7 +133,7 @@ def sub_block_execution_result(subBlock, dataframe):
             style_data_conditional=style_table(dataframe),
             fixed_rows={'headers': True},
             style_cell={                # ensure adequate header width when text is shorter than cell's text, and allign the text to left (default right)
-                'minWidth': 95, 'maxWidth': 95, 'width': 95, 'textAlign': 'left', 'font-family': '"IMTITLE", Sans-serif', 'padding': '5px'
+                'minWidth': 95, 'width': 95, 'textAlign': 'left', 'font-family': '"IMTITLE", Sans-serif', 'padding': '5px'
             },
             style_header={              # ensure adequate header width when text is shorter than cell's text, and allign the text to left (default right)
                 'padding': '5px',
