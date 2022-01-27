@@ -133,7 +133,7 @@ def sub_block_execution_result(subBlock, dataframe):
             style_data_conditional=style_table(dataframe),
             fixed_rows={'headers': True},
             style_cell={                # ensure adequate header width when text is shorter than cell's text, and allign the text to left (default right)
-                'minWidth': 95, 'width': 95, 'textAlign': 'left', 'font-family': '"IMTITLE", Sans-serif', 'padding': '5px'
+                'minWidth': 120, 'width': 120, 'textAlign': 'left', 'font-family': '"IMTITLE", Sans-serif', 'padding': '5px'
             },
             style_header={              # ensure adequate header width when text is shorter than cell's text, and allign the text to left (default right)
                 'padding': '5px',
