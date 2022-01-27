@@ -129,8 +129,12 @@ def _recursive_folderstats(folderpath, items=None,
             else:
                 filename, extension = os.path.splitext(f)
                 extension = extension[1:] if extension else None
-                inside_name = ZipFile(filepath, 'r').namelist() if extension=="zip" else "None"
-                inside_name = inside_name[0] if inside_name else "None"
+                try :
+                    inside_name = ZipFile(filepath, 'r').namelist() if extension=="zip" else "None"
+                except IOError as e:
+                    inside_name = "None"
+                    extension = "z_error"
+                inside_name = inside_name[0] if not(inside_name == "None") else "None"
                 item = [idx, filepath, filename, extension, stats.st_size,
                         False, None, depth, inside_name]
                 items.append(item)
