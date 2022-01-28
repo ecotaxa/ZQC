@@ -4,6 +4,7 @@ import numpy as np
 import os
 import labels
 from zipfile import ZipFile
+from zipfile import BadZipFile 
 
 #base_path= "../local_plankton/zooscan/"
 base_path= "/piqv/local_plankton/zooscan/"
@@ -61,33 +62,36 @@ def getdata(mode, subpath) :
 def  getTsv(subpath):
     """Read all ecotaxa tables (tsv files) for the given project. Return them as list of pandas dataframes"""
     tsv_files = []
-    for folder_name in listFolder(base_path+subpath+"/Zooscan_scan/_work/") :
-            try: 
-                path = base_path+subpath+"/Zooscan_scan/_work/"+folder_name+"/ecotaxa_"+folder_name+".tsv"
-                #needed tsv cols for data testing
-                cols = [
-                        'sample_id',
-                        'process_img_background_img', 
-                        'process_particle_bw_ratio', 
-                        "process_particle_pixel_size_mm",
-                        "process_img_resolution", 
-                        "acq_sub_part", 
-                        "process_particle_sep_mask", 
-                        'acq_min_mesh', 
-                        'acq_max_mesh'
-                    ]
-                cols_ok, cols_ko = missingCol(cols, path)
+    try : 
+        for folder_name in listFolder(base_path+subpath+"/Zooscan_scan/_work/") :
+                try: 
+                    path = base_path+subpath+"/Zooscan_scan/_work/"+folder_name+"/ecotaxa_"+folder_name+".tsv"
+                    #needed tsv cols for data testing
+                    cols = [
+                            'sample_id',
+                            'process_img_background_img', 
+                            'process_particle_bw_ratio', 
+                            "process_particle_pixel_size_mm",
+                            "process_img_resolution", 
+                            "acq_sub_part", 
+                            "process_particle_sep_mask", 
+                            'acq_min_mesh', 
+                            'acq_max_mesh'
+                        ]
+                    cols_ok, cols_ko = missingCol(cols, path)
 
-                df = pd.read_csv(path, encoding = "ISO-8859-1", usecols=cols_ok, sep="\t")
-                df['STATUS']="Ecotaxa table OK"
-                df['scan_id'] = folder_name
-                if cols_ko :
-                    df[cols_ko]=labels.errors["global.missing_column"]
-                tsv_files.append(df.drop(0))  
-            except IOError as e:
-                df = pd.DataFrame(data={'scan_id': [folder_name], 'STATUS': labels.errors["global.missing_ecotaxa_table"]})            
-                tsv_files.append(df)
-                print(e)
+                    df = pd.read_csv(path, encoding = "ISO-8859-1", usecols=cols_ok, sep="\t")
+                    df['STATUS']="Ecotaxa table OK"
+                    df['scan_id'] = folder_name
+                    if cols_ko :
+                        df[cols_ko]=labels.errors["global.missing_column"]
+                    tsv_files.append(df.drop(0))  
+                except IOError as e:
+                    df = pd.DataFrame(data={'scan_id': [folder_name], 'STATUS': labels.errors["global.missing_ecotaxa_table"]})            
+                    tsv_files.append(df)
+                    print(e)
+    except IOError as e:
+        print(e)
     return tsv_files
 
 def  getHeader(subpath):
@@ -129,12 +133,14 @@ def _recursive_folderstats(folderpath, items=None,
             else:
                 filename, extension = os.path.splitext(f)
                 extension = extension[1:] if extension else None
+                inside_name="None"
+
                 try :
-                    inside_name = ZipFile(filepath, 'r').namelist() if extension=="zip" else "None"
-                except IOError as e:
-                    inside_name = "None"
-                    extension = "z_error"
-                inside_name = inside_name[0] if not(inside_name == "None") else "None"
+                    inside_name = ZipFile(filepath, 'r').namelist() if extension == "zip" else "None"
+                    inside_name = inside_name[0] if inside_name else "None"
+                except BadZipFile : 
+                    inside_name=labels.errors["global.bad_zip_file"]
+
                 item = [idx, filepath, filename, extension, stats.st_size,
                         False, None, depth, inside_name]
                 items.append(item)

@@ -2,6 +2,7 @@ errors = {
     "global.missing_ecotaxa_table": "#MISSING ecotaxa table",
     "global.qc_not_implemented": "#Not impl",
     "global.missing_column": "#MISSING column",
+    "global.bad_zip_file": "#BAD ZIP FILE",
 
     "process.frame_type.not_ok" : "#Frame NOT OK",
 

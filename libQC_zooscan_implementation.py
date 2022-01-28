@@ -192,8 +192,16 @@ def check_process_post_scan(_id, _mode, local_data):
         work_zip = datascanId.loc[datascanId.extension== "zip", ['name', 'inside_name']]
         count_work_zip = len(work_zip['name'])
 
+        # if a zip is present, check that this zip is not corrupted
+        if count_work_zip == 1 and labels.errors["global.bad_zip_file"] == work_zip['inside_name'].values:
+            result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["global.bad_zip_file"]
+
+        # if a zip is present, check that the inside name is the same as the zip name
+        elif count_work_zip == 1 and work_zip['name'].values+".tif" != work_zip['inside_name'].values:
+            result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process.post_scan.rename_zip"]
+
         # if the count of files is as expected
-        if count_work_zip == 1 and count_tsv == 1 :
+        elif count_work_zip == 1 and count_tsv == 1 :
             result.loc[result["scan_id"] == id, 'process_post_scan'] = labels.sucess["process.post_scan.ok"]
 
         else :
@@ -204,10 +212,6 @@ def check_process_post_scan(_id, _mode, local_data):
             # if more tsv than excepted
             if count_tsv > 1:
                 result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process.post_scan.duplicate.tsv"]
-                
-            # if a zip is present, check that the inside name is the same as the zip name
-            if count_work_zip == 1 and work_zip['name'].values+".tif" != work_zip['inside_name'].values:
-                result.loc[result["scan_id"] == id, 'process_post_scan'] += labels.errors["process.post_scan.rename_zip"]
 
             # if less zip than expected
             if count_work_zip < 1:
