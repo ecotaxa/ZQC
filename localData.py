@@ -119,7 +119,8 @@ def _recursive_folderstats(folderpath, items=None,
     current_idx = idx
 
     if os.access(folderpath, os.R_OK):
-        for f in os.listdir(folderpath):
+        dirs = list(filter(lambda x: "DS_Store" not in x, os.listdir(folderpath)))
+        for f in dirs:
 
             filepath = os.path.join(folderpath, f)
             stats = os.stat(filepath)
@@ -164,7 +165,8 @@ def getFileSystem(subpath):
 
 def listFolder(path) :
     """List folder for the given path"""
-    return os.listdir(path)
+    dirs = list(filter(lambda x: "DS_Store" not in x, os.listdir(path)))
+    return dirs
 
 def tsvToGlobalData(tsv_files) : 
     """Generate from tsv a common structure of dataframe"""
