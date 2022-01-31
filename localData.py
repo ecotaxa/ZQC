@@ -11,8 +11,8 @@ base_path= "/piqv/local_plankton/zooscan/"
 
 def missingCol(cols, path):
     read_cols = pd.read_csv(path, nrows=0, encoding="ISO-8859-1", sep="\t").columns
-    cols_ok = read_cols[read_cols.isin(cols)].tolist()
-    cols_ko = list(set(cols) - set(cols_ok))
+    cols_ko = list(set(cols) - set(read_cols))
+    cols_ok = list(set(cols) - set(cols_ko))
     return cols_ok, cols_ko
 
 def getDrives():
@@ -62,22 +62,22 @@ def getdata(mode, subpath) :
 def  getTsv(subpath):
     """Read all ecotaxa tables (tsv files) for the given project. Return them as list of pandas dataframes"""
     tsv_files = []
+    #needed tsv cols for data testing
+    cols = [
+            'sample_id',
+            'process_img_background_img', 
+            'process_particle_bw_ratio', 
+            "process_particle_pixel_size_mm",
+            "process_img_resolution", 
+            "acq_sub_part", 
+            "process_particle_sep_mask", 
+            'acq_min_mesh', 
+            'acq_max_mesh'
+        ]
     try : 
         for folder_name in listFolder(base_path+subpath+"/Zooscan_scan/_work/") :
                 try: 
                     path = base_path+subpath+"/Zooscan_scan/_work/"+folder_name+"/ecotaxa_"+folder_name+".tsv"
-                    #needed tsv cols for data testing
-                    cols = [
-                            'sample_id',
-                            'process_img_background_img', 
-                            'process_particle_bw_ratio', 
-                            "process_particle_pixel_size_mm",
-                            "process_img_resolution", 
-                            "acq_sub_part", 
-                            "process_particle_sep_mask", 
-                            'acq_min_mesh', 
-                            'acq_max_mesh'
-                        ]
                     cols_ok, cols_ko = missingCol(cols, path)
 
                     df = pd.read_csv(path, encoding = "ISO-8859-1", usecols=cols_ok, sep="\t")
@@ -87,7 +87,8 @@ def  getTsv(subpath):
                         df[cols_ko]=labels.errors["global.missing_column"]
                     tsv_files.append(df.drop(0))  
                 except IOError as e:
-                    df = pd.DataFrame(data={'scan_id': [folder_name], 'STATUS': labels.errors["global.missing_ecotaxa_table"]})            
+                    df = pd.DataFrame(data={'scan_id': [folder_name], 'STATUS': labels.errors["global.missing_ecotaxa_table"]})
+                    df[cols]= labels.errors["global.missing_ecotaxa_table"]   
                     tsv_files.append(df)
                     print(e)
     except IOError as e:
