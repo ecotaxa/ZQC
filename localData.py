@@ -2,6 +2,7 @@ import libQC_classes
 import pandas as pd
 import numpy as np
 import os
+import stat
 import labels
 from zipfile import ZipFile
 from zipfile import BadZipFile 
@@ -19,21 +20,29 @@ def getDrives():
     print("************Get drives in************")
     drives = getDir("")
     #Sort in alphabetical order
-    drives.sort()
+    drives = sorted(drives, key=lambda d: d['label'])
     return drives
 
 def getProjects(drive):
     print("************Get projects in************")
-    projects = getDir(drive)
+    projects = getDir(drive+'/')
     #Keep only the one that begin with Zooscan_
-    projects= [x for x in projects if x.startswith('Zooscan_')]
+    projects = [p for p in projects if p['label'].startswith('Zooscan_')]
     #Sort in alphabetical order
-    projects.sort()
+    projects = sorted(projects, key=lambda d: d['label'])
     return projects
 
 def getDir(subpath) :
     print("************Get dir in************")
-    dirs = next(os.walk(base_path+subpath))[1]
+
+    path = base_path+subpath
+    dirs = []
+    dirs_names = next(os.walk(path))[1]
+
+    for dir_name in dirs_names:
+        dirs.append( { 'label': dir_name, 
+                        'disabled': not(os.access(path+dir_name, os.R_OK) and os.access(path+dir_name, os.W_OK))
+                    })
     return dirs
 
 def getFiles(subpath):

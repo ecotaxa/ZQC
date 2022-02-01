@@ -18,7 +18,7 @@ def generate_project_selector(drives):
             id='app-1-dropdown-drives',
             value="",
             options=[
-                {'label': drive, 'value': drive} for drive in drives
+                {'label': drive['label'], 'value': drive['label'], 'disabled': drive['disabled']} for drive in drives
             ]
         ),
         html.H2("Project"),

@@ -23,7 +23,7 @@ projectSelector = componants.generate_project_selector(drives)
 def update_projects_dropdown(value):
     projects = ad.getProjects(value)
     return [
-        {'label': project, 'value': project} for project in projects
+        {'label': project['label'], 'value': project['label'], 'disabled': project['disabled']} for project in projects
     ]
 
 
