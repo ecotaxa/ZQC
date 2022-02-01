@@ -41,7 +41,9 @@ def getDir(subpath) :
 
     for dir_name in dirs_names:
         dirs.append( { 'label': dir_name, 
-                        'disabled': not(os.access(path+dir_name, os.R_OK) and os.access(path+dir_name, os.W_OK))
+                        #TODO JCE : when app will implement the write fct
+                        # 'disabled': not(os.access(path+dir_name, os.R_OK) and os.access(path+dir_name, os.W_OK))
+                        'disabled': not(os.access(path+dir_name, os.R_OK))
                     })
     return dirs
 
