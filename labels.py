@@ -13,6 +13,7 @@ errors = {
     "process.raw_files.missing": "#MISSING FILE",
     "process.raw_files.duplicate": "#DUPLICATE FILE",
     "process.raw_files.rename_zip": "#BUG rename zip file",
+    "process.raw_files.inconsistent_scan_id": "#Inconsistent Scan ID",
 
     "process.scan_weight.bug": "#BUG weight",
 

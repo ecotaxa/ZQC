@@ -120,7 +120,8 @@ def check_raw_files(_id, _mode, local_data):
         # if more than excepted
         if count_log > 1 or count_meta > 1 or count_raw_tif > 1 or count_raw_zip > 1:
             result.loc[result["scan_id"] == id + "_1", 'raw_files'] += labels.errors["process.raw_files.duplicate"]
-
+    
+    result.loc[result["raw_files"]=="", "raw_files"]=labels.errors["process.raw_files.inconsistent_scan_id"]
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'raw_files': 'RAW files'}, inplace=True)
 
