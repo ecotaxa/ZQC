@@ -1,9 +1,9 @@
-
 import componants
 import localData
 from enum import Enum
 import pandas as pd
 import time
+import labels
 
 
 class Mode(Enum):
@@ -58,8 +58,13 @@ class Block:
             # Get data
             local_data = localData.getdata(self.mode, drive + "/" + project)
             print("--- Get local data : %s seconds ---" % (time.time() - start_time))
-            # Run blocks
-            qcExecutionData = [subBlock.runCallback(self.mode, local_data) for subBlock in self.subBlocks]
+
+            #If critical status error  : generate associated result componant
+            if labels.errors["global.missing_directory.work"] in local_data["dataframe"]["STATUS"].values :
+                qcExecutionData="The QC can't execute for this project because of : "+ local_data["dataframe"]["STATUS"][0]
+            else : 
+                # Run blocks
+                qcExecutionData = [subBlock.runCallback(self.mode, local_data) for subBlock in self.subBlocks]
             # Generate and agregate dash componants
             QC_execution.append(componants.qc_execution_result(project, qcExecutionData))
         return QC_execution

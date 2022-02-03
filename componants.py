@@ -18,7 +18,9 @@ def generate_project_selector(drives):
             id='app-1-dropdown-drives',
             value="",
             options=[
-                {'label': drive['label'] + " 🔒" if drive['disabled'] else drive['label'], 'value': drive['label'], 'disabled': drive['disabled']} for drive in drives
+                {'label': drive['label'] + " 🔒" if drive['disabled'] else drive['label'], 
+                'value': drive['label'], 
+                'disabled': drive['disabled']} for drive in drives
             ]
         ),
         html.H2("Project"),
@@ -130,7 +132,7 @@ def sub_block_execution_result(subBlock, dataframe):
             filter_action="native",     # allow filtering of data by user ('native') or not ('none')
             sort_action="native",       # enables data to be sorted per-column by user or not ('none')
             sort_mode="single",         # sort across 'multi' or 'single' columns
-            style_data_conditional=style_table(dataframe),
+            style_data_conditional=style_table_data(dataframe),
             fixed_rows={'headers': True},
             style_cell={                # ensure adequate header width when text is shorter than cell's text, and allign the text to left (default right)
                 'minWidth': 120, 'width': 120, 'textAlign': 'left', 'font-family': '"IMTITLE", Sans-serif', 'padding': '5px'
@@ -156,7 +158,9 @@ def qc_execution_result(project, qcExecutionLayout):
     ], className="result-project-title")
 
 
-def style_table(dataframe):
+#TODO JCE : add this color to header background where at leat one QC exec is a ko
+# background-color : #ed43371f,
+def style_table_data(dataframe):
     ret = [{
         'if': {'state': 'active'},
         'backgroundColor': 'lightgrey',
@@ -166,6 +170,7 @@ def style_table(dataframe):
         'border-bottom': 'lightgrey',
         'z-index': '200'
     }]
+    #Red text if cell (header and data) contains an error message 
     for errors_label in labels.errors.values():
         ret += [{
             'if': {

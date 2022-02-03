@@ -3,6 +3,7 @@ errors = {
     "global.qc_not_implemented": "#Not impl",
     "global.missing_column": "#MISSING column",
     "global.bad_zip_file": "#BAD ZIP FILE",
+    "global.missing_directory.work": "#MISSING _work DIRECTORY",
 
     "process.frame_type.not_ok" : "#Frame NOT OK",
 

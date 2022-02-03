@@ -59,7 +59,6 @@ def getdata(mode, subpath) :
         tsv_files = getTsv(subpath)
         # Format given data 
         dataframe = tsvToGlobalData(tsv_files)
-        
         fsData = getFileSystem(subpath)
         return {"dataframe" : dataframe, "fs" : fsData}
 
@@ -103,6 +102,9 @@ def  getTsv(subpath):
                     tsv_files.append(df)
                     print(e)
     except IOError as e:
+        df = pd.DataFrame(data={'scan_id': ["NOSCANID"], 'STATUS': labels.errors["global.missing_directory.work"]})
+        df[cols]= labels.errors["global.missing_directory.work"]   
+        tsv_files.append(df)
         print(e)
     return tsv_files
 
