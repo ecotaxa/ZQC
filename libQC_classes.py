@@ -55,16 +55,20 @@ class Block:
         QC_execution = []
         for project in projects:
             start_time = time.time()
+            try :
             # Get data
-            local_data = localData.getdata(self.mode, drive + "/" + project)
-            print("--- Get local data : %s seconds ---" % (time.time() - start_time))
-
-            #If critical status error  : generate associated result componant
-            if labels.errors["global.missing_directory.work"] in local_data["dataframe"]["STATUS"].values :
-                qcExecutionData="The QC can't execute for this project because of : "+ local_data["dataframe"]["STATUS"][0]
-            else : 
-                # Run blocks
-                qcExecutionData = [subBlock.runCallback(self.mode, local_data) for subBlock in self.subBlocks]
+                local_data = localData.getdata(self.mode, drive + "/" + project)
+                print("--- Get local data : %s seconds ---" % (time.time() - start_time))
+                #If critical status error  : generate associated result componant
+                if labels.errors["global.missing_directory.work"] in local_data["dataframe"]["STATUS"].values :
+                    qcExecutionData="The QC can't execute for this project because of : "+ local_data["dataframe"]["STATUS"][0]
+                else : 
+                    # Run blocks
+                    qcExecutionData = [subBlock.runCallback(self.mode, local_data) for subBlock in self.subBlocks]
+            except Exception as e:
+                qcExecutionData="The QC can't execute for this project because of : "+ str(e)
+                print("*****",e)
+            
             # Generate and agregate dash componants
             QC_execution.append(componants.qc_execution_result(project, qcExecutionData))
         return QC_execution
