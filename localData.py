@@ -7,8 +7,11 @@ import labels
 from zipfile import ZipFile
 from zipfile import BadZipFile 
 
-#base_path= "../local_plankton/zooscan/"
-base_path= "/piqv/local_plankton/zooscan/"
+local_base_path = "../local_plankton/zooscan/"
+complex_imev_mer_base_path = "/piqv/local_plankton/zooscan/"
+plankton_base_path = "/remote/plankton/piqv/local_plankton/zooscan/"
+
+base_path=plankton_base_path
 
 def missingCol(cols, path):
     read_cols = pd.read_csv(path, nrows=0, encoding="ISO-8859-1", sep="\t").columns
@@ -82,7 +85,8 @@ def  getTsv(subpath):
             "acq_sub_part", 
             "process_particle_sep_mask", 
             'acq_min_mesh', 
-            'acq_max_mesh'
+            'acq_max_mesh',
+            'sample_net_type'
         ]
     try : 
         for folder_name in listFolder(base_path+subpath+"/Zooscan_scan/_work/") :
