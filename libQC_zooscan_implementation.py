@@ -53,7 +53,7 @@ def check_frame_type(_id, _mode, local_data):
 
     # Replace by large or narrow or associated error code
     result.process_img_background_img = result.process_img_background_img.map(lambda x: "large" if ("large" in x) and ("large" in ini_file_name)
-                                                                              else "narrow" if ("narrow" in x) and ("large" in ini_file_name)
+                                                                              else "narrow" if ("narrow" in x) and ("narrow" in ini_file_name)
                                                                               else x if labels.errors["global.missing_ecotaxa_table"] == x
                                                                               else x if x==labels.errors["global.missing_column"]
                                                                               else labels.errors["process.frame_type.not_ok"])                  
