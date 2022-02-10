@@ -472,18 +472,14 @@ def check_motoda_check(_id, _mode, local_data):
 
     #QC core 
 
-    #print(dataToTest)
-
     # fill with motoda OK or associated generic error code
     result.motoda_check = result.acq_sub_part.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
                                                            else labels.errors["global.not_numeric"] if not is_int(x)
                                                            else labels.sucess["acquisition.motoda.check.ok"]) 
-    
     # If Motoda identique
     if len(dataToTest.acq_sub_part.unique()) == 1 :
-        result['motoda_check'] =  np.where(result['acq_sub_part'] == labels.sucess["acquisition.motoda.check.ok"],labels.errors["acquisition.motoda.check.identique"], result['acq_sub_part'])
+        result['motoda_check'] =  np.where(result['motoda_check'] == labels.sucess["acquisition.motoda.check.ok"],labels.errors["acquisition.motoda.check.identique"], result['motoda_check'])
 
-  
     for i in range(0, len(dataToTest.scan_id)):
         id = dataToTest.scan_id.values[i]
         motoda_check = result.loc[result["scan_id"] == id, 'motoda_check'].values[0]

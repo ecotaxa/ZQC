@@ -37,7 +37,7 @@ errors = {
     "acquisition.sieve.bug.min_d1_dif_max_d2": "#ACQ MIN (d1) ≠ ACQ MAX (d2)",
     "acquisition.sieve.bug.min_d2_dif_max_d3": "#ACQ MIN (d2) ≠ ACQ MAX (d3)",
 
-    "acquisition.motoda.check.identique": "#Motoda identique",
+    "acquisition.motoda.check.identique": "#Identical Motoda",
     #TODO JCE : talk with AMANDA 2^0==1
     "acquisition.motoda.check.cas1": "#Motoda Fraction ≠ 1 ou ≠ ^2",
     "acquisition.motoda.check.cas2": "#Motoda Fraction ≠ ^2",
