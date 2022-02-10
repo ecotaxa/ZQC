@@ -11,7 +11,7 @@ local_base_path = "../local_plankton/zooscan/"
 complex_imev_mer_base_path = "/piqv/local_plankton/zooscan/"
 plankton_base_path = "/remote/plankton/piqv/local_plankton/zooscan/"
 
-base_path=plankton_base_path
+base_path=complex_imev_mer_base_path
 
 def missingCol(cols, path):
     read_cols = pd.read_csv(path, nrows=0, encoding="ISO-8859-1", sep="\t").columns
