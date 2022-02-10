@@ -498,8 +498,6 @@ def check_motoda_check(_id, _mode, local_data):
             elif (fracID.startswith("_d") or fracID=="_tot_" or fracID=="_plankton_") and sample_net_type != "rg" and (int(acq_sub_part)==1 or not is_power_of_two(int(acq_sub_part))) :
                 #should be ^2 but not 1
                 result.loc[result["scan_id"] == id, 'motoda_check'] = labels.errors["acquisition.motoda.check.cas2"]
-            else :
-                result.loc[result["scan_id"] == id, 'motoda_check'] = motoda_check
 
     # Keep only one line by couples : id / motoda fraction
     result = result.drop_duplicates()
