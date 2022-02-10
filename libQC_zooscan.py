@@ -30,9 +30,9 @@ class Lib_zooscan():
       check_sep_mask = Check("SEP MASK", "Checking the presence of a sep.gif mask in the subdirectory of the _work. If it is not present, indicate the motoda fraction associated with the scan to eliminate the situation where there was no multiple to separate because the sample was very poor and therefore motoda = 1", "sep_mask", libQC_zooscan_implementation.check_sep_mask)
       check_process_post_sep = Check("Process POST SEP", "This second process must include the separation mask (if any) created in the previous step.", "process_post_sep", libQC_zooscan_implementation.check_process_post_sep)
    
-      check_sieve_bug = Check("Sieve Bug", "", "sieve_bug", libQC_zooscan_implementation.noCb)
-      check_motoda_fraction = Check("MOTODA fraction", "", "motoda_fraction", libQC_zooscan_implementation.noCb)
-      check_motoda_check = Check("MOTODA check", "Contrôle numérique", "motoda_check", libQC_zooscan_implementation.noCb)
+      check_sieve_bug = Check("Sieve Bug", "", "sieve_bug", libQC_zooscan_implementation.check_sieve_bug)
+      check_motoda_fraction = Check("MOTODA fraction", "", "motoda_fraction", libQC_zooscan_implementation.check_motoda_fraction)
+      check_motoda_check = Check("MOTODA check", "Contrôle numérique", "motoda_check", libQC_zooscan_implementation.check_motoda_check)
       check_motoda_comparaison = Check("MOTODA comparison", "Comparison entre les scanID d’un même sampleID", "motoda_comparaison", libQC_zooscan_implementation.noCb)
       check_motoda_quality = Check("MOTODA quality", "Nombre de vignettes", "motoda_quality", libQC_zooscan_implementation.noCb)
       check_ortographe= Check("Orthographe", "Sur champ récurrent", "ortographe", libQC_zooscan_implementation.noCb)
@@ -49,8 +49,8 @@ class Lib_zooscan():
 
       #Fill blocks with subblocks
       block_before_scan.addSubBlocks(subBlock_sample)
-      block_during_analysis.addSubBlocks(subBlock_process)
-      # block_during_analysis.addSubBlocks(subBlock_sample,subBlock_acquisition,subBlock_process)
+      #block_during_analysis.addSubBlocks(subBlock_sample, subBlock_acquisition, subBlock_process)
+      block_during_analysis.addSubBlocks(subBlock_acquisition)
       block_after_ecotaxa_classif.addSubBlocks(subBlock_multiples)
 
       #Fill sub blocks with checks

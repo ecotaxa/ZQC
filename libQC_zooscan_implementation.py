@@ -1,6 +1,7 @@
 import labels
 import time
-#import numpy as np
+import numpy as np
+import re
 
 #### TOOLS
 
@@ -19,6 +20,19 @@ def is_int(value):
         return True
     except BaseException:
         return False
+
+def get_frac_id(str) : 
+    '''Return the frac id from the giver str if this one is in the non exaustive list of frac type [d1, d2, d3, dN, tot, plankton] '''
+    frac_types = ["(_d){1}([1-9])+(_){1}", "(_tot_){1}", "(_plankton_){1}"]
+
+    for element in frac_types:
+        m = re.search(element, str)
+        if m:
+            return m.group(0)
+    return "frac_type_not_handled"
+
+def is_power_of_two(n):
+    return (n & (n-1) == 0) and n != 0
 
 #### CALLBACKS
 
@@ -357,64 +371,141 @@ def check_process_post_sep(_id, _mode, local_data):
     print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback check_process_post_sep")
     return result
 
-# ### ACQUISITION
+### ACQUISITION
 
-# def check_sieve_bug(_id, _mode, local_data):
-#     """This check verifies the sieve values used to prepare the scan. They must be constant in the same project and therefore NEVER be different.
-#     Potential cases :
-#         "global.missing_ecotaxa_table": "#MISSING ecotaxa table"
-#         "acquisition.sieve.bug.not_numeric": "#NOT NUMERIC",
-#         "acquisition.sieve.bug.different": "#SIEVE different from others",
-#         "acquisition.sieve.bug.min_sup_max": "#ACQ MIN > ACQ MAX",
-#         "acquisition.sieve.bug.min_equ_max": "#ACQ MIN = ACQ MAX",
-#         "acquisition.sieve.bug.": "#ACQ MIN (d1) ≠ ACQ MAX (d2)",
-#         "acquisition.sieve.bug.": "#ACQ MIN (d2) ≠ ACQ MAX (d3)"
-#         "acquisition.sieve.bug": "sieve OK"
-#     """
-#     start_time = time.time()
+def check_sieve_bug(_id, _mode, local_data):
+    """This check verifies the sieve values used to prepare the scan. They must be constant in the same project and therefore NEVER be different.
+    Potential cases :
+        "global.missing_ecotaxa_table": "#MISSING ecotaxa table"
+        "global.not_numeric": "#NOT NUMERIC",
+        "acquisition.sieve.bug.different": "#SIEVE different from others",
+        "acquisition.sieve.bug.min_sup_max": "#ACQ MIN > ACQ MAX",
+        "acquisition.sieve.bug.min_equ_max": "#ACQ MIN = ACQ MAX",
+        "acquisition.sieve.bug.min_d1_dif_max_d2": "#ACQ MIN (d1) ≠ ACQ MAX (d2)",
+        "acquisition.sieve.bug.min_d2_dif_max_d3": "#ACQ MIN (d2) ≠ ACQ MAX (d3)"
+        "acquisition.sieve.bug.ok": "sieve OK"
+    """
+    start_time = time.time()
 
-#     # Get only usefull columns
-#     result = local_data.get("dataframe")[['scan_id', 'acq_min_mesh', 'acq_max_mesh', 'sample_id']]
-#     result['sieve_bug']=""
+    # Get only usefull columns
+    result = local_data.get("dataframe")[['scan_id', 'acq_min_mesh', 'acq_max_mesh']]#, 'sample_id'
+    result['sieve_bug']=""
 
-#     # Replace by sieve OK or associated error code
-#     result.sieve_bug = result.acq_min_mesh.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
-#                                                            else labels.errors["acquisition.sieve.bug.not_numeric"] if not is_int(x)
-#                                                            else labels.sucess["acquisition.sieve.bug"]) 
+    # Replace by sieve OK or associated error code
+    result.sieve_bug = result.acq_min_mesh.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
+                                                           else labels.errors["global.not_numeric"] if not is_int(x)
+                                                           else labels.sucess["acquisition.sieve.bug.ok"]) 
     
-#     # If acq_min_mesh == acq_max_mesh 
-#     result['sieve_bug'] = np.where((result['acq_min_mesh'] == result['acq_max_mesh']) & (result['sieve_bug'] == labels.sucess["acquisition.sieve.bug"]),labels.errors["acquisition.sieve.bug.min_equ_max"], result['sieve_bug'])
+    # If acq_min_mesh == acq_max_mesh 
+    result['sieve_bug'] = np.where((result['acq_min_mesh'] == result['acq_max_mesh']) & (result['sieve_bug'] == labels.sucess["acquisition.sieve.bug.ok"]),labels.errors["acquisition.sieve.bug.min_equ_max"], result['sieve_bug'])
     
-#     # If acq_min_mesh > acq_max_mesh 
-#     result['sieve_bug'] = np.where((result['acq_min_mesh'] > result['acq_max_mesh']) & (result['sieve_bug'] == labels.sucess["acquisition.sieve.bug"]),labels.errors["acquisition.sieve.bug.min_sup_max"], result['sieve_bug'])
+    # If acq_min_mesh > acq_max_mesh 
+    result['sieve_bug'] = np.where((result['acq_min_mesh'] > result['acq_max_mesh']) & (result['sieve_bug'] == labels.sucess["acquisition.sieve.bug.ok"]),labels.errors["acquisition.sieve.bug.min_sup_max"], result['sieve_bug'])
 
-#     ## If the acq of one or more scans differs from the other scans
-#     if len(result['acq_min_mesh'].unique())>1 or len(result['acq_max_mesh'].unique())>1 :
-#         result['sieve_bug'] =  np.where(result['sieve_bug'] == labels.sucess["acquisition.sieve.bug"],labels.errors["acquisition.sieve.bug.different"], result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"])
+    ## If the acq of one or more scans differs from the other scans
+    if len(result['acq_min_mesh'].unique())>1 or len(result['acq_max_mesh'].unique())>1 :
+        result['sieve_bug'] =  np.where(result['sieve_bug'] == labels.sucess["acquisition.sieve.bug.ok"],labels.errors["acquisition.sieve.bug.different"], result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"])
 
-#     #pour chaque sample id if scan id contain d1,d2 d3
-#     sample_ids = result['sample_id'].unique()
-#     result = result.drop_duplicates()
-#     for id in sample_ids :
-#         data = result[result['sample_id']==id]
-#         print("************++++++", data)
-#         result['sieve_bug'] =  np.where(("d1" in data['scan_id']),result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"], labels.errors["acquisition.sieve.acquisition.sieve.bug.min_d1_dif_max_d2"], )
+    #pour chaque sample id if scan id contain d1,d2 d3
+    # sample_ids = result['sample_id'].unique()
+    # result = result.drop_duplicates()
+    # for id in sample_ids :
+    #     data = result[result['sample_id']==id]
+    #     print("************++++++", data)
+    #     result['sieve_bug'] =  np.where(("d1" in data['scan_id']),result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"], labels.errors["acquisition.sieve.bug.min_d1_dif_max_d2"], )
         
-#         #if contain d1 et d2 :
-#         if "d1" in data and "d2" in data :
-#             #if  acq_min (d1) ≠ acq_max (d2) : 
-#             result['sieve_bug'] =  np.where(("d1" in data['scan_id'] and "d2"),result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"], labels.errors["acquisition.sieve.acquisition.sieve.bug.min_d1_dif_max_d2"], )
+        #if contain d1 et d2 :
+        # if "d1" in data and "d2" in data :
+        #     #if  acq_min (d1) ≠ acq_max (d2) : 
+        #     result['sieve_bug'] =  np.where(("d1" in data['scan_id'] and "d2"),result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"], labels.errors["acquisition.sieve.bug.min_d1_dif_max_d2"], )
         
-#                 # add error mess
-#             #if contain d3 :
-#                 #if acq_min (d2) ≠ acq_max (d3)
-#                     # add error mess
+                # add error mess
+            #if contain d3 :
+                #if acq_min (d2) ≠ acq_max (d3)
+                    # add error mess
     
-#     # Keep only one line by couples : id / frame type
-#     result = result.drop_duplicates()
+    # Keep only one line by couples : id / frame type
+    result = result.drop_duplicates()
 
-#     # Rename collums to match the desiered output
-#     result.rename(columns={'scan_id': 'List scan ID', 'acq_min_mesh': 'acq min mesh', 'acq_max_mesh': 'acq max mesh', 'sieve_bug' : 'Sieve Bug'}, inplace=True)
+    # Rename collums to match the desiered output
+    result.rename(columns={'scan_id': 'List scan ID', 'acq_min_mesh': 'acq min mesh', 'acq_max_mesh': 'acq max mesh', 'sieve_bug' : 'Sieve Bug'}, inplace=True)
 
-#     print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback sieve_bug")
-#     return result
+    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback sieve_bug")
+    return result
+
+def check_motoda_fraction(_id, _mode, local_data):
+    """
+    Potential cases :
+        - show the motoda frac from acq_sub_part tsv
+    """
+    start_time = time.time()
+
+    # Get only usefull columns
+    result = local_data.get("dataframe")[['scan_id', 'acq_sub_part']]
+
+    # Keep only one line by couples : id / motoda fraction
+    result = result.drop_duplicates()
+
+    # Rename collums to match the desiered output
+    result.rename(columns={'scan_id': 'List scan ID', 'acq_sub_part': 'MOTODA Fraction'}, inplace=True)
+
+    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback motoda_fraction")
+    return result
+
+def check_motoda_check(_id, _mode, local_data):
+    """
+    Potential cases :
+        "global.missing_ecotaxa_table": "#MISSING ecotaxa table",
+        "global.not_numeric": "#NOT NUMERIC",
+        "acquisition.motoda.check.identique": "Motoda identique",
+
+        "acquisition.motoda.check.cas1": "Motoda Fraction ≠ 1 ou ≠ ^2",
+        "acquisition.motoda.check.cas2": "Motoda Fraction ≠ ^2",
+        "acquisition.motoda.check.ok": "sieve OK",  
+    """
+    start_time = time.time()
+    # Get only usefull columns
+    dataToTest = local_data.get("dataframe")[['scan_id', 'acq_sub_part', 'sample_net_type']].groupby('scan_id').first().reset_index()
+    dataToTest["fracID"] = [get_frac_id(e) for e in dataToTest["scan_id"]]
+    result = local_data.get("dataframe")[['scan_id','acq_sub_part']].drop_duplicates()
+    result["motoda_check"] = ""
+
+    #QC core 
+
+    #print(dataToTest)
+
+    # fill with motoda OK or associated generic error code
+    result.motoda_check = result.acq_sub_part.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
+                                                           else labels.errors["global.not_numeric"] if not is_int(x)
+                                                           else labels.sucess["acquisition.motoda.check.ok"]) 
+    
+    # If Motoda identique
+    if len(dataToTest.acq_sub_part.unique()) == 1 :
+        result['motoda_check'] =  np.where(result['acq_sub_part'] == labels.sucess["acquisition.motoda.check.ok"],labels.errors["acquisition.motoda.check.identique"], result['acq_sub_part'])
+
+  
+    for i in range(0, len(dataToTest.scan_id)):
+        id = dataToTest.scan_id.values[i]
+        motoda_check = result.loc[result["scan_id"] == id, 'motoda_check'].values[0]
+        sample_net_type = dataToTest.sample_net_type.values[i]
+        fracID = dataToTest.fracID.values[i]
+        acq_sub_part = dataToTest.acq_sub_part.values[i]
+
+        if motoda_check == labels.sucess["acquisition.motoda.check.ok"]:
+            if(fracID=="_d1_" or ( fracID=="_tot_" and sample_net_type=="rg") and not is_power_of_two(int(acq_sub_part))) : 
+                #should be (1 or )puissance de 2
+                result.loc[result["scan_id"] == id, 'motoda_check'] = labels.errors["acquisition.motoda.check.cas1"]
+            elif (fracID.startswith("_d") or fracID=="_tot_" or fracID=="_plankton_") and sample_net_type != "rg" and (int(acq_sub_part)==1 or not is_power_of_two(int(acq_sub_part))) :
+                #should be ^2 but not 1
+                result.loc[result["scan_id"] == id, 'motoda_check'] = labels.errors["acquisition.motoda.check.cas2"]
+            else :
+                result.loc[result["scan_id"] == id, 'motoda_check'] = motoda_check
+
+    # Keep only one line by couples : id / motoda fraction
+    result = result.drop_duplicates()
+    result.drop(columns=["acq_sub_part"], inplace=True)
+    # Rename collums to match the desiered output
+    result.rename(columns={'scan_id': 'List scan ID', 'motoda_check': 'MOTODA check'}, inplace=True)
+
+    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback motoda_fraction")
+    return result

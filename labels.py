@@ -4,6 +4,7 @@ errors = {
     "global.missing_column": "#MISSING column",
     "global.bad_zip_file": "#BAD ZIP FILE",
     "global.missing_directory.work": "#MISSING _work DIRECTORY",
+    "global.not_numeric": "#NOT NUMERIC",
 
     "process.frame_type.not_ok" : "#Frame NOT OK",
 
@@ -29,13 +30,20 @@ errors = {
     "process.post_sep.unprocessed": "#UNPROCESSED",
     "process.post_sep.not_included": "#SEP MSK NOT INCLUDED",
 
-    "acquisition.sieve.bug.not_numeric": "#NOT NUMERIC",
+    #TODO JCE : talk with AMANDA for better understanding of this QC
     "acquisition.sieve.bug.different": "#SIEVE different from others",
     "acquisition.sieve.bug.min_sup_max": "#ACQ MIN > ACQ MAX",
     "acquisition.sieve.bug.min_equ_max": "#ACQ MIN = ACQ MAX",
-    #TODO JCE : talk with AMANDA
     "acquisition.sieve.bug.min_d1_dif_max_d2": "#ACQ MIN (d1) ≠ ACQ MAX (d2)",
-    "acquisition.sieve.bug.motoda.min_d2_dif_max_d3": "#ACQ MIN (d2) ≠ ACQ MAX (d3)"
+    "acquisition.sieve.bug.min_d2_dif_max_d3": "#ACQ MIN (d2) ≠ ACQ MAX (d3)",
+
+    "acquisition.motoda.check.identique": "#Motoda identique",
+    #TODO JCE : talk with AMANDA 2^0==1
+    "acquisition.motoda.check.cas1": "#Motoda Fraction ≠ 1 ou ≠ ^2",
+    "acquisition.motoda.check.cas2": "#Motoda Fraction ≠ ^2",
+
+
+
 }
 
 sucess = {
@@ -46,5 +54,6 @@ sucess = {
     "process.sep_mask.ok": "Sep mask OK",
     "process.post_sep.ok": "process OK",
 
-    "acquisition.sieve.bug": "sieve OK"
+    "acquisition.sieve.bug.ok": "sieve OK",
+    "acquisition.motoda.check.ok": "Motoda OK",
 }
