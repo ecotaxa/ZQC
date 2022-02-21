@@ -42,7 +42,7 @@ errors = {
     "acquisition.motoda.check.cas1": "#Motoda Fraction ≠ 1 ou ≠ ^2",
     "acquisition.motoda.check.cas2": "#Motoda Fraction ≠ ^2",
     
-    "acquisition.motoda.comparaison.ko": "Motoda frac (dN-1) ≥ Motoda frac (dN)",
+    "acquisition.motoda.comparaison.ko": "#Motoda frac",
 }
 
 sucess = {
