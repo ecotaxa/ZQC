@@ -11,7 +11,7 @@ local_base_path = "../local_plankton/zooscan/"
 complex_imev_mer_base_path = "/piqv/local_plankton/zooscan/"
 plankton_base_path = "/remote/plankton/piqv/local_plankton/zooscan/"
 
-base_path=plankton_base_path
+base_path=complex_imev_mer_base_path
 
 def missingCol(cols, path):
     read_cols = pd.read_csv(path, nrows=0, encoding="ISO-8859-1", sep="\t").columns
@@ -86,7 +86,8 @@ def  getTsv(subpath):
             "process_particle_sep_mask", 
             'acq_min_mesh', 
             'acq_max_mesh',
-            'sample_net_type'
+            'sample_net_type',
+            'sample_comment'
         ]
     try : 
         for folder_name in listFolder(base_path+subpath+"/Zooscan_scan/_work/") :
@@ -95,7 +96,7 @@ def  getTsv(subpath):
                     cols_ok, cols_ko = missingCol(cols, path)
 
                     df = pd.read_csv(path, encoding = "ISO-8859-1", usecols=cols_ok, sep="\t")
-                    df['STATUS']="Ecotaxa table OK"
+                    df['STATUS']=""
                     df['scan_id'] = folder_name
                     if cols_ko :
                         df[cols_ko]=labels.errors["global.missing_column"]

@@ -41,9 +41,8 @@ errors = {
     #TODO JCE : talk with AMANDA 2^0==1
     "acquisition.motoda.check.cas1": "#Motoda Fraction ≠ 1 ou ≠ ^2",
     "acquisition.motoda.check.cas2": "#Motoda Fraction ≠ ^2",
-
-
-
+    
+    "acquisition.motoda.comparaison.ko": "Motoda frac (dN-1) ≥ Motoda frac (dN)",
 }
 
 sucess = {
@@ -56,4 +55,5 @@ sucess = {
 
     "acquisition.sieve.bug.ok": "sieve OK",
     "acquisition.motoda.check.ok": "Motoda OK",
+     "acquisition.motoda.comparaison.ok": "Motoda comparison OK"
 }

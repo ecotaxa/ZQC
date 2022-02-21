@@ -2,6 +2,7 @@ import labels
 import time
 import numpy as np
 import re
+import pandas as pd
 
 #### TOOLS
 
@@ -433,25 +434,6 @@ def check_sieve_bug(_id, _mode, local_data):
     print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback sieve_bug")
     return result
 
-def check_motoda_fraction(_id, _mode, local_data):
-    """
-    Potential cases :
-        - show the motoda frac from acq_sub_part tsv
-    """
-    start_time = time.time()
-
-    # Get only usefull columns
-    result = local_data.get("dataframe")[['scan_id', 'acq_sub_part']]
-
-    # Keep only one line by couples : id / motoda fraction
-    result = result.drop_duplicates()
-
-    # Rename collums to match the desiered output
-    result.rename(columns={'scan_id': 'List scan ID', 'acq_sub_part': 'MOTODA Fraction'}, inplace=True)
-
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback motoda_fraction")
-    return result
-
 def check_motoda_check(_id, _mode, local_data):
     """
     Potential cases :
@@ -488,6 +470,7 @@ def check_motoda_check(_id, _mode, local_data):
         acq_sub_part = dataToTest.acq_sub_part.values[i]
 
         if motoda_check == labels.sucess["acquisition.motoda.check.ok"]:
+            result.loc[result["scan_id"] == id, 'acq_sub_part'] = int(acq_sub_part)
             if(fracID=="_d1_" or ( fracID=="_tot_" and sample_net_type=="rg") and not is_power_of_two(int(acq_sub_part))) : 
                 #should be (1 or )puissance de 2
                 result.loc[result["scan_id"] == id, 'motoda_check'] = labels.errors["acquisition.motoda.check.cas1"]
@@ -497,9 +480,61 @@ def check_motoda_check(_id, _mode, local_data):
 
     # Keep only one line by couples : id / motoda fraction
     result = result.drop_duplicates()
-    result.drop(columns=["acq_sub_part"], inplace=True)
+
     # Rename collums to match the desiered output
-    result.rename(columns={'scan_id': 'List scan ID', 'motoda_check': 'MOTODA check'}, inplace=True)
+    result.rename(columns={'scan_id': 'List scan ID', 'acq_sub_part' : 'MOTODA Fraction','motoda_check': 'MOTODA check'}, inplace=True)
+
+    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback motoda_fraction")
+    return result
+
+def check_motoda_comparaison(_id, _mode, local_data):
+    """
+    Potential cases :
+        "global.missing_ecotaxa_table": "#MISSING ecotaxa table",
+        "global.not_numeric": "#NOT NUMERIC",
+        "acquisition.motoda.comparaison.ko": "Motoda frac (dN-1) ≥ Motoda frac (dN)"
+        "acquisition.motoda.comparaison.ok": "Motoda comparison OK"
+    """
+    start_time = time.time()
+    # Get only usefull columns
+    dataToTest = local_data.get("dataframe")[['scan_id', 'acq_sub_part', 'sample_id']].groupby('scan_id').first().reset_index()
+    dataToTest["fracID"] = [get_frac_id(e) for e in dataToTest["scan_id"]]
+    result = local_data.get("dataframe")[['scan_id','acq_sub_part', 'sample_comment', 'sample_id']].drop_duplicates()
+    result.insert(loc=2, column='motoda_comp', value="")
+
+    # fill with motoda OK or associated generic error code
+    result.motoda_comp = result.acq_sub_part.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
+                                                           else labels.errors["global.not_numeric"] if not is_int(x)
+                                                           else labels.sucess["acquisition.motoda.comparaison.ok"]) 
+
+    data_by_sample_id = dataToTest.groupby("sample_id")
+    
+    for key, item in data_by_sample_id:
+        group=data_by_sample_id.get_group(key)
+
+        if len(group)>1 :
+            for i in range(1,len(group)) :
+                #Get d_i and d_i+1
+                d_i=group[group["fracID"]=="_d"+str(i)+"_"]
+                d_i_plus_1=group[group["fracID"]=="_d"+str(i+1)+"_"]
+
+                #if not d_i and d_i+1 skip test
+                if d_i.empty or d_i_plus_1.empty : 
+                    break
+
+                #Compare d_i and d_i+1
+                #Should respect "acq_sub_part (N) < acq_sub_part (N+1)"
+                if int(d_i.acq_sub_part.values[0]) >= int(d_i_plus_1.acq_sub_part.values[0]) :
+                    result.loc[result["scan_id"] == d_i.scan_id.values[0], 'motoda_comp'] = "Motoda frac (d"+str(i)+") ≥ Motoda frac (d"+str(i+1)+")"
+                    result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'motoda_comp'] = "Motoda frac (d"+str(i)+") ≥ Motoda frac (d"+str(i+1)+")"
+
+
+    # Keep only one line by couples : id / motoda fraction
+    result = result.drop_duplicates()
+    result.drop(columns=["acq_sub_part", "sample_id"], inplace=True)
+
+    # Rename collums to match the desiered output
+    result.rename(columns={'scan_id': 'List scan ID', 'motoda_comp': 'MOTODA comparison', 'sample_comment':'Sample comment'}, inplace=True)
 
     print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback motoda_fraction")
     return result
