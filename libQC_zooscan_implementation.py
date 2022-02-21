@@ -525,8 +525,8 @@ def check_motoda_comparaison(_id, _mode, local_data):
                 #Compare d_i and d_i+1
                 #Should respect "acq_sub_part (N) < acq_sub_part (N+1)"
                 if int(d_i.acq_sub_part.values[0]) >= int(d_i_plus_1.acq_sub_part.values[0]) :
-                    result.loc[result["scan_id"] == d_i.scan_id.values[0], 'motoda_comp'] = "Motoda frac (d"+str(i)+") ≥ Motoda frac (d"+str(i+1)+")"
-                    result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'motoda_comp'] = "Motoda frac (d"+str(i)+") ≥ Motoda frac (d"+str(i+1)+")"
+                    result.loc[result["scan_id"] == d_i.scan_id.values[0], 'motoda_comp'] = labels.errors["acquisition.motoda.comparaison.ko"]+" (d"+str(i)+") ≥ Motoda frac (d"+str(i+1)+")"
+                    result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'motoda_comp'] = labels.errors["acquisition.motoda.comparaison.ko"]+" (d"+str(i)+") ≥ Motoda frac (d"+str(i+1)+")"
 
 
     # Keep only one line by couples : id / motoda fraction
