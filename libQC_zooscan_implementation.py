@@ -461,8 +461,6 @@ def check_motoda_check(_id, _mode, local_data):
     result = local_data.get("dataframe")[['scan_id','acq_sub_part']].drop_duplicates()
     result["motoda_check"] = ""
 
-    #QC core 
-
     # fill with motoda OK or associated generic error code
     result.motoda_check = result.acq_sub_part.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
                                                            else labels.errors["global.not_numeric"] if not is_int(x)
@@ -480,7 +478,7 @@ def check_motoda_check(_id, _mode, local_data):
 
         if motoda_check == labels.sucess["acquisition.motoda.check.ok"]:
             result.loc[result["scan_id"] == id, 'acq_sub_part'] = int(acq_sub_part)
-            if(fracID=="_d1_" or ( fracID=="_tot_" and sample_net_type=="rg") and not is_power_of_two(int(acq_sub_part))) : 
+            if(fracID=="_d1_" or ( fracID=="_tot_" and sample_net_type=="rg")) and not is_power_of_two(int(acq_sub_part)) : 
                 #should be (1 or )puissance de 2
                 result.loc[result["scan_id"] == id, 'motoda_check'] = labels.errors["acquisition.motoda.check.cas1"]
             elif (fracID.startswith("_d") or fracID=="_tot_" or fracID=="_plankton_") and sample_net_type != "rg" and (int(acq_sub_part)==1 or not is_power_of_two(int(acq_sub_part))) :
