@@ -34,8 +34,8 @@ errors = {
     "acquisition.sieve.bug.different": "#SIEVE different from others",
     "acquisition.sieve.bug.min_sup_max": "#ACQ MIN > ACQ MAX",
     "acquisition.sieve.bug.min_equ_max": "#ACQ MIN = ACQ MAX",
-    "acquisition.sieve.bug.min_dn_dif_max_dn+1_1": "#ACQ MIN (",
-    "acquisition.sieve.bug.min_dn_dif_max_dn+1_2": ") ≠ ACQ MAX (",
+    "acquisition.sieve.bug.min_dn_dif_max_dn+1_1": "#ACQ MIN (d",
+    "acquisition.sieve.bug.min_dn_dif_max_dn+1_2": ") ≠ ACQ MAX (d",
     "acquisition.sieve.bug.min_dn_dif_max_dn+1_3": ")",
 
     "acquisition.motoda.check.identique": "#Identical Motoda",
