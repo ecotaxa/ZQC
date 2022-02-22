@@ -392,31 +392,37 @@ def check_sieve_bug(_id, _mode, local_data):
     result = local_data.get("dataframe")[['scan_id', 'acq_min_mesh', 'sample_id', 'acq_max_mesh']]
     result["fracID"] = [get_frac_id(e) for e in result["scan_id"]]
     result['sieve_bug']=""
-
+    result = result.drop_duplicates()
+    
     # Replace by sieve OK or associated error code
     result.sieve_bug = result.acq_min_mesh.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
                                                            else labels.errors["global.not_numeric"] if not is_int(x)
                                                            else labels.sucess["acquisition.sieve.bug.ok"]) 
 
-    #TODO JCE  : le acq_min est supérieur ou égal au acq_max **pour un même FracID (à l’intérieur d’un même scanID)**, mettre un warning “ACQ MIN > ACQ MAX” ou “ACQ MIN = ACQ MAX” selon la situation :
-    
-    # If acq_min_mesh == acq_max_mesh 
-    result['sieve_bug'] = np.where((result['acq_min_mesh'] == result['acq_max_mesh']) & (result['sieve_bug'] == labels.sucess["acquisition.sieve.bug.ok"]),labels.errors["acquisition.sieve.bug.min_equ_max"], result['sieve_bug'])
-    
-    # If acq_min_mesh > acq_max_mesh 
-    result['sieve_bug'] = np.where((result['acq_min_mesh'] > result['acq_max_mesh']) & (result['sieve_bug'] == labels.sucess["acquisition.sieve.bug.ok"]),labels.errors["acquisition.sieve.bug.min_sup_max"], result['sieve_bug'])
-
-    ## If the acq of one or more scans differs from the other scans
+    # If the acq of one or more scans differs from the other scans
     if len(result['acq_min_mesh'].unique())>1 or len(result['acq_max_mesh'].unique())>1 :
         result['sieve_bug'] =  np.where(result['sieve_bug'] == labels.sucess["acquisition.sieve.bug.ok"],labels.errors["acquisition.sieve.bug.different"], result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"])
-   
+    
+    # The acq_min is superior or equal to the acq_max **for the same FracID (within the same scanID)**, 
+    # put a warning "ACQ MIN > ACQ MAX" or "ACQ MIN = ACQ MAX" according to the situation:
+    for id in result.scan_id : 
+        sieve_bug_label=result.loc[result["scan_id"] == id, 'sieve_bug'].values[0]
+        if sieve_bug_label == labels.sucess["acquisition.sieve.bug.ok"] :
+            acq_min_mesh = int(result.loc[result["scan_id"] == id, 'acq_min_mesh'].values[0])
+            acq_max_mesh =int(result.loc[result["scan_id"] == id, 'acq_max_mesh'].values[0])
+            
+            # If acq_min_mesh == acq_max_mesh 
+            if acq_min_mesh == acq_max_mesh :
+                result.loc[result["scan_id"] == id, 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_equ_max"]
+            # If acq_min_mesh > acq_max_mesh 
+            elif acq_min_mesh > acq_max_mesh :
+                result.loc[result["scan_id"] == id, 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_sup_max"]
+
     #For the same sampleID whose FracID = d1 or d2 ... dN (comparison between several scanIDs of the same sampleID), check the following conditions:
     # - the acq_min (dN) ≠ acq_max (dN+1), put a warning "ACQ MIN (dN) ≠ ACQ MAX (dN+1)"
     data_by_sample_id = result.groupby("sample_id")
-    
     for key, item in data_by_sample_id:
         group=data_by_sample_id.get_group(key)
-
         if len(group)>1 :
             for i in range(1,len(group)) :
                 #Get d_i and d_i+1
@@ -433,6 +439,7 @@ def check_sieve_bug(_id, _mode, local_data):
                     result.loc[result["scan_id"] == d_i.scan_id.values[0], 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_1"]+str(i)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_2"]+str(i+1)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_3"]
                     result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_1"]+str(i)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_2"]+str(i+1)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_3"]
 
+    
     # Keep only one usfull lines
     result = result.drop_duplicates()
     result.drop(columns=["sample_id", "fracID"], inplace=True)
