@@ -34,8 +34,9 @@ errors = {
     "acquisition.sieve.bug.different": "#SIEVE different from others",
     "acquisition.sieve.bug.min_sup_max": "#ACQ MIN > ACQ MAX",
     "acquisition.sieve.bug.min_equ_max": "#ACQ MIN = ACQ MAX",
-    "acquisition.sieve.bug.min_d1_dif_max_d2": "#ACQ MIN (d1) ≠ ACQ MAX (d2)",
-    "acquisition.sieve.bug.min_d2_dif_max_d3": "#ACQ MIN (d2) ≠ ACQ MAX (d3)",
+    "acquisition.sieve.bug.min_dn_dif_max_dn+1_1": "#ACQ MIN (",
+    "acquisition.sieve.bug.min_dn_dif_max_dn+1_2": ") ≠ ACQ MAX (",
+    "acquisition.sieve.bug.min_dn_dif_max_dn+1_3": ")",
 
     "acquisition.motoda.check.identique": "#Identical Motoda",
     #TODO JCE : talk with AMANDA 2^0==1
