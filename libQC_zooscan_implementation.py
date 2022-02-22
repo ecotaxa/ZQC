@@ -389,13 +389,16 @@ def check_sieve_bug(_id, _mode, local_data):
     start_time = time.time()
 
     # Get only usefull columns
-    result = local_data.get("dataframe")[['scan_id', 'acq_min_mesh', 'acq_max_mesh']]#, 'sample_id'
+    result = local_data.get("dataframe")[['scan_id', 'acq_min_mesh', 'sample_id', 'acq_max_mesh']]
+    result["fracID"] = [get_frac_id(e) for e in result["scan_id"]]
     result['sieve_bug']=""
 
     # Replace by sieve OK or associated error code
     result.sieve_bug = result.acq_min_mesh.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
                                                            else labels.errors["global.not_numeric"] if not is_int(x)
                                                            else labels.sucess["acquisition.sieve.bug.ok"]) 
+
+    #TODO JCE  : le acq_min est supérieur ou égal au acq_max **pour un même FracID (à l’intérieur d’un même scanID)**, mettre un warning “ACQ MIN > ACQ MAX” ou “ACQ MIN = ACQ MAX” selon la situation :
     
     # If acq_min_mesh == acq_max_mesh 
     result['sieve_bug'] = np.where((result['acq_min_mesh'] == result['acq_max_mesh']) & (result['sieve_bug'] == labels.sucess["acquisition.sieve.bug.ok"]),labels.errors["acquisition.sieve.bug.min_equ_max"], result['sieve_bug'])
@@ -406,29 +409,34 @@ def check_sieve_bug(_id, _mode, local_data):
     ## If the acq of one or more scans differs from the other scans
     if len(result['acq_min_mesh'].unique())>1 or len(result['acq_max_mesh'].unique())>1 :
         result['sieve_bug'] =  np.where(result['sieve_bug'] == labels.sucess["acquisition.sieve.bug.ok"],labels.errors["acquisition.sieve.bug.different"], result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"])
-
-    #pour chaque sample id if scan id contain d1,d2 d3
-    # sample_ids = result['sample_id'].unique()
-    # result = result.drop_duplicates()
-    # for id in sample_ids :
-    #     data = result[result['sample_id']==id]
-    #     print("************++++++", data)
-    #     result['sieve_bug'] =  np.where(("d1" in data['scan_id']),result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"], labels.errors["acquisition.sieve.bug.min_d1_dif_max_d2"], )
-        
-        #if contain d1 et d2 :
-        # if "d1" in data and "d2" in data :
-        #     #if  acq_min (d1) ≠ acq_max (d2) : 
-        #     result['sieve_bug'] =  np.where(("d1" in data['scan_id'] and "d2"),result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"], labels.errors["acquisition.sieve.bug.min_d1_dif_max_d2"], )
-        
-                # add error mess
-            #if contain d3 :
-                #if acq_min (d2) ≠ acq_max (d3)
-                    # add error mess
+   
+    #For the same sampleID whose FracID = d1 or d2 ... dN (comparison between several scanIDs of the same sampleID), check the following conditions:
+    # - the acq_min (dN) ≠ acq_max (dN+1), put a warning "ACQ MIN (dN) ≠ ACQ MAX (dN+1)"
+    data_by_sample_id = result.groupby("sample_id")
     
-    # Keep only one line by couples : id / frame type
-    result = result.drop_duplicates()
+    for key, item in data_by_sample_id:
+        group=data_by_sample_id.get_group(key)
 
-    result['sieve_bug']=labels.errors["global.qc_not_implemented"] #TODO JCE : re-Work on this QC
+        if len(group)>1 :
+            for i in range(1,len(group)) :
+                #Get d_i and d_i+1
+                d_i=group[group["fracID"]=="_d"+str(i)+"_"]
+                d_i_plus_1=group[group["fracID"]=="_d"+str(i+1)+"_"]
+
+                #if not d_i and d_i+1 skip test
+                if d_i.empty or d_i_plus_1.empty : 
+                    break
+
+                #Compare d_i and d_i+1
+                #Should respect "acq_min_mesh (N) == acq_max_mesh (N+1)"
+                if int(d_i.acq_min_mesh.values[0]) != int(d_i_plus_1.acq_max_mesh.values[0]) :
+                    result.loc[result["scan_id"] == d_i.scan_id.values[0], 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_1"]+str(i)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_2"]+str(i+1)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_3"]
+                    result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_1"]+str(i)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_2"]+str(i+1)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_3"]
+
+    # Keep only one usfull lines
+    result = result.drop_duplicates()
+    result.drop(columns=["sample_id", "fracID "], inplace=True)
+
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'acq_min_mesh': 'acq min mesh', 'acq_max_mesh': 'acq max mesh', 'sieve_bug' : 'Sieve Bug'}, inplace=True)
 
