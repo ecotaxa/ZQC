@@ -428,6 +428,7 @@ def check_sieve_bug(_id, _mode, local_data):
     # Keep only one line by couples : id / frame type
     result = result.drop_duplicates()
 
+    result['sieve_bug']=labels.errors["global.qc_not_implemented"] #TODO JCE : re-Work on this QC
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'acq_min_mesh': 'acq min mesh', 'acq_max_mesh': 'acq max mesh', 'sieve_bug' : 'Sieve Bug'}, inplace=True)
 
@@ -501,6 +502,7 @@ def check_motoda_comparaison(_id, _mode, local_data):
     dataToTest["fracID"] = [get_frac_id(e) for e in dataToTest["scan_id"]]
     result = local_data.get("dataframe")[['scan_id','acq_sub_part', 'sample_comment', 'sample_id']].drop_duplicates()
     result.insert(loc=2, column='motoda_comp', value="")
+    result['Observation']=labels.errors["global.qc_not_implemented"]#TODO JCE : GET DATA IN : Observation du fichier meta.txt
 
     # fill with motoda OK or associated generic error code
     result.motoda_comp = result.acq_sub_part.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
@@ -528,6 +530,7 @@ def check_motoda_comparaison(_id, _mode, local_data):
                     result.loc[result["scan_id"] == d_i.scan_id.values[0], 'motoda_comp'] = labels.errors["acquisition.motoda.comparaison.ko"]+" (d"+str(i)+") ≥ Motoda frac (d"+str(i+1)+")"
                     result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'motoda_comp'] = labels.errors["acquisition.motoda.comparaison.ko"]+" (d"+str(i)+") ≥ Motoda frac (d"+str(i+1)+")"
 
+    result.loc[result["motoda_comp"] == labels.errors["global.missing_ecotaxa_table"], 'sample_comment'] = labels.errors["global.qc_not_implemented"] #TODO JCE : GET DATA IN : sample_comment dans le meta.txt
 
     # Keep only one line by couples : id / motoda fraction
     result = result.drop_duplicates()
