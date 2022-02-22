@@ -435,7 +435,7 @@ def check_sieve_bug(_id, _mode, local_data):
 
     # Keep only one usfull lines
     result = result.drop_duplicates()
-    result.drop(columns=["sample_id", "fracID "], inplace=True)
+    result.drop(columns=["sample_id", "fracID"], inplace=True)
 
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'acq_min_mesh': 'acq min mesh', 'acq_max_mesh': 'acq max mesh', 'sieve_bug' : 'Sieve Bug'}, inplace=True)
