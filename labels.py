@@ -44,6 +44,10 @@ errors = {
     "acquisition.motoda.check.cas2": "#Motoda Fraction ≠ ^2",
     
     "acquisition.motoda.comparaison.ko": "#Motoda frac",
+
+    "acquisition.motoda.quality.missing": "#MISSING images",
+    "acquisition.motoda.quality.low": "#Images nb LOW : ",
+    "acquisition.motoda.quality.high": "#Images nb HIGH : ",
 }
 
 sucess = {
@@ -56,5 +60,7 @@ sucess = {
 
     "acquisition.sieve.bug.ok": "sieve OK",
     "acquisition.motoda.check.ok": "Motoda OK",
-     "acquisition.motoda.comparaison.ok": "Motoda comparison OK"
+    "acquisition.motoda.comparaison.ok": "Motoda comparison OK",
+    "acquisition.motoda.quality.ok": "Motoda OK",
+
 }

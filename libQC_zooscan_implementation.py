@@ -193,7 +193,7 @@ def check_process_post_scan(_id, _mode, local_data):
     result = local_data.get("dataframe")[['scan_id']].drop_duplicates()
     result["process_post_scan"] = ""
 
-    # Extract scan ids from _work files name
+    # Extract scan ids
     ids = result["scan_id"].values
 
     # foreatch scan id
@@ -389,11 +389,10 @@ def check_sieve_bug(_id, _mode, local_data):
     start_time = time.time()
 
     # Get only usefull columns
-    result = local_data.get("dataframe")[['scan_id', 'acq_min_mesh', 'sample_id', 'acq_max_mesh']]
+    result = local_data.get("dataframe")[['scan_id', 'acq_min_mesh', 'sample_id', 'acq_max_mesh']].drop_duplicates()
     result["fracID"] = [get_frac_id(e) for e in result["scan_id"]]
     result['sieve_bug']=""
-    result = result.drop_duplicates()
-    
+
     # Replace by sieve OK or associated error code
     result.sieve_bug = result.acq_min_mesh.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
                                                            else labels.errors["global.not_numeric"] if not is_int(x)
@@ -551,6 +550,95 @@ def check_motoda_comparaison(_id, _mode, local_data):
 
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'motoda_comp': 'MOTODA comparison', 'sample_comment':'Sample comment'}, inplace=True)
+
+    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback motoda_fraction")
+    return result
+
+def check_motoda_quality(_id, _mode, local_data):
+    """
+    Potential cases :
+        "global.missing_ecotaxa_table": "#MISSING ecotaxa table",
+        "acquisition.motoda.quality.missing": "#MISSING images",
+        "acquisition.motoda.quality.low": "#Images nb LOW : ",
+        "acquisition.motoda.quality.high": "#Images nb HIGH : ",
+        "acquisition.motoda.quality.ok": "Motoda OK",
+    """
+    start_time = time.time()
+    # Get only usefull columns
+    result = local_data.get("dataframe")[['scan_id', 'sample_net_type', 'acq_sub_part']].drop_duplicates()
+    result["fracID"] = [get_frac_id(e) for e in result["scan_id"]]
+    result['motoda_quality']=""
+    # Get only usefull file name : .jpg in /Zooscan_scan/_work/ folder
+    fs = local_data.get("fs")
+    dataToTest = fs.loc[([True if "/Zooscan_scan/_work/" in i else False for i in fs['path'].values])
+                        & (fs['extension'].values == "jpg"), ["name", "extension"]]
+
+    # fill with motoda OK or associated generic error code
+    result.motoda_quality = result.acq_sub_part.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
+                                                           else labels.errors["global.not_numeric"] if not is_int(x)
+                                                           else "") 
+    # Extract scan ids
+    ids = result["scan_id"].values
+
+    # foreatch scan id
+    for id in ids:
+        #get lines related to curent id
+        data_img_list = dataToTest.loc[([True if id in i else False for i in dataToTest['name'].values]), ["name", "extension"]]
+
+        # count of scanID.tsv should be 1
+        count_img = len(data_img_list)
+        #get needed infos for that scan id
+        scan_id_data = result.loc[result["scan_id"]==id, ["sample_net_type", "fracID", "acq_sub_part", "motoda_quality"]]
+        # if no img in work, fill result with the associated error msg
+        if count_img==0 :
+            result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.missing"]
+        elif scan_id_data["motoda_quality"].values[0]=="" :
+            #get needed infos for that scan id
+            net_type = scan_id_data["sample_net_type"].values[0]
+            frac_id = scan_id_data["fracID"].values[0]
+            motoda_frac = int(scan_id_data["acq_sub_part"].values[0])
+
+            #start testing
+            if net_type=="rg" :
+                # When Nettype = rg and motoda_frac strictly =1
+                if motoda_frac==1 :
+                    # the number of .jpg images in the _work subdirectory must not be > 1500
+                    result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"] if count_img <= 1500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img)
+                # When Nettype = rg and motoda_frac strictly >1
+                elif motoda_frac>1 :
+                    # the number of .jpg images in the _work subdirectory must be between 800 and 1500
+                    result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 800 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 1500 else labels.sucess["acquisition.motoda.quality.ok"] 
+                else : 
+                    result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"]
+            #For all other Nettype:
+            else :
+                if frac_id=="_d1_" : 
+                    # When Nettype ≠ rg and FracID = d1 and motoda_frac strictly =1
+                    if motoda_frac == 1 :
+                        # the number of .jpg images in the _work subdirectory must not be > 1500
+                        result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"] if count_img <= 1500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img)
+                    # When Nettype ≠ rg and FracID = d1 and the motoda_frac strictly >1 
+                    elif motoda_frac > 1 :
+                        # the number of .jpg images in the _work subdirectory must be between 800 and 1500
+                        result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 800 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 1500 else labels.sucess["acquisition.motoda.quality.ok"] 
+                
+                elif (frac_id.startswith("_d") or frac_id=="_tot_" or frac_id=="_plankton_") : 
+                    # When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly =1
+                    if motoda_frac == 1 :
+                        # the number of .jpg images in the _work subdirectory must not be > 2500
+                        result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"] if count_img <= 2500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img)
+                    # When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly >1
+                    elif motoda_frac > 1 :
+                        # the number of .jpg images in the _work subdirectory must be between 1000 and 2500
+                        result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 1000 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 2500 else labels.sucess["acquisition.motoda.quality.ok"] 
+                else : 
+                    result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"]
+
+    #Remove result useless columns
+    result.drop(columns=["fracID", "sample_net_type", "acq_sub_part"], inplace=True)
+
+    # Rename collums to match the desiered output
+    result.rename(columns={'scan_id': 'List scan ID', "motoda_quality" : "Motoda quality"}, inplace=True)
 
     print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback motoda_fraction")
     return result

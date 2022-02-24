@@ -33,7 +33,7 @@ class Lib_zooscan():
       check_sieve_bug = Check("Sieve Bug", "", "sieve_bug", libQC_zooscan_implementation.check_sieve_bug)
       check_motoda_check = Check("MOTODA check", "Contrôle numérique", "motoda_check", libQC_zooscan_implementation.check_motoda_check)
       check_motoda_comparaison = Check("MOTODA comparison", "Comparison entre les scanID d’un même sampleID", "motoda_comparaison", libQC_zooscan_implementation.check_motoda_comparaison)
-      check_motoda_quality = Check("MOTODA quality", "Nombre de vignettes", "motoda_quality", libQC_zooscan_implementation.noCb)
+      check_motoda_quality = Check("MOTODA quality", "Nombre de vignettes", "motoda_quality", libQC_zooscan_implementation.check_motoda_quality)
       check_ortographe= Check("Orthographe", "Sur champ récurrent", "ortographe", libQC_zooscan_implementation.noCb)
 
       checks_gps = Check("GPS", "Carte interactive, sous forme d’un Tableau, sous forme de Graphs", "GPS", libQC_zooscan_implementation.noCb)
