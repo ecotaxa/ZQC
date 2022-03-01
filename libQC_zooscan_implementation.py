@@ -514,7 +514,10 @@ def check_motoda_comparaison(_id, _mode, local_data):
     dataToTest["fracID"] = [get_frac_id(e) for e in dataToTest["scan_id"]]
     result = local_data.get("dataframe")[['scan_id','acq_sub_part', 'sample_comment', 'sample_id']].drop_duplicates()
     result.insert(loc=2, column='motoda_comp', value="")
-    result['Observation']=labels.errors["global.qc_not_implemented"]#TODO JCE : GET DATA IN : Observation du fichier meta.txt
+    result['Observation']=""
+    
+    #get meta.txt related information
+    meta = local_data.get("meta")
 
     # fill with motoda OK or associated generic error code
     result.motoda_comp = result.acq_sub_part.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
@@ -541,8 +544,30 @@ def check_motoda_comparaison(_id, _mode, local_data):
                 if int(d_i.acq_sub_part.values[0]) >= int(d_i_plus_1.acq_sub_part.values[0]) :
                     result.loc[result["scan_id"] == d_i.scan_id.values[0], 'motoda_comp'] = labels.errors["acquisition.motoda.comparaison.ko"]+" (d"+str(i)+") ≥ Motoda frac (d"+str(i+1)+")"
                     result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'motoda_comp'] = labels.errors["acquisition.motoda.comparaison.ko"]+" (d"+str(i)+") ≥ Motoda frac (d"+str(i+1)+")"
-
-    result.loc[result["motoda_comp"] == labels.errors["global.missing_ecotaxa_table"], 'sample_comment'] = labels.errors["global.qc_not_implemented"] #TODO JCE : GET DATA IN : sample_comment dans le meta.txt
+    
+    # Extract scan ids
+    ids = result["scan_id"].values
+    if len(meta) == 0 :
+        result['sample_comment'] = labels.errors["global.missing_meta_txt_file"]
+        result['Observation'] = labels.errors["global.missing_meta_txt_file"]
+    else :
+        # foreatch scan id
+        for id in ids:
+            #get meta related to curent scan_id (opti)
+            for k,v in meta.items() :
+                if id in k :
+                    meta_for_scan_id = v
+                    break
+                
+            if result.loc[result["scan_id"] == id ].motoda_comp.values[0] == labels.errors["global.missing_ecotaxa_table"] :
+                #get sample_comment
+                meta_sample_comment =  meta_for_scan_id if meta_for_scan_id == labels.errors["global.bad_meta_txt_file"] else [a.replace("Sample_comment= ", "") for a in meta_for_scan_id if a.startswith("Sample_comment= ")]
+                #set sample_comment
+                result.loc[result["scan_id"] == id, "sample_comment"] = meta_sample_comment[0] if len(meta_sample_comment)>0 else labels.errors["global.missing_column"]+" in meta.txt"
+            
+            #get and set Observation
+            meta_observation =  meta_for_scan_id if meta_for_scan_id == labels.errors["global.bad_meta_txt_file"] else [a.replace("Observation= ", "") for a in meta_for_scan_id if a.startswith("Observation= ")]
+            result.loc[result["scan_id"] == id, "Observation"] = meta_observation[0] if len(meta_observation)>0 else labels.errors["global.missing_column"]+"  in meta.txt"
 
     # Keep only one line by couples : id / motoda fraction
     result = result.drop_duplicates()

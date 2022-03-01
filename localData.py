@@ -22,6 +22,8 @@ def missingCol(cols, path):
 def getDrives():
     print("************Get drives in************")
     drives = getDir("")
+    #Keep only the one that begin with Zooscan_
+    [d for d in drives if d['label'].startswith('zooscan_')]
     #Sort in alphabetical order
     drives = sorted(drives, key=lambda d: d['label'])
     return drives
@@ -63,7 +65,9 @@ def getdata(mode, subpath) :
         # Format given data 
         dataframe = tsvToGlobalData(tsv_files)
         fsData = getFileSystem(subpath)
-        return {"dataframe" : dataframe, "fs" : fsData}
+        #Get meta data
+        meta_files= getMeta(fsData)
+        return {"dataframe" : dataframe, "fs" : fsData, "meta" : meta_files}
 
     elif mode==libQC_classes.Mode.HEADER :
         # Get all header files 
@@ -71,6 +75,21 @@ def getdata(mode, subpath) :
         # Format given data 
         dataframe = headerToGlobalData(header_files)
         return dataframe
+
+def getMeta(fs) : 
+    meta_files = {}
+    #list meta.txt in all _work/ sub directory 
+    list_meta_paths = fs.loc[([True if ("/Zooscan_scan/_work/" in i) and ("meta" in i) else False for i in fs['path'].values])
+                        & (fs['extension'].values == "txt"), ["path", "name", "extension"]]
+    #for eatch listed meta.txt read file and add an entry in meta_files dictionary
+    for path in list_meta_paths.path.values : 
+        try :
+            with open(path) as f:
+                lines = f.readlines()
+                meta_files[path] = lines
+        except :
+            meta_files[path] = [labels.errors["global.bad_meta_txt_file"]]
+    return meta_files
 
 def  getTsv(subpath):
     """Read all ecotaxa tables (tsv files) for the given project. Return them as list of pandas dataframes"""

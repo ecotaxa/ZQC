@@ -3,6 +3,8 @@ errors = {
     "global.qc_not_implemented": "#Not impl",
     "global.missing_column": "#MISSING column",
     "global.bad_zip_file": "#BAD ZIP FILE",
+    "global.bad_meta_txt_file": "#BAD TXT FILE",
+    "global.missing_meta_txt_file": "#MISSING Meta txt file",
     "global.missing_directory.work": "#MISSING _work DIRECTORY",
     "global.not_numeric": "#NOT NUMERIC",
 
