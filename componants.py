@@ -1,5 +1,5 @@
-from dash import dcc
-from dash import html, dash_table
+from dash import dash_table, dcc, html
+from enums import SUPPORTED_DATA_COMPONANT
 import labels
 
 
@@ -26,7 +26,7 @@ def generate_project_selector(drives):
         html.H2("Project"),
         dcc.Dropdown(
             id='app-1-dropdown-projects',
-            value=[],
+            value=[''],
             multi=True
         )
     ], className="container-prj-selector")
@@ -122,33 +122,38 @@ def emptyResult(block_id, projects):
     return emptyResLayout
 
 
-def sub_block_execution_result(subBlock, dataframe):
-    return html.Div([
-        html.H3(subBlock),
-        dash_table.DataTable(
-            id='tbl-' + subBlock,
-            data=dataframe.to_dict('records'),  # the contents of the table
-            columns=[{"name": i, "id": i} for i in dataframe.columns],
-            filter_action="native",     # allow filtering of data by user ('native') or not ('none')
-            sort_action="native",       # enables data to be sorted per-column by user or not ('none')
-            sort_mode="single",         # sort across 'multi' or 'single' columns
-            style_data_conditional=style_table_data(dataframe),
-            fixed_rows={'headers': True},
-            style_cell={                # ensure adequate header width when text is shorter than cell's text, and allign the text to left (default right)
-                'minWidth': 120, 'width': 120, 'textAlign': 'left', 'font-family': '"IMTITLE", Sans-serif', 'padding': '5px'
-            },
-            style_header={              # ensure adequate header width when text is shorter than cell's text, and allign the text to left (default right)
-                'padding': '5px',
-                'textAlign': 'center',
-            },
-            style_data={                # overflow cells' content into multiple lines
-                'whiteSpace': 'normal',
-                'height': 'auto',
-                'font-size': '14px'
-            }
-        )
-    ],
+def sub_block_execution_result(subBlock, data):
+    results_content= [html.H3(subBlock)]
+    for result in data :
+        if result["type"] == SUPPORTED_DATA_COMPONANT.DATA_TABLE :
+            dash_comp = dash_table.DataTable(
+                id='tbl-' + subBlock,
+                data=result["dataframe"].to_dict('records'),  # the contents of the table
+                columns=[{"name": i, "id": i} for i in result["dataframe"].columns],
+                filter_action="native",     # allow filtering of data by user ('native') or not ('none')
+                sort_action="native",       # enables data to be sorted per-column by user or not ('none')
+                sort_mode="single",         # sort across 'multi' or 'single' columns
+                style_data_conditional=style_table_data(result["dataframe"]),
+                fixed_rows={'headers': True},
+                style_cell={                # ensure adequate header width when text is shorter than cell's text, and allign the text to left (default right)
+                    'minWidth': 120, 'width': 120, 'textAlign': 'left', 'font-family': '"IMTITLE", Sans-serif', 'padding': '5px'
+                },
+                style_header={              # ensure adequate header width when text is shorter than cell's text, and allign the text to left (default right)
+                    'padding': '5px',
+                    'textAlign': 'center',
+                },
+                style_data={                # overflow cells' content into multiple lines
+                    'whiteSpace': 'normal',
+                    'height': 'auto',
+                    'font-size': '14px'
+                }
+            )
+            results_content.append(dash_comp)
+
+    div = html.Div(
+        results_content,
         className="sub-block-div")
+    return div
 
 
 def qc_execution_result(project, qcExecutionLayout):

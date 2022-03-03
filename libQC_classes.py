@@ -1,21 +1,8 @@
 import componants
 import localData
-from enum import Enum
 import pandas as pd
 import time
 import labels
-
-
-class Mode(Enum):
-    TSV = "TSV"
-    HEADER = "HEADER"
-
-
-class EXECUTION_STATUS(Enum):
-    SUCESS = "Sucess"
-    ERROR = "Error"
-    KNOWN_ERROR = "Known error"
-
 
 class ChecksLib():
     def __init__(self):
@@ -56,7 +43,7 @@ class Block:
         for project in projects:
             start_time = time.time()
             try :
-            # Get data
+                # Get data
                 local_data = localData.getdata(self.mode, drive + "/" + project)
                 print("--- Get local data : %s seconds ---" % (time.time() - start_time))
                 #If critical status error  : generate associated result componant
@@ -82,10 +69,11 @@ class Block:
 
 
 class SubBlock:
-    def __init__(self, _title, _description, _id):
+    def __init__(self, _title, _description, _number_of_fig, _id):
         self.title = _title
         self.description = _description
         self.id = _id
+        self.number_of_fig = _number_of_fig
         self.checks = []
 
     def addChecks(self, *_checks):
@@ -97,11 +85,14 @@ class SubBlock:
     def runCallback(self, mode, local_data):
         """Run sub block's QC, save the result in project forlder and return execution result as dash componants"""
         # For eatch checks of this sub block, run its callback and store the result in frames array.
-        frames = [check.callback(check.id, mode, local_data) for check in self.checks]
-
-        # Concat all frame to create a unique result dataframe for this sub block. #TODO JCE
-        result = pd.concat(frames)
-        result = result.groupby([result.columns[0]]).first().reset_index()  # TODO JCE first_valid_index
+        frames = [{"type": check.type, "fig_number" : check.fig_number, "data" : check.callback(check.id, mode, local_data) } for check in self.checks]
+        result=[]
+        # Concat all frame concat depending fig nb to create a unique result dataframe for this sub block. 
+        for nb in range(1, self.number_of_fig+1):
+            frames_for_fig_n = [d for d in frames if d['fig_number'] == nb]
+            type_for_fig_n=list(set([frame["type"] for frame in frames_for_fig_n]))
+            dataframe_for_fig_n=[frame["data"] for frame in frames_for_fig_n]
+            result.append({"dataframe" : pd.concat(dataframe_for_fig_n).groupby([dataframe_for_fig_n[0].columns[0]]).first().reset_index(), "type" : type_for_fig_n[0]})
 
         # Save the result of the execution as html in the project folder
         localData.saveQcExecution(self.title, result)
@@ -121,10 +112,12 @@ class SubBlock:
 
 
 class Check:
-    def __init__(self, _title, _description, _id, _callback):
+    def __init__(self, _title, _description, _id, _type, _fig_number, _callback):
         self.title = _title
         self.description = _description
         self.id = _id
+        self.fig_number=_fig_number
+        self.type = _type
         self.callback = _callback
 
     def listChecks(self):

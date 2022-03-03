@@ -1,11 +1,10 @@
-import libQC_classes 
 import pandas as pd
 import numpy as np
 import os
-import stat
 import labels
 from zipfile import ZipFile
 from zipfile import BadZipFile 
+from enums import Mode
 
 local_base_path = "../local_plankton/zooscan/"
 complex_imev_mer_base_path = "/piqv/local_plankton/zooscan/"
@@ -59,7 +58,7 @@ def getFiles(subpath):
 
 def getdata(mode, subpath) :
     """Read, format, and return usefull data for the selected project"""
-    if mode==libQC_classes.Mode.TSV :
+    if mode==Mode.TSV :
         # Get all tsv files 
         tsv_files = getTsv(subpath)
         # Format given data 
@@ -69,7 +68,7 @@ def getdata(mode, subpath) :
         meta_files= getMeta(fsData)
         return {"dataframe" : dataframe, "fs" : fsData, "meta" : meta_files}
 
-    elif mode==libQC_classes.Mode.HEADER :
+    elif mode==Mode.HEADER :
         # Get all header files 
         header_files = getHeader(subpath)
         # Format given data 
@@ -106,7 +105,9 @@ def  getTsv(subpath):
             'acq_min_mesh', 
             'acq_max_mesh',
             'sample_net_type',
-            'sample_comment'
+            'sample_comment',
+            'sample_scan_operator',
+            'acq_sub_method'
         ]
     try : 
         for folder_name in listFolder(base_path+subpath+"/Zooscan_scan/_work/") :

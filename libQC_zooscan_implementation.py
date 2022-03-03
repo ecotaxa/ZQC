@@ -2,7 +2,6 @@ import labels
 import time
 import numpy as np
 import re
-import pandas as pd
 
 #### TOOLS
 
@@ -34,6 +33,18 @@ def get_frac_id(str) :
 
 def is_power_of_two(n):
     return (n & (n-1) == 0) and n != 0
+
+def independent_concat(df1_max, col1, df2_min, col2): 
+    ''' set the df2_min size of a collumn in order to integrate it into de bigger df'''
+    tmp_min = []
+
+    for e in df2_min[col2].values : 
+        tmp_min.append(e)
+    for i in range(len(df2_min[col2].values),len(df1_max[col1].values)) : 
+        tmp_min.append(" ")
+    
+    df1_max[col2]=tmp_min
+    return df1_max
 
 #### CALLBACKS
 
@@ -666,4 +677,22 @@ def check_motoda_quality(_id, _mode, local_data):
     result.rename(columns={'scan_id': 'List scan ID', "motoda_quality" : "Motoda quality"}, inplace=True)
 
     print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback motoda_fraction")
+    return result
+
+def check_ortographe(_id, _mode, local_data):
+    """
+    Potential cases :
+    """
+    start_time = time.time()
+    # Get only usefull columns and drp duplicate to keep uniques values
+    result_sample_scan_operator = local_data.get("dataframe")[['sample_scan_operator']].drop_duplicates()
+    result_acq_sub_method = local_data.get("dataframe")[['acq_sub_method']].drop_duplicates()
+
+    #set same len to both col
+    result = independent_concat(result_sample_scan_operator, "sample_scan_operator",result_acq_sub_method, "acq_sub_method") if len(result_sample_scan_operator["sample_scan_operator"])>len(result_acq_sub_method["acq_sub_method"]) else independent_concat(result_sample_scan_operator, "sample_scan_operator", result_acq_sub_method, "acq_sub_method") 
+
+    # Rename collums to match the desiered output
+    result.rename(columns={'sample_scan_operator': 'Scan op.', "acq_sub_method" : "Submethod"}, inplace=True)
+
+    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback check_ortographe")
     return result
