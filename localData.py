@@ -22,7 +22,7 @@ def getDrives():
     print("************Get drives in************")
     drives = getDir("")
     #Keep only the one that begin with Zooscan_
-    [d for d in drives if d['label'].startswith('zooscan_')]
+    drives = [d for d in drives if d['label'].startswith('zooscan_')]
     #Sort in alphabetical order
     drives = sorted(drives, key=lambda d: d['label'])
     return drives
