@@ -7,7 +7,7 @@ from zipfile import BadZipFile
 from enums import Mode
 
 local_base_path = "../local_plankton/zooscan/"
-complex_imev_mer_base_path = "/piqv/local_plankton/zooscan/"
+complex_imev_mer_base_path = "/piqv/plankton/"
 plankton_base_path = "/remote/plankton/piqv/local_plankton/zooscan/"
 
 base_path=complex_imev_mer_base_path
