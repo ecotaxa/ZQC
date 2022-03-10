@@ -387,15 +387,19 @@ def check_process_post_sep(_id, _mode, local_data):
 
 def check_sieve_bug(_id, _mode, local_data):
     """This check verifies the sieve values used to prepare the scan. They must be constant in the same project and therefore NEVER be different.
-    Potential cases :
-        "global.missing_ecotaxa_table": "#MISSING ecotaxa table"
-        "global.not_numeric": "#NOT NUMERIC",
-        "acquisition.sieve.bug.different": "#SIEVE different from others",
-        "acquisition.sieve.bug.min_sup_max": "#ACQ MIN > ACQ MAX",
-        "acquisition.sieve.bug.min_equ_max": "#ACQ MIN = ACQ MAX",
-        "acquisition.sieve.bug.min_d1_dif_max_d2": "#ACQ MIN (d1) ≠ ACQ MAX (d2)",
-        "acquisition.sieve.bug.min_d2_dif_max_d3": "#ACQ MIN (d2) ≠ ACQ MAX (d3)"
-        "acquisition.sieve.bug.ok": "sieve OK"
+    
+    In the columns 'sieve MIN size' and 'sieve MAX size' of the report table, are reported respectively :
+        - the minimum sieve size, column CS acq_min_mesh of the ecotaxa_scanID.tsv tables of the subdirectories of the _work directories
+        - the maximum size, column CT acq_max_mesh of the tables ecotaxa_scanID.tsv of the sub-directories of the directories _work
+
+    In the 'sieve BUG' column :
+        - "#MISSING ecotaxa table" : No ecotaxa_scanID.tsv table
+        - "#NOT NUMERIC" : the acq_min and acq_max values are not numerical
+        - "#SIEVE different from others" : the acq_min of 1 or more scans differs from the other scans or the acq_max of 1 or more scans diverges from the other scans 
+        - "#ACQ MIN > ACQ MAX" : the acq_min is greater than the acq_max for the same FracID (within the same scanID)
+        - "#ACQ MIN = ACQ MAX" : the acq_min is equal to the acq_max for the same FracID (within the same scanID)
+        - "#ACQ MIN (dN) ≠ ACQ MAX (dN+1)" : For the same sampleID whose FracID = d1 or d2 or d3 (comparison between several scanIDs of the same sampleID) the acq_min (dN) ≠ acq_max (d+1)
+        - "sieve OK" : Everything is OK
     """
     start_time = time.time()
 
@@ -462,14 +466,16 @@ def check_sieve_bug(_id, _mode, local_data):
 
 def check_motoda_check(_id, _mode, local_data):
     """
-    Potential cases :
-        "global.missing_ecotaxa_table": "#MISSING ecotaxa table",
-        "global.not_numeric": "#NOT NUMERIC",
-        "acquisition.motoda.check.identique": "Motoda identique",
-
-        "acquisition.motoda.check.cas1": "Motoda Fraction ≠ 1 ou ≠ ^2",
-        "acquisition.motoda.check.cas2": "Motoda Fraction ≠ ^2",
-        "acquisition.motoda.check.ok": "sieve OK",  
+    This control performs a numerical check on the motoda fraction used. 
+        In the column 'MOTODA Fraction' of the report table, is reported :
+            - the fraction acq_sub_part of the tables ecotaxa_scanID.tsv of the subdirectories of the _work directories.
+        In the column 'MOTODA check':
+            - "#NOT NUMERIC": if the acq_sub_part value is not numeric
+            - "#MISSING ecotaxa table" : if no ecotaxa_scanID.tsv table
+            - "#Motoda Fraction ≠ 1 or ≠ ^2": if when FracID = d1 regardless of sample_net_type OR when FracID = tot and sample_net_type = rg, does not respect → acq_sub_part = 1 or a power of 2
+            - "#Motoda Fraction ≠ ^2": if when FracID = dN+1 OR =tot OR = plankton (all net types except rg), does not respect → acq_sub_part = a power of 2 except 1
+            - "#Motoda identical": if acq_sub_part is identical throughout the project
+            - "Motoda OK" : if everything is OK
     """
     start_time = time.time()
     # Get only usefull columns
@@ -513,11 +519,15 @@ def check_motoda_check(_id, _mode, local_data):
 
 def check_motoda_comparaison(_id, _mode, local_data):
     """
-    Potential cases :
-        "global.missing_ecotaxa_table": "#MISSING ecotaxa table",
-        "global.not_numeric": "#NOT NUMERIC",
-        "acquisition.motoda.comparaison.ko": "Motoda frac (dN-1) ≥ Motoda frac (dN)"
-        "acquisition.motoda.comparaison.ok": "Motoda comparison OK"
+    Comparison of the motoda fraction between scanIDs of the same sampleID, this control is only done for scans where the FracID = d1 or d2 or dn... , so having the same sampleID.
+    In the columns 'MOTODA comparison' :
+        - "#NOT NUMERIC": if the acq_sub_part value is not numeric
+        - "#MISSING ecotaxa table": if no ecotaxa_scanID.tsv table
+        - "#Motoda frac (dN-1) ≥ Motoda frac (dN)": if does not respect acq_sub_part (N) < acq_sub_part (N+1). Example : acq_sub_part (d1) > acq_sub_part (d2)
+        - "#Motoda comparison OK" : if everything is OK
+    In the columns 'Sample Comment' and 'Observation' of the report table, are reported respectively :
+        - the sample_comment, column EK of the ecotaxa_scanID.tsv tables of the subdirectories of the _work directories. If the ecotaxa.tsv table is missing it is retrieved from the meta.txt.
+        - the Observation, from the meta.txt file of the _work directories.
     """
     start_time = time.time()
     # Get only usefull columns
@@ -592,12 +602,26 @@ def check_motoda_comparaison(_id, _mode, local_data):
 
 def check_motoda_quality(_id, _mode, local_data):
     """
-    Potential cases :
-        "global.missing_ecotaxa_table": "#MISSING ecotaxa table",
-        "acquisition.motoda.quality.missing": "#MISSING images",
-        "acquisition.motoda.quality.low": "#Images nb LOW : ",
-        "acquisition.motoda.quality.high": "#Images nb HIGH : ",
-        "acquisition.motoda.quality.ok": "Motoda OK",
+    .jpg images, commonly called vignettes, are created in the sub-directories of the _work directory following the initial process step.
+    The number of vignettes created tells us about the quality of the fraction chosen with the motoda to make the scan : sample with insufficient or too many splits.
+    In the columns 'Motoda quality' :
+        - "#NOT NUMERIC": if the acq_sub_part value is not numeric
+        - "#MISSING ecotaxa table": if no ecotaxa_scanID.tsv table
+        - "#MISSING images" : if No .jpg images in the sub-directories of the _work directory
+        - "#Images nb LOW : N" or "#Images nb HIGH : N" : if the following conditions are not met :
+                # When Nettype is rg and motoda_frac strictly equal to 1
+                    → the number of .jpg images in the _work subdirectory must not be > 1500
+                # When Nettype is rg and motoda_frac strictly > 1
+                    → the number of .jpg images in the _work subdirectory must be between 800 and 1500
+                # When Nettype ≠ rg and FracID = d1 and motoda_frac strictly equal to 1
+                    → the number of .jpg images in the _work subdirectory must not be > 1500
+                # When Nettype ≠ rg and FracID = d1 and the motoda_frac strictly > 1 
+                    → the number of .jpg images in the _work subdirectory must be between 800 and 1500
+                # When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly equal to 1
+                    → the number of .jpg images in the _work subdirectory must not be > 2500
+                # When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly >1
+                    → the number of .jpg images in the _work subdirectory must be between 1000 and 2500
+        - "Motoda OK" : if everything is OK
     """
     start_time = time.time()
     # Get only usefull columns
@@ -679,9 +703,11 @@ def check_motoda_quality(_id, _mode, local_data):
     print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback motoda_fraction")
     return result
 
-def check_ortographe(_id, _mode, local_data):
+def check_spelling(_id, _mode, local_data):
     """
-    Potential cases :
+    Highlighting in a second table the spelling errors on fields that should be constant in the project:
+        - analysis operator in "Scan op." column
+        - splitting method in "Submethod" column
     """
     start_time = time.time()
     # Get only usefull columns and drp duplicate to keep uniques values
@@ -694,5 +720,5 @@ def check_ortographe(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'sample_scan_operator': 'Scan op.', "acq_sub_method" : "Submethod"}, inplace=True)
 
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback check_ortographe")
+    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback check_spelling")
     return result

@@ -31,11 +31,11 @@ class Lib_zooscan():
       check_sep_mask = Check("SEP MASK", "Checking the presence of a sep.gif mask in the subdirectory of the _work. If it is not present, indicate the motoda fraction associated with the scan to eliminate the situation where there was no multiple to separate because the sample was very poor and therefore motoda = 1", "sep_mask", 1, SUPPORTED_DATA_COMPONANT.DATA_TABLE,  libQC_zooscan_implementation.check_sep_mask)
       check_process_post_sep = Check("Process POST SEP", "This second process must include the separation mask (if any) created in the previous step.", "process_post_sep", 1, SUPPORTED_DATA_COMPONANT.DATA_TABLE, libQC_zooscan_implementation.check_process_post_sep)
    
-      check_sieve_bug = Check("Sieve Bug", "", "sieve_bug", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_sieve_bug)
-      check_motoda_check = Check("MOTODA check", "Contrôle numérique", "motoda_check", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_motoda_check)
-      check_motoda_comparaison = Check("MOTODA comparison", "Comparison entre les scanID d’un même sampleID", "motoda_comparaison", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_motoda_comparaison)
-      check_motoda_quality = Check("MOTODA quality", "Nombre de vignettes", "motoda_quality", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_motoda_quality)
-      check_ortographe= Check("Orthographe", "Sur champ récurrent", "ortographe", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 2, libQC_zooscan_implementation.check_ortographe)
+      check_sieve_bug = Check("Sieve Bug", libQC_zooscan_implementation.check_sieve_bug.__doc__, "sieve_bug", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_sieve_bug)
+      check_motoda_check = Check("MOTODA check", libQC_zooscan_implementation.check_motoda_check.__doc__, "motoda_check", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_motoda_check)
+      check_motoda_comparaison = Check("MOTODA comparison", libQC_zooscan_implementation.check_motoda_comparaison.__doc__, "motoda_comparaison", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_motoda_comparaison)
+      check_motoda_quality = Check("MOTODA quality", libQC_zooscan_implementation.check_motoda_quality.__doc__, "motoda_quality", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_motoda_quality)
+      check_spelling= Check("Spelling", libQC_zooscan_implementation.check_spelling.__doc__, "spelling", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 2, libQC_zooscan_implementation.check_spelling)
 
       checks_gps = Check("GPS", "Carte interactive, sous forme d’un Tableau, sous forme de Graphs", "GPS", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.noCb)
       checks_date = Check("Check dates de prélèvements", "", "Dates", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.noCb)
@@ -55,7 +55,7 @@ class Lib_zooscan():
 
       #Fill sub blocks with checks
       subBlock_process.addChecks(check_frame_type, check_raw_files, check_scan_weight, check_process_post_scan, check_bw_ratio, check_pixel_size, check_sep_mask, check_process_post_sep)
-      subBlock_acquisition.addChecks(check_sieve_bug, check_motoda_check, check_motoda_comparaison, check_motoda_quality, check_ortographe)
+      subBlock_acquisition.addChecks(check_sieve_bug, check_motoda_check, check_motoda_comparaison, check_motoda_quality, check_spelling)
       subBlock_sample.addChecks(checks_gps, checks_date, checks_other_data, checks_distance_parcourue, checks_filtred_volume)
 
    def listChecks(self) :

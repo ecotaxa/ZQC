@@ -27,7 +27,7 @@ def generate_project_selector(drives):
         html.H2("Project"),
         dcc.Dropdown(
             id='app-1-dropdown-projects',
-            value=[''],
+            value=[],
             multi=True
         )
     ], className="container-prj-selector")
