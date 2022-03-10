@@ -17,6 +17,7 @@ def generate_project_selector(drives):
         dcc.Dropdown(
             id='app-1-dropdown-drives',
             value="zooscan_lov",
+            clearable = False,
             options=[
                 {'label': drive['label'] + " 🔒" if drive['disabled'] else drive['label'], 
                 'value': drive['label'], 
