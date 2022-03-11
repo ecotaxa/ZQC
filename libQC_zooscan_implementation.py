@@ -157,6 +157,7 @@ def check_raw_files(_id, _mode, local_data):
 
 def check_scan_weight(_id, _mode, local_data):
     """All image files _raw_1.tif inside the _raw directory must be the same size.
+    
     In the column "SCAN weight" of the report table:
         - "#BUG weight" : all these .tif have not the same weight
         - "Weight OK" : all these .tif have the same weight
@@ -185,11 +186,13 @@ def check_scan_weight(_id, _mode, local_data):
 
 def check_process_post_scan(_id, _mode, local_data):
     """ Checks the file system structure post scan generated.
+
     In the _raw directory of Zooscan_scan must be present :
         - N images named : scanID_X.jpg (images go from 1 to infinity)
         - 1 table ecotaxa_scanID.tsv
         - 1 file of the following types dat1.pid, msk1.gif, out1.gif
         - 1 zipped image vis1.zip
+
     In the column "POST SCAN" of the report table:
         - "#UNPROCESSED" : if less tsv than expected
         - "#DUPLICATE TSV" : if more tsv than excepted
@@ -259,6 +262,7 @@ def check_process_post_scan(_id, _mode, local_data):
 
 def check_bw_ratio(_id, _mode, local_data):
     """In order to ensure the quality of the process, the value of the B/W ratio must be strictly less than 0.25.
+
         In the column "B/W ratio" of the report table:
             - "#MISSING ecotaxa table" : if no ecotaxa_scanID.tsv table.
             - "#MISSING column" : if process_particle_bw_ratio column is missing from the ecotaxa.tsv table.
@@ -286,19 +290,20 @@ def check_bw_ratio(_id, _mode, local_data):
     return result
 
 def check_pixel_size(_id, _mode, local_data):
-    """The idea here is to reveal an old zooprocess bug that was mistaken about the pixel size to apply for morphometric calculations.
-    The purpose is to check that the pixel_size is consistent with the process_img_resolution. 
-    It should match one of the following proposals :
-        - size :"0.0847" and resolution : "300"
-        - size :"0.0408" and resolution : "600" 
-        - size :"0.0204" and resolution : "1200"
-        - size :"0.0106" and resolution : "2400"
-        - size :"0.0053" and resolution : "4800"
-    In the column "PIXEL size" of the report table:
-        - "#MISSING ecotaxa table" : if no ecotaxa_scanID.tsv table.
-        - "#MISSING column" : if pixel_size column  or process_img_resolution column is missing from the ecotaxa.tsv table.
-        - "#Size NOK" : if the pixel size is not consistent with the resolution.
-        - pixel size value : if the pixel size is consistent with the resolution.
+    """The idea here is to reveal an old zooprocess bug that was mistaken about the pixel size to apply for morphometric calculations. The purpose is to check that the pixel_size is consistent with the process_img_resolution. 
+
+        It should match one of the following proposals :
+            - size :"0.0847" and resolution : "300"
+            - size :"0.0408" and resolution : "600" 
+            - size :"0.0204" and resolution : "1200"
+            - size :"0.0106" and resolution : "2400"
+            - size :"0.0053" and resolution : "4800"
+            
+        In the column "PIXEL size" of the report table:
+            - "#MISSING ecotaxa table" : if no ecotaxa_scanID.tsv table.
+            - "#MISSING column" : if pixel_size column  or process_img_resolution column is missing from the ecotaxa.tsv table.
+            - "#Size NOK" : if the pixel size is not consistent with the resolution.
+            - pixel size value : if the pixel size is consistent with the resolution.
     """
     start_time = time.time()
 
@@ -334,9 +339,10 @@ def check_pixel_size(_id, _mode, local_data):
 
 def check_sep_mask(_id, _mode, local_data):
     """Verification of the presence of a sep.gif mask in the subdirectory of the _work. 
-    In the column "SEP MASK" of the report table:
-        - "#MISSING SEP MSK = (F)" : If the sep.gif mask is not present, indicate also the motoda fraction associated with the scan to eliminate the situation where there was no multiple to separate because the sample was very poor and therefore motoda = 1
-        - "Sep mask OK" : If a sep.gif mask is present
+
+        In the column "SEP MASK" of the report table:
+            - "#MISSING SEP MSK = (F)" : If the sep.gif mask is not present, indicate also the motoda fraction associated with the scan to eliminate the situation where there was no multiple to separate because the sample was very poor and therefore motoda = 1
+            - "Sep mask OK" : If a sep.gif mask is present
     """
     start_time = time.time()
 
@@ -364,7 +370,8 @@ def check_sep_mask(_id, _mode, local_data):
     return result
 
 def check_process_post_sep(_id, _mode, local_data):
-    """This second process must include the separation mask (if any) created in the previous step.
+    """ This second process must include the separation mask (if any) created in the previous step.
+
         In the column "PIXEL size" of the report table:
             - "#UNPROCESSED" : if missing ecotaxa_scanID.tsv table.
             - "#MISSING column" : if process_particle_sep_mask column is missing from the ecotaxa.tsv table.
@@ -474,9 +481,11 @@ def check_sieve_bug(_id, _mode, local_data):
 
 def check_motoda_check(_id, _mode, local_data):
     """This control performs a numerical check on the motoda fraction used. 
+
         In the column 'MOTODA Fraction' of the report table, is reported :
             - the fraction acq_sub_part of the tables ecotaxa_scanID.tsv of the subdirectories of the _work directories.
-        In the column 'MOTODA check':
+
+        In the column 'MOTODA check' of the report table :
             - "#NOT NUMERIC": if the acq_sub_part value is not numeric
             - "#MISSING ecotaxa table" : if no ecotaxa_scanID.tsv table
             - "#Motoda Fraction ≠ 1 or ≠ ^2": if when FracID = d1 regardless of sample_net_type OR when FracID = tot and sample_net_type = rg, does not respect → acq_sub_part = 1 or a power of 2
@@ -525,15 +534,17 @@ def check_motoda_check(_id, _mode, local_data):
     return result
 
 def check_motoda_comparaison(_id, _mode, local_data):
-    """Comparison of the motoda fraction between scanIDs of the same sampleID, this control is only done for scans where the FracID = d1 or d2 or dn... , so having the same sampleID.
-    In the columns 'MOTODA comparison' :
-        - "#NOT NUMERIC": if the acq_sub_part value is not numeric
-        - "#MISSING ecotaxa table": if no ecotaxa_scanID.tsv table
-        - "#Motoda frac (dN-1) ≥ Motoda frac (dN)": if does not respect acq_sub_part (N) < acq_sub_part (N+1). Example : acq_sub_part (d1) > acq_sub_part (d2)
-        - "#Motoda comparison OK" : if everything is OK
-    In the columns 'Sample Comment' and 'Observation' of the report table, are reported respectively :
-        - the sample_comment, column EK of the ecotaxa_scanID.tsv tables of the subdirectories of the _work directories. If the ecotaxa.tsv table is missing it is retrieved from the meta.txt.
-        - the Observation, from the meta.txt file of the _work directories.
+    """ Comparison of the motoda fraction between scanIDs of the same sampleID, this control is only done for scans where the FracID = d1 or d2 or dn... , so having the same sampleID.
+
+        In the column 'MOTODA comparison' of the report table :
+            - "#NOT NUMERIC": if the acq_sub_part value is not numeric
+            - "#MISSING ecotaxa table": if no ecotaxa_scanID.tsv table
+            - "#Motoda frac (dN-1) ≥ Motoda frac (dN)": if does not respect acq_sub_part (N) < acq_sub_part (N+1). Example : acq_sub_part (d1) > acq_sub_part (d2)
+            - "#Motoda comparison OK" : if everything is OK
+            
+        In the columns 'Sample Comment' and 'Observation' of the report table, are reported respectively :
+            - the sample_comment, column EK of the ecotaxa_scanID.tsv tables of the subdirectories of the _work directories. If the ecotaxa.tsv table is missing it is retrieved from the meta.txt.
+            - the Observation, from the meta.txt file of the _work directories.
     """
     start_time = time.time()
     # Get only usefull columns
@@ -608,25 +619,26 @@ def check_motoda_comparaison(_id, _mode, local_data):
 
 def check_motoda_quality(_id, _mode, local_data):
     """.jpg images, commonly called vignettes, are created in the sub-directories of the _work directory following the initial process step.
-    The number of vignettes created tells us about the quality of the fraction chosen with the motoda to make the scan : sample with insufficient or too many splits.
-    In the columns 'Motoda quality' :
-        - "#NOT NUMERIC": if the acq_sub_part value is not numeric
-        - "#MISSING ecotaxa table": if no ecotaxa_scanID.tsv table
-        - "#MISSING images" : if No .jpg images in the sub-directories of the _work directory
-        - "#Images nb LOW : N" or "#Images nb HIGH : N" : if the following conditions are not met :
-                # When Nettype is rg and motoda_frac strictly equal to 1
-                    → the number of .jpg images in the _work subdirectory must not be > 1500
-                # When Nettype is rg and motoda_frac strictly > 1
-                    → the number of .jpg images in the _work subdirectory must be between 800 and 1500
-                # When Nettype ≠ rg and FracID = d1 and motoda_frac strictly equal to 1
-                    → the number of .jpg images in the _work subdirectory must not be > 1500
-                # When Nettype ≠ rg and FracID = d1 and the motoda_frac strictly > 1 
-                    → the number of .jpg images in the _work subdirectory must be between 800 and 1500
-                # When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly equal to 1
-                    → the number of .jpg images in the _work subdirectory must not be > 2500
-                # When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly >1
-                    → the number of .jpg images in the _work subdirectory must be between 1000 and 2500
-        - "Motoda OK" : if everything is OK
+        The number of vignettes created tells us about the quality of the fraction chosen with the motoda to make the scan : sample with insufficient or too many splits.
+        
+        In the column 'Motoda quality' of the report table:
+            - "#NOT NUMERIC": if the acq_sub_part value is not numeric
+            - "#MISSING ecotaxa table": if no ecotaxa_scanID.tsv table
+            - "#MISSING images" : if No .jpg images in the sub-directories of the _work directory
+            - "#Images nb LOW : N" or "#Images nb HIGH : N" : if the following conditions are not met :
+                    # When Nettype is rg and motoda_frac strictly equal to 1
+                        → the number of .jpg images in the _work subdirectory must not be > 1500
+                    # When Nettype is rg and motoda_frac strictly > 1
+                        → the number of .jpg images in the _work subdirectory must be between 800 and 1500
+                    # When Nettype ≠ rg and FracID = d1 and motoda_frac strictly equal to 1
+                        → the number of .jpg images in the _work subdirectory must not be > 1500
+                    # When Nettype ≠ rg and FracID = d1 and the motoda_frac strictly > 1 
+                        → the number of .jpg images in the _work subdirectory must be between 800 and 1500
+                    # When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly equal to 1
+                        → the number of .jpg images in the _work subdirectory must not be > 2500
+                    # When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly >1
+                        → the number of .jpg images in the _work subdirectory must be between 1000 and 2500
+            - "Motoda OK" : if everything is OK
     """
     start_time = time.time()
     # Get only usefull columns
