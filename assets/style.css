@@ -123,6 +123,12 @@ button{
     padding: 0px 10px;
 }
 
+.details_doc{
+    color: #9b9b9b;
+    font-family: "IMTITLE", Sans-serif;
+    font-size: 14px;
+    font-style: bold;
+}
 .results{
     padding: 10px;
 }

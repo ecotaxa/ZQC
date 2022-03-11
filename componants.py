@@ -90,7 +90,7 @@ def generate_checks_block(checks):
         checks_layout.append(
             html.Div([
                 html.H5(check["title"] + " :"),
-                html.P(check["description"])
+                html.Div(check["description"], style={'whiteSpace': 'pre-line'}, className="details_doc")
             ])
         )
     return html.Div(checks_layout, className="checks-block")

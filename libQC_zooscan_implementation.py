@@ -473,8 +473,7 @@ def check_sieve_bug(_id, _mode, local_data):
     return result
 
 def check_motoda_check(_id, _mode, local_data):
-    """
-    This control performs a numerical check on the motoda fraction used. 
+    """This control performs a numerical check on the motoda fraction used. 
         In the column 'MOTODA Fraction' of the report table, is reported :
             - the fraction acq_sub_part of the tables ecotaxa_scanID.tsv of the subdirectories of the _work directories.
         In the column 'MOTODA check':
@@ -526,8 +525,7 @@ def check_motoda_check(_id, _mode, local_data):
     return result
 
 def check_motoda_comparaison(_id, _mode, local_data):
-    """
-    Comparison of the motoda fraction between scanIDs of the same sampleID, this control is only done for scans where the FracID = d1 or d2 or dn... , so having the same sampleID.
+    """Comparison of the motoda fraction between scanIDs of the same sampleID, this control is only done for scans where the FracID = d1 or d2 or dn... , so having the same sampleID.
     In the columns 'MOTODA comparison' :
         - "#NOT NUMERIC": if the acq_sub_part value is not numeric
         - "#MISSING ecotaxa table": if no ecotaxa_scanID.tsv table
@@ -609,8 +607,7 @@ def check_motoda_comparaison(_id, _mode, local_data):
     return result
 
 def check_motoda_quality(_id, _mode, local_data):
-    """
-    .jpg images, commonly called vignettes, are created in the sub-directories of the _work directory following the initial process step.
+    """.jpg images, commonly called vignettes, are created in the sub-directories of the _work directory following the initial process step.
     The number of vignettes created tells us about the quality of the fraction chosen with the motoda to make the scan : sample with insufficient or too many splits.
     In the columns 'Motoda quality' :
         - "#NOT NUMERIC": if the acq_sub_part value is not numeric
@@ -712,8 +709,7 @@ def check_motoda_quality(_id, _mode, local_data):
     return result
 
 def check_spelling(_id, _mode, local_data):
-    """
-    Highlighting in a second table the spelling errors on fields that should be constant in the project:
+    """Highlighting in a second table the spelling errors on fields that should be constant in the project:
         - analysis operator in "Scan op." column
         - splitting method in "Submethod" column
     """
