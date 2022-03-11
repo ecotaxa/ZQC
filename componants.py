@@ -16,7 +16,7 @@ def generate_project_selector(drives):
         html.H2("Drive"),
         dcc.Dropdown(
             id='app-1-dropdown-drives',
-            value="zooscan_lov",
+            value="zooscan_embrc",
             clearable = False,
             options=[
                 {'label': drive['label'] + " 🔒" if drive['disabled'] else drive['label'], 
@@ -90,7 +90,7 @@ def generate_checks_block(checks):
         checks_layout.append(
             html.Div([
                 html.H5(check["title"] + " :"),
-                html.Div(check["description"], style={'whiteSpace': 'pre-line'}, className="details_doc")
+                html.Div(check["description"], style={'whiteSpace': 'pre'}, className="details_doc")
             ])
         )
     return html.Div(checks_layout, className="checks-block")

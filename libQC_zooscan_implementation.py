@@ -60,7 +60,7 @@ def noCb(_id, _mode, local_data):
 ### PROCESS
 def check_frame_type(_id, _mode, local_data):
     """Displays information about the size of the frame used for scanning: "large" or "narrow".
-    In the "Frame type" column of the report table:
+       In the "Frame type" column of the report table:
         - "large" : if the process_img_background_img of ecotaxa.tsv tables contains "large" and the .ini file name in Zooscan_config folder contains "large"
         - "narrow" : if the process_img_background_img of ecotaxa.tsv tables contains "narrow" and the .ini file name in Zooscan_config folder contains "narrow"
         - "#MISSING ecotaxa table" : if no ecotaxa_scanID.tsv table
