@@ -212,8 +212,8 @@ def tsvToGlobalData(tsv_files) :
     dataframe = pd.concat(tsv_files)
     for col in dataframe.columns :
         dataframe[col].fillna(dataframe.STATUS, inplace=True)
-        #JCE DO NOT PUSH
-    dataframe.to_csv("export_dataframe.csv", index = False, header=True)
+    #     #JCE DO NOT PUSH
+    # dataframe.to_csv("export_dataframe.csv", index = False, header=True)
     return dataframe
 
 def headerToGlobalData(header_files) : 
