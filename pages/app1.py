@@ -54,14 +54,14 @@ def render_content_before_scan(tab, click_run, projects, drive):
         if tab == 'tab-details-before_scan':
             return componants.generate_details(checksBlocks[0]), 0, tab
         elif tab == 'tab-result-before_scan':
-            return componants.generate_result(componants.emptyResult("before_scan", projects)), 0, tab
+            return componants.generate_result("This feature will be available in a future release of the QC application."), 0, tab
         else:
             return [], 0, tab
-    else:
-        if len(projects) > 0:
-            QC_execution = lib_qc_zooscan.runCallback(projects, drive, "before_scan")
-            return componants.generate_result(QC_execution), 0, 'tab-result-before_scan'
-    return componants.generate_result(componants.emptyResult("before_scan", projects)), 0, 'tab-result-before_scan'
+    # else:
+    #     if len(projects) > 0:
+    #         QC_execution = lib_qc_zooscan.runCallback(projects, drive, "before_scan")
+    #         return componants.generate_result(QC_execution), 0, 'tab-result-before_scan'
+    return componants.generate_result("This feature will be available in a future release of the QC application."), 0, 'tab-result-before_scan'
 
 # during_analysis Tabs related callbacks ##
 
@@ -92,14 +92,14 @@ def render_content_after_ecotaxa_classif(tab, click_run, projects, drive):
         if tab == 'tab-details-after_ecotaxa_classif':
             return componants.generate_details(checksBlocks[2]), 0, tab
         elif tab == 'tab-result-after_ecotaxa_classif':
-            return componants.generate_result(componants.emptyResult("after_ecotaxa_classif", projects)), 0, tab
+            return componants.generate_result("This feature will be available in a future release of the QC application."), 0, tab
         else:
             return [], 0, tab
-    else:
-        if len(projects) > 0:
-            QC_execution = lib_qc_zooscan.runCallback(projects, drive, "after_ecotaxa_classif")
-            return componants.generate_result(QC_execution), 0, 'tab-result-after_ecotaxa_classif'
-    return componants.generate_result(componants.emptyResult("after_ecotaxa_classif", projects)), 0, 'tab-result-after_ecotaxa_classif'
+    # else:
+    #     if len(projects) > 0:
+    #         QC_execution = lib_qc_zooscan.runCallback(projects, drive, "after_ecotaxa_classif")
+    #         return componants.generate_result(QC_execution), 0, 'tab-result-after_ecotaxa_classif'
+    return componants.generate_result("This feature will be available in a future release of the QC application."), 0, 'tab-result-after_ecotaxa_classif'
 
 
 checksSelector = html.Div([
