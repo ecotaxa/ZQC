@@ -10,7 +10,7 @@ local_base_path = "../local_plankton/zooscan/"
 complex_imev_mer_base_path = "/piqv/plankton/"
 plankton_base_path = "/remote/plankton/piqv/local_plankton/zooscan/"
 
-base_path=complex_imev_mer_base_path
+base_path=local_base_path
 
 def missingCol(cols, path):
     read_cols = pd.read_csv(path, nrows=0, encoding="ISO-8859-1", sep="\t").columns
@@ -212,6 +212,8 @@ def tsvToGlobalData(tsv_files) :
     dataframe = pd.concat(tsv_files)
     for col in dataframe.columns :
         dataframe[col].fillna(dataframe.STATUS, inplace=True)
+        #JCE DO NOT PUSH
+    dataframe.to_csv("export_dataframe.csv", index = False, header=True)
     return dataframe
 
 def headerToGlobalData(header_files) : 
