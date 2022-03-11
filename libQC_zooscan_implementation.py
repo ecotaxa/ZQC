@@ -408,13 +408,13 @@ def check_sieve_bug(_id, _mode, local_data):
         - the maximum size, column CT acq_max_mesh of the tables ecotaxa_scanID.tsv of the sub-directories of the directories _work
 
     In the 'sieve BUG' column :
-        - "#MISSING ecotaxa table" : No ecotaxa_scanID.tsv table
-        - "#NOT NUMERIC" : the acq_min and acq_max values are not numerical
-        - "#SIEVE different from others" : the acq_min of 1 or more scans differs from the other scans or the acq_max of 1 or more scans diverges from the other scans 
-        - "#ACQ MIN > ACQ MAX" : the acq_min is greater than the acq_max for the same FracID (within the same scanID)
-        - "#ACQ MIN = ACQ MAX" : the acq_min is equal to the acq_max for the same FracID (within the same scanID)
-        - "#ACQ MIN (dN) ≠ ACQ MAX (dN+1)" : For the same sampleID whose FracID = d1 or d2 or d3 (comparison between several scanIDs of the same sampleID) the acq_min (dN) ≠ acq_max (d+1)
-        - "sieve OK" : Everything is OK
+        - "#MISSING ecotaxa table" : If no ecotaxa_scanID.tsv table
+        - "#NOT NUMERIC" : If the acq_min and acq_max values are not numerical
+        - "#SIEVE different from others" : If the acq_min of 1 or more scans differs from the other scans or the acq_max of 1 or more scans diverges from the other scans 
+        - "#ACQ MIN > ACQ MAX" : If the acq_min is greater than the acq_max for the same FracID (within the same scanID)
+        - "#ACQ MIN = ACQ MAX" : If the acq_min is equal to the acq_max for the same FracID (within the same scanID)
+        - "#ACQ MIN (dN) ≠ ACQ MAX (dN+1)" : if for the same sampleID whose FracID = d1 or d2 or d3 (comparison between several scanIDs of the same sampleID) the acq_min (dN) ≠ acq_max (d+1)
+        - "sieve OK" : If everything is OK
     """
     start_time = time.time()
 
@@ -488,8 +488,10 @@ def check_motoda_check(_id, _mode, local_data):
         In the column 'MOTODA check' of the report table :
             - "#NOT NUMERIC": if the acq_sub_part value is not numeric
             - "#MISSING ecotaxa table" : if no ecotaxa_scanID.tsv table
-            - "#Motoda Fraction ≠ 1 or ≠ ^2": if when FracID = d1 regardless of sample_net_type OR when FracID = tot and sample_net_type = rg, does not respect → acq_sub_part = 1 or a power of 2
-            - "#Motoda Fraction ≠ ^2": if when FracID = dN+1 OR =tot OR = plankton (all net types except rg), does not respect → acq_sub_part = a power of 2 except 1
+            - "#Motoda Fraction ≠ 1 or ≠ ^2": if when FracID = d1 regardless of sample_net_type OR when FracID = tot and sample_net_type = rg, 
+              does not respect → acq_sub_part = 1 or a power of 2
+            - "#Motoda Fraction ≠ ^2": if when FracID = dN+1 OR =tot OR = plankton (all net types except rg), 
+              does not respect → acq_sub_part = a power of 2 except 1
             - "#Motoda identical": if acq_sub_part is identical throughout the project
             - "Motoda OK" : if everything is OK
     """
@@ -539,11 +541,13 @@ def check_motoda_comparaison(_id, _mode, local_data):
         In the column 'MOTODA comparison' of the report table :
             - "#NOT NUMERIC": if the acq_sub_part value is not numeric
             - "#MISSING ecotaxa table": if no ecotaxa_scanID.tsv table
-            - "#Motoda frac (dN-1) ≥ Motoda frac (dN)": if does not respect acq_sub_part (N) < acq_sub_part (N+1). Example : acq_sub_part (d1) > acq_sub_part (d2)
+            - "#Motoda frac (dN-1) ≥ Motoda frac (dN)": if does not respect acq_sub_part (N) < acq_sub_part (N+1). 
+              Example : acq_sub_part (d1) > acq_sub_part (d2)
             - "#Motoda comparison OK" : if everything is OK
             
         In the columns 'Sample Comment' and 'Observation' of the report table, are reported respectively :
-            - the sample_comment, column EK of the ecotaxa_scanID.tsv tables of the subdirectories of the _work directories. If the ecotaxa.tsv table is missing it is retrieved from the meta.txt.
+            - the sample_comment, column EK of the ecotaxa_scanID.tsv tables of the subdirectories of the _work directories. 
+              If the ecotaxa.tsv table is missing it is retrieved from the meta.txt.
             - the Observation, from the meta.txt file of the _work directories.
     """
     start_time = time.time()
@@ -618,25 +622,24 @@ def check_motoda_comparaison(_id, _mode, local_data):
     return result
 
 def check_motoda_quality(_id, _mode, local_data):
-    """.jpg images, commonly called vignettes, are created in the sub-directories of the _work directory following the initial process step.
-        The number of vignettes created tells us about the quality of the fraction chosen with the motoda to make the scan : sample with insufficient or too many splits.
+    """ .jpg images, commonly called vignettes, are created in the sub-directories of the _work directory following the initial process step. The number of vignettes created tells us about the quality of the fraction chosen with the motoda to make the scan : sample with insufficient or too many splits.
         
         In the column 'Motoda quality' of the report table:
             - "#NOT NUMERIC": if the acq_sub_part value is not numeric
             - "#MISSING ecotaxa table": if no ecotaxa_scanID.tsv table
             - "#MISSING images" : if No .jpg images in the sub-directories of the _work directory
             - "#Images nb LOW : N" or "#Images nb HIGH : N" : if the following conditions are not met :
-                    # When Nettype is rg and motoda_frac strictly equal to 1
+                    When Nettype is rg and motoda_frac strictly equal to 1
                         → the number of .jpg images in the _work subdirectory must not be > 1500
-                    # When Nettype is rg and motoda_frac strictly > 1
+                    When Nettype is rg and motoda_frac strictly > 1
                         → the number of .jpg images in the _work subdirectory must be between 800 and 1500
-                    # When Nettype ≠ rg and FracID = d1 and motoda_frac strictly equal to 1
+                    When Nettype ≠ rg and FracID = d1 and motoda_frac strictly equal to 1
                         → the number of .jpg images in the _work subdirectory must not be > 1500
-                    # When Nettype ≠ rg and FracID = d1 and the motoda_frac strictly > 1 
+                    When Nettype ≠ rg and FracID = d1 and the motoda_frac strictly > 1 
                         → the number of .jpg images in the _work subdirectory must be between 800 and 1500
-                    # When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly equal to 1
+                    When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly equal to 1
                         → the number of .jpg images in the _work subdirectory must not be > 2500
-                    # When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly >1
+                    When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly >1
                         → the number of .jpg images in the _work subdirectory must be between 1000 and 2500
             - "Motoda OK" : if everything is OK
     """
