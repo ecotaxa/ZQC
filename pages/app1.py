@@ -105,7 +105,7 @@ def render_content_after_ecotaxa_classif(tab, click_run, projects, drive):
 checksSelector = html.Div([
     html.H2("Project checks", className="inline"),
     #html.Img(className="runQC-btn", src="../assets/play.png", alt="Run selected QC"),
-    html.Img(className="runQC-btn", src="../assets/run-all-blocks.png", alt="Run all", title="Run all"),
+    #TODO JCE COM FOR PROD html.Img(className="runQC-btn", src="../assets/run-all-blocks.png", alt="Run all", title="Run all"),
     html.Div(checksBlocks_layout, className="QC-types")],
     className="container-checks-selector")
 
