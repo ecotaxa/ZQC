@@ -10,5 +10,7 @@ pip3 install -r requirements.txt
 ```python
 python index.py
 ```
-### Url to zooscan QC app :
+### local Url to zooscan QC app :
 http://127.0.0.1:8050/QC/zooscan
+### local Url to zooscan QC doc :
+http://127.0.0.1:8050/QC/zooscan/doc

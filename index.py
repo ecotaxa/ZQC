@@ -15,8 +15,8 @@ app.layout = html.Div([
 def display_page(pathname):
     if pathname == '/QC/zooscan':
         return app1.layout
-    elif pathname == '/pages/app2':
-        return app2.layout
+    elif pathname=='/QC/zooscan/doc' : 
+        return  app2.layout
     else:
         return '404'
 
