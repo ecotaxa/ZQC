@@ -27,9 +27,9 @@ class Lib_zooscan():
       check_scan_weight = Check("SCAN weight",  libQC_zooscan_implementation.check_scan_weight.__doc__ , "scan_weight", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_scan_weight)
       check_process_post_scan = Check("Process POST SCAN", libQC_zooscan_implementation.check_process_post_scan.__doc__ , "process_post_scan", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_process_post_scan)
       check_bw_ratio = Check("B/W ratio", libQC_zooscan_implementation.check_bw_ratio.__doc__ , "bw_ratio", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_bw_ratio)
-      check_pixel_size = Check("PIXEL size",  libQC_zooscan_implementation.check_pixel_size.__doc__ , "pixel_size", 1, SUPPORTED_DATA_COMPONANT.DATA_TABLE,  libQC_zooscan_implementation.check_pixel_size)
-      check_sep_mask = Check("SEP MASK", libQC_zooscan_implementation.check_sep_mask.__doc__ , "sep_mask", 1, SUPPORTED_DATA_COMPONANT.DATA_TABLE,  libQC_zooscan_implementation.check_sep_mask)
-      check_process_post_sep = Check("Process POST SEP",  libQC_zooscan_implementation.check_process_post_sep.__doc__ , "process_post_sep", 1, SUPPORTED_DATA_COMPONANT.DATA_TABLE, libQC_zooscan_implementation.check_process_post_sep)
+      check_pixel_size = Check("PIXEL size",  libQC_zooscan_implementation.check_pixel_size.__doc__ , "pixel_size", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_pixel_size)
+      check_sep_mask = Check("SEP MASK", libQC_zooscan_implementation.check_sep_mask.__doc__ , "sep_mask", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1,  libQC_zooscan_implementation.check_sep_mask)
+      check_process_post_sep = Check("Process POST SEP",  libQC_zooscan_implementation.check_process_post_sep.__doc__ , "process_post_sep", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_process_post_sep)
    
       check_sieve_bug = Check("Sieve Bug", libQC_zooscan_implementation.check_sieve_bug.__doc__, "sieve_bug", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_sieve_bug)
       check_motoda_check = Check("MOTODA check", libQC_zooscan_implementation.check_motoda_check.__doc__, "motoda_check", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_motoda_check)
