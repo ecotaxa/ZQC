@@ -126,7 +126,7 @@ def emptyResult(block_id, projects):
 def sub_block_execution_result(subBlock, data):
     results_content= [html.H3(subBlock)]
     for result in data :
-        if result["type"] == SUPPORTED_DATA_COMPONANT.DATA_TABLE :
+        if result["type"] == SUPPORTED_DATA_COMPONANT.DATA_TABLE or result["type"] == SUPPORTED_DATA_COMPONANT.DATA_TABLE_XS:
             dash_comp = dash_table.DataTable(
                 id='tbl-' + subBlock,
                 data=result["dataframe"].to_dict('records'),  # the contents of the table
@@ -149,9 +149,10 @@ def sub_block_execution_result(subBlock, data):
                     'whiteSpace': 'normal',
                     'height': 'auto',
                     'font-size': '14px'
-                },
-                fill_width=False
+                }
             )
+            if result["type"] == SUPPORTED_DATA_COMPONANT.DATA_TABLE_XS :
+                dash_comp.fill_width=False
             results_content.append(dash_comp)
 
     div = html.Div(

@@ -11,4 +11,5 @@ class EXECUTION_STATUS(Enum):
     KNOWN_ERROR = "Known error"
 
 class SUPPORTED_DATA_COMPONANT(Enum):
-    DATA_TABLE = "DataTable"
+    DATA_TABLE = "DataTable" # full width
+    DATA_TABLE_XS = "DataTableXs" # width min
