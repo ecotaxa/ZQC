@@ -149,7 +149,8 @@ def sub_block_execution_result(subBlock, data):
                     'whiteSpace': 'normal',
                     'height': 'auto',
                     'font-size': '14px'
-                }
+                },
+                fill_width=False
             )
             results_content.append(dash_comp)
 
