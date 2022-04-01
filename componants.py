@@ -140,8 +140,10 @@ def sub_block_execution_result(subBlock, data):
                     'minWidth': 120, 'width': 120, 'textAlign': 'left', 'font-family': '"IMTITLE", Sans-serif', 'padding': '5px'
                 },
                 style_header={              # ensure adequate header width when text is shorter than cell's text, and allign the text to left (default right)
-                    'padding': '5px',
+                    'padding-left': '5px',
                     'textAlign': 'center',
+                    'whiteSpace': 'normal',
+                    'height': 'auto',
                 },
                 style_data={                # overflow cells' content into multiple lines
                     'whiteSpace': 'normal',
