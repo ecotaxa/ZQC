@@ -35,7 +35,7 @@ class Lib_zooscan():
       check_motoda_check = Check("MOTODA check", libQC_zooscan_implementation.check_motoda_check.__doc__, "motoda_check", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_motoda_check)
       check_motoda_comparaison = Check("MOTODA comparison", libQC_zooscan_implementation.check_motoda_comparaison.__doc__, "motoda_comparaison", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_motoda_comparaison)
       check_motoda_quality = Check("MOTODA quality", libQC_zooscan_implementation.check_motoda_quality.__doc__, "motoda_quality", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_motoda_quality)
-      check_spelling= Check("Spelling", libQC_zooscan_implementation.check_spelling.__doc__, "spelling", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 2, libQC_zooscan_implementation.check_spelling)
+      check_spelling= Check("Spelling", libQC_zooscan_implementation.check_spelling.__doc__, "spelling", SUPPORTED_DATA_COMPONANT.DATA_TABLE_XS, 2, libQC_zooscan_implementation.check_spelling)
 
       checks_gps = Check("GPS", libQC_zooscan_implementation.noCb.__doc__ , "GPS", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.noCb)
       checks_date = Check("Check sampling dates", libQC_zooscan_implementation.noCb.__doc__ , "Dates", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.noCb)
