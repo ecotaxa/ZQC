@@ -472,7 +472,7 @@ def check_sieve_bug(_id, _mode, local_data):
             group=data_by_frac_id.get_group(key)
             # If the acq of one or more scans differs from the other scans
             if len(group['acq_min_mesh'].unique())>1 or len(group['acq_max_mesh'].unique())>1 :
-                result.loc[result['fracID'] == key,  'sieve_bug'] = labels.errors["acquisition.sieve.bug.different"]
+                result.loc[result['fracID'] == key,  'sieve_bug'] = labels.errors["acquisition.sieve.bug.different"]+" ("+key.replace('_', '')+")"
     
     # Keep only one usfull lines
     result = result.drop_duplicates()
