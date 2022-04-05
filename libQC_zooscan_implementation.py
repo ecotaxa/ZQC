@@ -428,6 +428,7 @@ def check_sieve_bug(_id, _mode, local_data):
                                                            else labels.errors["global.not_numeric"] if not is_int(x)
                                                            else labels.sucess["acquisition.sieve.bug.ok"]) 
 
+    result=result.astype({"acq_min_mesh" : "int", "acq_max_mesh" : "int"}, errors='ignore')
     
     # The acq_min is superior or equal to the acq_max **for the same FracID (within the same scanID)**, 
     # put a warning "ACQ MIN > ACQ MAX" or "ACQ MIN = ACQ MAX" according to the situation:
