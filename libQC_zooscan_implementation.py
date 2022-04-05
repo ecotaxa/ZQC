@@ -20,6 +20,8 @@ def is_int(value):
         return True
     except BaseException:
         return False
+def is_not_int(value):
+    return not(is_int(value))
 
 def get_frac_id(str) : 
     '''Return the frac id from the giver str if this one is in the non exaustive list of frac type [d1, d2, d3, dN, tot, plankton] '''
@@ -427,9 +429,11 @@ def check_sieve_bug(_id, _mode, local_data):
     result.sieve_bug = result.acq_min_mesh.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
                                                            else labels.errors["global.not_numeric"] if not is_int(x)
                                                            else labels.sucess["acquisition.sieve.bug.ok"]) 
+    result.loc[result["acq_max_mesh"].apply(is_not_int) & result["sieve_bug"]==labels.sucess["acquisition.sieve.bug.ok"], 'sieve_bug']=labels.errors["global.not_numeric"]
 
+    # cast the type
     result=result.astype({"acq_min_mesh" : "int", "acq_max_mesh" : "int"}, errors='ignore')
-    
+
     # The acq_min is superior or equal to the acq_max **for the same FracID (within the same scanID)**, 
     # put a warning "ACQ MIN > ACQ MAX" or "ACQ MIN = ACQ MAX" according to the situation:
     for id in result.scan_id : 
