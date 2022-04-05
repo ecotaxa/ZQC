@@ -410,7 +410,7 @@ def check_sieve_bug(_id, _mode, local_data):
     In the 'sieve BUG' column :
         - "#MISSING ecotaxa table" : If no ecotaxa_scanID.tsv table
         - "#NOT NUMERIC" : If the acq_min and acq_max values are not numerical
-        - "#SIEVE different from others" : If the acq_min of 1 or more scans differs from the other scans or the acq_max of 1 or more scans diverges from the other scans 
+        - "#SIEVE different from others" : If the acq_min of 1 or more scans differs from the other scans with the same frac ID or the acq_max of 1 or more scans diverges from the other scans with the same frac ID
         - "#ACQ MIN > ACQ MAX" : If the acq_min is greater than the acq_max for the same FracID (within the same scanID)
         - "#ACQ MIN = ACQ MAX" : If the acq_min is equal to the acq_max for the same FracID (within the same scanID)
         - "#ACQ MIN (dN) ≠ ACQ MAX (dN+1)" : if for the same sampleID whose FracID = d1 or d2 or d3 (comparison between several scanIDs of the same sampleID) the acq_min (dN) ≠ acq_max (d+1)
@@ -428,9 +428,6 @@ def check_sieve_bug(_id, _mode, local_data):
                                                            else labels.errors["global.not_numeric"] if not is_int(x)
                                                            else labels.sucess["acquisition.sieve.bug.ok"]) 
 
-    # If the acq of one or more scans differs from the other scans
-    if len(result['acq_min_mesh'].unique())>1 or len(result['acq_max_mesh'].unique())>1 :
-        result['sieve_bug'] =  np.where(result['sieve_bug'] == labels.sucess["acquisition.sieve.bug.ok"],labels.errors["acquisition.sieve.bug.different"], result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"])
     
     # The acq_min is superior or equal to the acq_max **for the same FracID (within the same scanID)**, 
     # put a warning "ACQ MIN > ACQ MAX" or "ACQ MIN = ACQ MAX" according to the situation:
@@ -468,7 +465,15 @@ def check_sieve_bug(_id, _mode, local_data):
                     result.loc[result["scan_id"] == d_i.scan_id.values[0], 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_1"]+str(i)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_2"]+str(i+1)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_3"]
                     result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_1"]+str(i)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_2"]+str(i+1)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_3"]
 
-    
+    #For the same handled Frac ID 
+    data_by_frac_id = result.groupby("fracID")
+    for key, item in data_by_frac_id:
+        if key!= "frac_type_not_handled" :
+            group=data_by_frac_id.get_group(key)
+            # If the acq of one or more scans differs from the other scans
+            if len(group['acq_min_mesh'].unique())>1 or len(group['acq_max_mesh'].unique())>1 :
+                result['sieve_bug'] =  np.where(result['sieve_bug'] == labels.sucess["acquisition.sieve.bug.ok"],labels.errors["acquisition.sieve.bug.different"], result['sieve_bug']+labels.errors["acquisition.sieve.bug.different"])
+
     # Keep only one usfull lines
     result = result.drop_duplicates()
     result.drop(columns=["sample_id", "fracID"], inplace=True)
