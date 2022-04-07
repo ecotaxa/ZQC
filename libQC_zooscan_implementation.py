@@ -439,8 +439,8 @@ def check_sieve_bug(_id, _mode, local_data):
     for id in result.scan_id : 
         sieve_bug_label=result.loc[result["scan_id"] == id, 'sieve_bug'].values[0]
         if sieve_bug_label == labels.sucess["acquisition.sieve.bug.ok"] :
-            acq_min_mesh = int(result.loc[result["scan_id"] == id, 'acq_min_mesh'].values[0])
-            acq_max_mesh =int(result.loc[result["scan_id"] == id, 'acq_max_mesh'].values[0])
+            acq_min_mesh = int(result.loc[result["scan_id"] == id, 'acq_min_mesh'].values[0]) if is_int(result.loc[result["scan_id"] == id, 'acq_min_mesh'].values[0]) else result.loc[result["scan_id"] == id, 'acq_min_mesh'].values[0]
+            acq_max_mesh = int(result.loc[result["scan_id"] == id, 'acq_max_mesh'].values[0]) if is_int(result.loc[result["scan_id"] == id, 'acq_max_mesh'].values[0]) else result.loc[result["scan_id"] == id, 'acq_max_mesh'].values[0]
             
             # If acq_min_mesh == acq_max_mesh 
             if acq_min_mesh == acq_max_mesh :
@@ -466,7 +466,9 @@ def check_sieve_bug(_id, _mode, local_data):
 
                 #Compare d_i and d_i+1
                 #Should respect "acq_min_mesh (N) == acq_max_mesh (N+1)"
-                if int(d_i.acq_min_mesh.values[0]) != int(d_i_plus_1.acq_max_mesh.values[0]) :
+                di_acq_min_mesh = int(d_i.acq_min_mesh.values[0]) if is_int(d_i.acq_min_mesh.values[0]) else d_i.acq_min_mesh.values[0]
+                di_plus_un_acq_max_mesh = int(d_i_plus_1.acq_max_mesh.values[0]) if is_int(d_i_plus_1.acq_max_mesh.values[0]) else d_i_plus_1.acq_max_mesh.values[0]
+                if di_acq_min_mesh != di_plus_un_acq_max_mesh :
                     result.loc[result["scan_id"] == d_i.scan_id.values[0], 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_1"]+str(i)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_2"]+str(i+1)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_3"]
                     result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_1"]+str(i)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_2"]+str(i+1)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_3"]
     
@@ -528,7 +530,7 @@ def check_motoda_check(_id, _mode, local_data):
         acq_sub_part = dataToTest.acq_sub_part.values[i]
 
         if motoda_check == labels.sucess["acquisition.motoda.check.ok"]:
-            result.loc[result["scan_id"] == id, 'acq_sub_part'] = int(acq_sub_part)
+            result.loc[result["scan_id"] == id, 'acq_sub_part'] = int(acq_sub_part) if is_int(acq_sub_part) else acq_sub_part
             if(fracID=="_d1_" or ( fracID=="_tot_" and sample_net_type=="rg")) :
                 #should be (1 or )puissance de 2
                 if not is_power_of_two(int(acq_sub_part)) : 
@@ -595,7 +597,9 @@ def check_motoda_comparaison(_id, _mode, local_data):
 
                 #Compare d_i and d_i+1
                 #Should respect "acq_sub_part (N) < acq_sub_part (N+1)"
-                if int(d_i.acq_sub_part.values[0]) >= int(d_i_plus_1.acq_sub_part.values[0]) :
+                di_acq_sub_part = int(d_i.acq_sub_part.values[0]) if is_int(d_i.acq_sub_part.values[0]) else d_i.acq_sub_part.values[0]
+                di_plus_un_acq_sub_part = int(d_i_plus_1.acq_sub_part.values[0]) if is_int(d_i_plus_1.acq_sub_part.values[0]) else d_i_plus_1.acq_sub_part.values[0]
+                if di_acq_sub_part >= di_plus_un_acq_sub_part :
                     result.loc[result["scan_id"] == d_i.scan_id.values[0], 'motoda_comp'] = labels.errors["acquisition.motoda.comparaison.ko"]+" (d"+str(i)+") ≥ Motoda frac (d"+str(i+1)+")"
                     result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'motoda_comp'] = labels.errors["acquisition.motoda.comparaison.ko"]+" (d"+str(i)+") ≥ Motoda frac (d"+str(i+1)+")"
     
@@ -688,7 +692,7 @@ def check_motoda_quality(_id, _mode, local_data):
             #get needed infos for that scan id
             net_type = scan_id_data["sample_net_type"].values[0]
             frac_id = scan_id_data["fracID"].values[0]
-            motoda_frac = int(scan_id_data["acq_sub_part"].values[0])
+            motoda_frac = int(scan_id_data["acq_sub_part"].values[0]) if is_int(scan_id_data["acq_sub_part"].values[0]) else scan_id_data["acq_sub_part"].values[0]
 
             #start testing
             if net_type=="rg" :
