@@ -5,6 +5,11 @@ import labels
 from zipfile import ZipFile
 from zipfile import BadZipFile 
 from enums import Mode
+import logging
+from datetime import datetime
+
+now= datetime.now()
+logging.basicConfig(filename="logs/"+str(now.year)+"-"+str(now.month)+".log", level = logging.INFO, format="%(asctime)s | %(levelname)s | %(threadName)s |%(message)s")
 
 local_base_path = "../local_plankton/zooscan/"
 complex_imev_mer_base_path = "/piqv/plankton/"
@@ -19,7 +24,7 @@ def missingCol(cols, path):
     return cols_ok, cols_ko
 
 def getDrives():
-    print("************Get drives in************")
+    logging.info("************Get drives in************")
     drives = getDir("")
     #Keep only the one that begin with Zooscan_
     drives = [d for d in drives if d['label'].startswith('zooscan_')]
@@ -28,7 +33,7 @@ def getDrives():
     return drives
 
 def getProjects(drive):
-    print("************Get projects in************")
+    logging.info("************Get projects in************")
     projects = getDir(drive+'/')
     #Keep only the one that begin with Zooscan_
     projects = [p for p in projects if p['label'].startswith('Zooscan_')]
@@ -37,7 +42,7 @@ def getProjects(drive):
     return projects
 
 def getDir(subpath) :
-    print("************Get dir in************")
+    logging.info("************Get dir in************")
 
     path = base_path+subpath
     dirs = []
@@ -52,7 +57,7 @@ def getDir(subpath) :
     return dirs
 
 def getFiles(subpath):
-    print("************Get files in************")
+    logging.info("************Get files in************")
     files = next(os.walk(base_path+subpath))[2]
     return files
 
@@ -125,12 +130,12 @@ def  getTsv(subpath):
                     df = pd.DataFrame(data={'scan_id': [folder_name], 'STATUS': labels.errors["global.missing_ecotaxa_table"]})
                     df[cols]= labels.errors["global.missing_ecotaxa_table"]   
                     tsv_files.append(df)
-                    print(e)
+                    logging.warning("{}".format(e))
     except IOError as e:
         df = pd.DataFrame(data={'scan_id': ["NOSCANID"], 'STATUS': labels.errors["global.missing_directory.work"]})
         df[cols]= labels.errors["global.missing_directory.work"]   
         tsv_files.append(df)
-        print(e)
+        logging.warning("{}".format(e))
     return tsv_files
 
 def  getHeader(subpath):
@@ -141,13 +146,13 @@ def  getHeader(subpath):
         df = pd.read_csv(base_path+subpath+"/Zooscan_meta/zooscan_sample_header_table.csv", encoding = "ISO-8859-1", usecols=['sampleid', 'ship'], sep=";")
         header_files.append(df)  
     except IOError as e:
-        print(e)
+        logging.warning("{}".format(e))
     # Read scan header table
     try: 
         df = pd.read_csv(base_path+subpath+"/Zooscan_meta/zooscan_scan_header_table.csv", encoding = "ISO-8859-1", sep=";")
         header_files.append(df)  
     except IOError as e:
-        print(e)
+        logging.warning("{}".format(e))
     return header_files
 
 def _recursive_folderstats(folderpath, items=None,

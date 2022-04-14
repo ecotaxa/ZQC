@@ -1,8 +1,13 @@
+from datetime import datetime
 import componants
 import localData
 import pandas as pd
 import time
 import labels
+import logging
+
+now= datetime.now()
+logging.basicConfig(filename="logs/"+str(now.year)+"-"+str(now.month)+".log", level = logging.INFO, format="%(asctime)s | %(levelname)s | %(threadName)s |%(message)s")
 
 class ChecksLib():
     def __init__(self):
@@ -40,12 +45,13 @@ class Block:
     def runCallback(self, projects, drive):
         """Run block's QC, and return execution result as dash componants"""
         QC_execution = []
+        logging.info("--- run for {} projects : {} ---".format(len(projects), projects))
         for project in projects:
             start_time = time.time()
             try :
                 # Get data
                 local_data = localData.getdata(self.mode, drive + "/" + project)
-                print("--- Get local data : %s seconds ---" % (time.time() - start_time))
+                logging.info("--- Get local data for project '{}' in : {} seconds ---".format(project, time.time() - start_time))
                 #If critical status error  : generate associated result componant
                 if labels.errors["global.missing_directory.work"] in local_data["dataframe"]["STATUS"].values :
                     qcExecutionData="The QC can't execute for this project because of : "+ local_data["dataframe"]["STATUS"][0]
@@ -54,7 +60,7 @@ class Block:
                     qcExecutionData = [subBlock.runCallback(self.mode, local_data) for subBlock in self.subBlocks]
             except Exception as e:
                 qcExecutionData="The QC can't execute for this project because of : "+ str(e)
-                print("*****",e)
+                logging.warning("***** runCallback error for project '{}' : {}".format(project, e))
             
             # Generate and agregate dash componants
             QC_execution.append(componants.qc_execution_result(project, qcExecutionData))

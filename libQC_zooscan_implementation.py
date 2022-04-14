@@ -2,6 +2,11 @@ import labels
 import time
 import numpy as np
 import re
+import logging
+from datetime import datetime
+
+now= datetime.now()
+logging.basicConfig(filename="logs/"+str(now.year)+"-"+str(now.month)+".log", level = logging.INFO, format="%(asctime)s | %(levelname)s | %(threadName)s |%(message)s")
 
 #### TOOLS
 
@@ -53,7 +58,7 @@ def independent_concat(df1_max, col1, df2_min, col2):
 #Returns information by samples about the absence of implementation of this QC
 def noCb(_id, _mode, local_data):
     """This feature will be available in a future release of the QC application."""
-    print(_id, " : ", _mode, " : WIP callback not implemented yet")
+    logging.info("{} : {} : WIP callback not implemented yet".format(_id, _mode))
     result = local_data.get("dataframe")[['scan_id']].drop_duplicates()
     result[_id] = "Not impl"#labels.errors["global.qc_not_implemented"]
     result.rename(columns={'scan_id': 'List scan ID'}, inplace=True)
@@ -93,7 +98,7 @@ def check_frame_type(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'process_img_background_img': 'Frame type'}, inplace=True)
 
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback check_frame_type")
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_frame_type".format((time.time() - start_time), _id, _mode))
     return result
 
 def check_raw_files(_id, _mode, local_data):
@@ -154,7 +159,7 @@ def check_raw_files(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'raw_files': 'RAW files'}, inplace=True)
 
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback check_raw_files ")
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_raw_files".format((time.time() - start_time), _id, _mode))
     return result
 
 def check_scan_weight(_id, _mode, local_data):
@@ -183,7 +188,7 @@ def check_scan_weight(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'scan_weight': 'SCAN weight'}, inplace=True)
 
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback check_scan_weight")
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_scan_weight".format((time.time() - start_time), _id, _mode))
     return result
 
 def check_process_post_scan(_id, _mode, local_data):
@@ -259,7 +264,7 @@ def check_process_post_scan(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'process_post_scan': 'POST SCAN'}, inplace=True)
 
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback check_process_post_scan")
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_process_post_scan".format((time.time() - start_time), _id, _mode))
     return result
 
 def check_bw_ratio(_id, _mode, local_data):
@@ -288,7 +293,7 @@ def check_bw_ratio(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'process_particle_bw_ratio': 'B/W ratio'}, inplace=True)
 
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback process_particle_bw_ratio")
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_bw_ratio".format((time.time() - start_time), _id, _mode))
     return result
 
 def check_pixel_size(_id, _mode, local_data):
@@ -336,7 +341,7 @@ def check_pixel_size(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'pixel_size': 'PIXEL size'}, inplace=True)
 
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback check_pixel_size")
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_pixel_size".format((time.time() - start_time), _id, _mode))
     return result
 
 def check_sep_mask(_id, _mode, local_data):
@@ -368,7 +373,7 @@ def check_sep_mask(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'sep_mask': 'SEP MASK'}, inplace=True)
 
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback check_sep_mask")
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_sep_mask".format((time.time() - start_time), _id, _mode))
     return result
 
 def check_process_post_sep(_id, _mode, local_data):
@@ -397,7 +402,7 @@ def check_process_post_sep(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'process_particle_sep_mask': 'POST SEP'}, inplace=True)
 
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback check_process_post_sep")
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_process_post_sep".format((time.time() - start_time), _id, _mode))
     return result
 
 ### ACQUISITION
@@ -488,7 +493,7 @@ def check_sieve_bug(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'acq_min_mesh': 'acq min mesh', 'acq_max_mesh': 'acq max mesh', 'sieve_bug' : 'Sieve Bug'}, inplace=True)
 
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback sieve_bug")
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_sieve_bug".format((time.time() - start_time), _id, _mode))
     return result
 
 def check_motoda_check(_id, _mode, local_data):
@@ -546,7 +551,7 @@ def check_motoda_check(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'acq_sub_part' : 'MOTODA Fraction','motoda_check': 'MOTODA check'}, inplace=True)
 
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback motoda_fraction")
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_motoda_check".format((time.time() - start_time), _id, _mode))
     return result
 
 def check_motoda_comparaison(_id, _mode, local_data):
@@ -634,7 +639,7 @@ def check_motoda_comparaison(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'motoda_comp': 'MOTODA comparison', 'sample_comment':'Sample comment'}, inplace=True)
 
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback motoda_fraction")
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_motoda_comparaison".format((time.time() - start_time), _id, _mode))
     return result
 
 def check_motoda_quality(_id, _mode, local_data):
@@ -736,7 +741,7 @@ def check_motoda_quality(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', "motoda_quality" : "Motoda quality"}, inplace=True)
 
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback motoda_fraction")
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_motoda_quality".format((time.time() - start_time), _id, _mode))
     return result
 
 def check_spelling(_id, _mode, local_data):
@@ -755,5 +760,5 @@ def check_spelling(_id, _mode, local_data):
     # Rename collums to match the desiered output
     result.rename(columns={'sample_scan_operator': 'Scan op.', "acq_sub_method" : "Submethod"}, inplace=True)
 
-    print("-- TIME : %s seconds --" % (time.time() - start_time), " : ", _id, " : ", _mode, " : callback check_spelling")
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_spelling".format((time.time() - start_time), _id, _mode))
     return result
