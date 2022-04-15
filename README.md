@@ -58,4 +58,9 @@ Local Url to zooscan QC doc : http://complex.imev-mer.fr:8050/QC/zooscan/doc
     The logs are saved in the /logs folder. The log files are created automatically and have the name format ***YYYY-MM.log***. 
     If log files become to big we will easily be able to change this to YYYY-MM-***DD***.log or more by adding an incremental number N : YYYY-MM-DD-***N***.log
 - Tests :
-  *TODO*
+- https://dash.plotly.com/testing
+- 
+  UNIT : *TODO*
+  FEATURES : *TODO*
+  INTEGRATION : used tutorials : https://python.plainenglish.io/test-your-dash-app-in-python-6eb7229d40b8 https://community.plotly.com/t/how-you-can-integration-test-your-app-by-dash-testing/25002/3 *TODO*
+  PERF  : *TODO*
