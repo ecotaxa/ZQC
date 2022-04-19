@@ -166,6 +166,25 @@ button{
     cursor: pointer;
     margin: 0px 10px;
 }
+/**********help IMG**********/
+.help-btn{
+    /* width: 20px;
+    height: auto; */
+    height: 19px;
+    cursor: pointer;
+    margin: 0px 10px;
+}
+/**********app IMG**********/
+.app-btn{
+    /* width: 20px;
+    height: auto; */
+    height: 19px;
+    cursor: pointer;
+    margin: 0px 10px;
+}
+.go-qc{
+    float: right;
+}
 
 /**********TAB**********/
 

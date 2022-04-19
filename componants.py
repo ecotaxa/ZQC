@@ -5,7 +5,8 @@ import labels
 
 def generate_header():
     return html.Div([
-                    html.H1('Data quality checks'),
+                    html.H1('Data quality checks', className="inline"),
+                    dcc.Link(html.Img(className="help-btn", src="../assets/help.png", alt="help", title="Help"), href='/QC/zooscan/doc'),
                     html.Span(className='elementor-divider-separator')
                     ],
                     className="container-header")
