@@ -11,11 +11,18 @@ from datetime import datetime
 now= datetime.now()
 logging.basicConfig(filename="logs/"+str(now.year)+"-"+str(now.month)+".log", level = logging.INFO, format="%(asctime)s | %(levelname)s | %(threadName)s |%(message)s")
 
-local_base_path = "../local_plankton/zooscan/"
-complex_imev_mer_base_path = "/piqv/plankton/"
-plankton_base_path = "/remote/plankton/piqv/local_plankton/zooscan/"
-
-base_path=complex_imev_mer_base_path
+def get_path_from_env(env) :
+    if env == "PROD" :
+        return "/piqv/plankton/"
+    elif env == "DEV" :
+        return "../local_plankton/zooscan/"
+    else :
+        return "./dash_test/data/"
+try :   
+    env = os.environ['DASH_ENV']
+except : 
+    env="err"
+base_path=get_path_from_env(env)
 
 def missingCol(cols, path):
     read_cols = pd.read_csv(path, nrows=0, encoding="ISO-8859-1", sep="\t").columns
