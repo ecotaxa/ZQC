@@ -8,7 +8,7 @@ import localData
 #check_raw_files, check_frame_type, check_scan_weight, check_process_post_scan, check_bw_ratio, check_pixel_size, check_sep_mask, check_process_post_sep
 
 def test_subBlock_process_check_raw_files(dash_duo) :
-    project="zooscan_test/test_subBlock_process_check_raw_files/" 
+    project="zooscan_test/test_subBlock_process_data_2/" 
     data = localData.getdata(Mode.TSV, project)
     res = impl.check_raw_files("check_raw_files", Mode.TSV, data) 
 
@@ -62,7 +62,7 @@ def test_subBlock_process_check_raw_files(dash_duo) :
     
 
 def test_subBlock_process_check_frame_type(dash_duo) : 
-    project="zooscan_test/test_subBlock_process_check_raw_files/" 
+    project="zooscan_test/test_subBlock_process_data_2/" 
     data = localData.getdata(Mode.TSV, project)
     res = impl.check_frame_type("check_frame_type", Mode.TSV, data) 
 
@@ -76,8 +76,8 @@ def test_subBlock_process_check_frame_type(dash_duo) :
     #assert res.loc[res["List scan ID"]==""]["B/W ratio"].values[0] == "narrow"
 
     # "#MISSING ecotaxa table" : if no ecotaxa_scanID.tsv table
-    ##wp220191119_stn_08_d2_1
-    assert res.loc[res["List scan ID"]=="wp220191119_stn_08_d2_1"]["Frame type"].values[0] == "#MISSING ecotaxa table"
+    ##wp220191103_stn_01_d1_1
+    assert res.loc[res["List scan ID"]=="wp220191103_stn_01_d1_1"]["Frame type"].values[0] == "#MISSING ecotaxa table"
 
     # "#MISSING column" : if process_img_background_img column is missing from the ecotaxa.tsv table
     ## wp220191103_stn_01_d2_1
@@ -85,16 +85,17 @@ def test_subBlock_process_check_frame_type(dash_duo) :
 
     # "#Frame NOT OK" : if any other issue
     ## large.ini and narrow in tsv
-    ## ecotaxa_wp220191103_stn_01_d1_1
-    assert res.loc[res["List scan ID"]=="wp220191103_stn_01_d1_1"]["Frame type"].values[0] == "#Frame NOT OK"
+    ## wp220191127_stn_10_t1_d2_1
+    assert res.loc[res["List scan ID"]=="wp220191127_stn_10_t1_d2_1"]["Frame type"].values[0] == "#Frame NOT OK"
+
     #TODO JCE
     ## narrow.ini and large in tsv
     ##
     #assert res.loc[res["List scan ID"]==""]["Frame type"].values[0] == "#Frame NOT OK"
 
 def test_subBlock_process_check_scan_weight(dash_duo) : 
-    project_ok="zooscan_test/test_subBlock_process_check_bw_ratio/" 
-    project_ko="zooscan_test/test_subBlock_process_check_raw_files/" 
+    project_ok="zooscan_test/test_subBlock_process_data_1/" 
+    project_ko="zooscan_test/test_subBlock_process_data_2/" 
     data_ok = localData.getdata(Mode.TSV, project_ok)
     data_ko = localData.getdata(Mode.TSV, project_ko)
     res_ok = impl.check_scan_weight("check_scan_weight", Mode.TSV, data_ok)
@@ -115,7 +116,7 @@ def test_subBlock_process_check_process_post_scan(dash_duo) :
     #         - 1 file of the following types dat1.pid, msk1.gif, out1.gif
     #         - 1 zipped image vis1.zip
 
-    project="zooscan_test/test_subBlock_process_check_raw_files/" 
+    project="zooscan_test/test_subBlock_process_data_2/" 
     data = localData.getdata(Mode.TSV, project)
     res = impl.check_process_post_scan("check_process_post_scan", Mode.TSV, data) 
 
@@ -151,7 +152,7 @@ def test_subBlock_process_check_process_post_scan(dash_duo) :
 
 
 def test_subBlock_process_check_bw_ratio(dash_duo) :
-    project="zooscan_test/test_subBlock_process_check_bw_ratio/" 
+    project="zooscan_test/test_subBlock_process_data_1/" 
     data = localData.getdata(Mode.TSV, project)
     res = impl.check_bw_ratio("check_bw_ratio", Mode.TSV, data)
 
@@ -185,7 +186,7 @@ def test_subBlock_process_check_bw_ratio(dash_duo) :
 
 
 def test_subBlock_process_check_pixel_size(dash_duo) : 
-    project="zooscan_test/test_subBlock_process_check_raw_files/" 
+    project="zooscan_test/test_subBlock_process_data_2/" 
     data = localData.getdata(Mode.TSV, project)
     res = impl.check_pixel_size("check_pixel_size", Mode.TSV, data)
     # It should match one of the following proposals :
@@ -232,7 +233,7 @@ def test_subBlock_process_check_pixel_size(dash_duo) :
 
 
 def test_subBlock_process_check_sep_mask(dash_duo) : 
-    project="zooscan_test/test_subBlock_process_check_bw_ratio/" 
+    project="zooscan_test/test_subBlock_process_data_1/" 
     data = localData.getdata(Mode.TSV, project)
     res = impl.check_sep_mask("check_sep_mask", Mode.TSV, data)
 
@@ -246,7 +247,7 @@ def test_subBlock_process_check_sep_mask(dash_duo) :
 
 
 def test_subBlock_process_check_process_post_sep(dash_duo) : 
-    project="zooscan_test/test_subBlock_process_check_bw_ratio/" 
+    project="zooscan_test/test_subBlock_process_data_1/" 
     data = localData.getdata(Mode.TSV, project)
     res = impl.check_process_post_sep("check_process_post_sep", Mode.TSV, data)
 
