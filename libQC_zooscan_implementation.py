@@ -194,7 +194,7 @@ def check_scan_weight(_id, _mode, local_data):
 def check_process_post_scan(_id, _mode, local_data):
     """ Checks the file system structure post scan generated.
 
-    In the _raw directory of Zooscan_scan must be present :
+    In the _work directory of Zooscan_scan must be present :
         - N images named : scanID_X.jpg (images go from 1 to infinity)
         - 1 table ecotaxa_scanID.tsv
         - 1 file of the following types dat1.pid, msk1.gif, out1.gif
@@ -209,6 +209,7 @@ def check_process_post_scan(_id, _mode, local_data):
         - "#BAD ZIP FILE" : if a zip is present, but this zip is corrupted and can't be read
         - "Process OK" : if the count of files is as expected
     """
+    #JCE TODO "N images named" not tested
     start_time = time.time()
 
     # Get only usefull column size : where path contains /_raw/
@@ -379,7 +380,7 @@ def check_sep_mask(_id, _mode, local_data):
 def check_process_post_sep(_id, _mode, local_data):
     """ This second process must include the separation mask (if any) created in the previous step.
 
-        In the column "PIXEL size" of the report table:
+        In the column "POST SEP" of the report table:
             - "#UNPROCESSED" : if missing ecotaxa_scanID.tsv table.
             - "#MISSING column" : if process_particle_sep_mask column is missing from the ecotaxa.tsv table.
             - "#SEP MSK NOT INCLUDED" : if process_particle_sep_mask from ecotaxa.tsv table does not contains "include"

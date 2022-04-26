@@ -27,7 +27,7 @@ errors = {
     "process.post_scan.duplicate.zip": "#DUPLICATE ZIP",
     "process.post_scan.rename_zip": "#BUG rename zip file",
 
-    "process.sep_mask.missing": "#MISSING SEP MSK ",
+    "process.sep_mask.missing": "#MISSING SEP MSK",
 
     "process.post_sep.unprocessed": "#UNPROCESSED",
     "process.post_sep.not_included": "#SEP MSK NOT INCLUDED",
