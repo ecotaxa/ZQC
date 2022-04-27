@@ -75,20 +75,101 @@ def test_subBlock_acquisition_check_sieve_bug(dash_duo) :
 
 #TODO JCE
 def test_subBlock_acquisition_check_motoda_check(dash_duo) : 
-    project="zooscan_test/test_subBlock_process_data_2/" 
-    data = localData.getdata(Mode.TSV, project)
-    res = impl.check_motoda_check("check_motoda_check", Mode.TSV, data) 
-
     # In the column 'MOTODA Fraction' of the report table, is reported :
     # the fraction acq_sub_part of the tables ecotaxa_scanID.tsv of the subdirectories of the _work directories.
-
+    
+    project_1="zooscan_test/test_subBlock_acquisition_check_motoda_check_1/" 
+    data_1 = localData.getdata(Mode.TSV, project_1)
+    res_1 = impl.check_motoda_check("check_motoda_check", Mode.TSV, data_1) 
     # In the column 'MOTODA check' of the report table :
-    # "#NOT NUMERIC": if the acq_sub_part value is not numeric
     # "#MISSING ecotaxa table" : if no ecotaxa_scanID.tsv table
-    # "#Motoda Fraction ≠ 1 or ≠ ^2": if when FracID = d1 regardless of sample_net_type OR when FracID = tot and sample_net_type = rg, does not respect → acq_sub_part = 1 or a power of 2
-    # "#Motoda Fraction ≠ ^2": if when FracID = dN+1 OR =tot OR = plankton (all net types except rg), does not respect → acq_sub_part = a power of 2 except 1
+    ## wp_d1_1
+    assert res_1.loc[res_1["List scan ID"]=="wp_d1_1"]["MOTODA Fraction"].values[0] == "#MISSING ecotaxa table"
+    assert res_1.loc[res_1["List scan ID"]=="wp_d1_1"]["MOTODA check"].values[0] == "#MISSING ecotaxa table"
+
+    project_2="zooscan_test/test_subBlock_acquisition_check_motoda_check_2/" 
+    data_2 = localData.getdata(Mode.TSV, project_2)
+    res_2 = impl.check_motoda_check("check_motoda_check", Mode.TSV, data_2) 
+    # "#NOT NUMERIC": if the acq_sub_part value is not numeric
+    ## wp_d1_1
+    assert res_2.loc[res_2["List scan ID"]=="wp_d1_1"]["MOTODA Fraction"].values[0] == "test"
+    assert res_2.loc[res_2["List scan ID"]=="wp_d1_1"]["MOTODA check"].values[0] == "#NOT NUMERIC"
+
+    project_3="zooscan_test/test_subBlock_acquisition_check_motoda_check_3/" 
+    data_3 = localData.getdata(Mode.TSV, project_3)
+    res_3 = impl.check_motoda_check("check_motoda_check", Mode.TSV, data_3) 
     # "#Motoda identical": if acq_sub_part is identical throughout the project
+    ## wp_d1_1
+    assert res_3.loc[res_3["List scan ID"]=="wp_d1_1"]["MOTODA Fraction"].values[0] == "4"
+    assert res_3.loc[res_3["List scan ID"]=="wp_d1_1"]["MOTODA check"].values[0] == "#Identical Motoda"
+    ## wp_d2_1
+    assert res_3.loc[res_3["List scan ID"]=="wp_d2_1"]["MOTODA Fraction"].values[0] == "4"
+    assert res_3.loc[res_3["List scan ID"]=="wp_d2_1"]["MOTODA check"].values[0] == "#Identical Motoda"
+    
+
+
+    project_4="zooscan_test/test_subBlock_acquisition_check_motoda_check_4/" 
+    data_4 = localData.getdata(Mode.TSV, project_4)
+    res_4 = impl.check_motoda_check("check_motoda_check", Mode.TSV, data_4) 
+    # "#Motoda Fraction ≠ 1 or ≠ ^2": if does not respect → acq_sub_part = 1 or a power of 2
+    ## when FracID = d1 regardless of sample_net_type 
+    ## wp_d1_1 (here test with d1/wp2/3)
+    assert res_4.loc[res_4["List scan ID"]=="wp_d1_1"]["MOTODA Fraction"].values[0] == 3
+    assert res_4.loc[res_4["List scan ID"]=="wp_d1_1"]["MOTODA check"].values[0] == "#Motoda Fraction ≠ 1 or ≠ ^2"
+    ## OR when FracID = tot and sample_net_type = rg,
+    ## rg_tot_1 (here test with tot/rg/21)
+    assert res_4.loc[res_4["List scan ID"]=="rg_tot_1"]["MOTODA Fraction"].values[0] == 21
+    assert res_4.loc[res_4["List scan ID"]=="rg_tot_1"]["MOTODA check"].values[0] == "#Motoda Fraction ≠ 1 or ≠ ^2"
+
+    # "#Motoda Fraction ≠ ^2": does not respect → acq_sub_part = a power of 2 except 1
+    ## when FracID = dN+1 and all net types except rg 
+    ## wp2_d3_1 (here test with d3/wp2/1)
+    assert res_4.loc[res_4["List scan ID"]=="wp2_d3_1"]["MOTODA Fraction"].values[0] == 1
+    assert res_4.loc[res_4["List scan ID"]=="wp2_d3_1"]["MOTODA check"].values[0] == "#Motoda Fraction ≠ ^2"
+    ## OR =tot and all net types except rg
+    ## manta_tot_1 (here test with d3/manta/111)
+    assert res_4.loc[res_4["List scan ID"]=="manta_tot_1"]["MOTODA Fraction"].values[0] == 111
+    assert res_4.loc[res_4["List scan ID"]=="manta_tot_1"]["MOTODA check"].values[0] == "#Motoda Fraction ≠ ^2"
+    ## OR = plankton  all net types except rg
+    ## bongo_plankton_1 (here test with plankton/bongo/1)
+    assert res_4.loc[res_4["List scan ID"]=="bongo_plankton_1"]["MOTODA Fraction"].values[0] == 1
+    assert res_4.loc[res_4["List scan ID"]=="bongo_plankton_1"]["MOTODA check"].values[0] == "#Motoda Fraction ≠ ^2"
+
+
+
+
+    project_5="zooscan_test/test_subBlock_acquisition_check_motoda_check_5/" 
+    data_5 = localData.getdata(Mode.TSV, project_5)
+    res_5 = impl.check_motoda_check("check_motoda_check", Mode.TSV, data_5) 
     # "Motoda OK" : if everything is OK
+    # if does respect → acq_sub_part = 1 or a power of 2
+    ## when FracID = d1 regardless of sample_net_type 
+    ## wp_d1_1 (here test with d1/wp2/1)
+    assert res_5.loc[res_5["List scan ID"]=="wp_d1_1"]["MOTODA Fraction"].values[0] == 1
+    assert res_5.loc[res_5["List scan ID"]=="wp_d1_1"]["MOTODA check"].values[0] == "Motoda OK"
+    assert res_5.loc[res_5["List scan ID"]=="wp_2_d1_1"]["MOTODA Fraction"].values[0] == 2
+    assert res_5.loc[res_5["List scan ID"]=="wp_2_d1_1"]["MOTODA check"].values[0] == "Motoda OK"
+    ## OR when FracID = tot and sample_net_type = rg, 
+    ## rg_tot_1 (here test with tot/rg/1)
+    assert res_5.loc[res_5["List scan ID"]=="rg_tot_1"]["MOTODA Fraction"].values[0] == 1
+    assert res_5.loc[res_5["List scan ID"]=="rg_tot_1"]["MOTODA check"].values[0] == "Motoda OK"
+    ## rg_2_tot_1 (here test with tot/rg/8)
+    assert res_5.loc[res_5["List scan ID"]=="rg_2_tot_1"]["MOTODA Fraction"].values[0] == 8
+    assert res_5.loc[res_5["List scan ID"]=="rg_2_tot_1"]["MOTODA check"].values[0] == "Motoda OK"
+
+    # if does not respect → acq_sub_part = a power of 2 except 1
+    ## when FracID = dN+1 and all net types except rg 
+    ## wp2_d3_1 (here test with d3/wp2/2)
+    assert res_5.loc[res_5["List scan ID"]=="wp2_d3_1"]["MOTODA Fraction"].values[0] == 2
+    assert res_5.loc[res_5["List scan ID"]=="wp2_d3_1"]["MOTODA check"].values[0] == "Motoda OK"
+    ## OR =tot and all net types except rg
+    ## manta_tot_1 (here test with d3/manta/4)
+    assert res_5.loc[res_5["List scan ID"]=="manta_tot_1"]["MOTODA Fraction"].values[0] == 4
+    assert res_5.loc[res_5["List scan ID"]=="manta_tot_1"]["MOTODA check"].values[0] == "Motoda OK"
+    ## OR = plankton  all net types except rg
+    ## bongo_plankton_1 (here test with d3/plankton/16)
+    assert res_5.loc[res_5["List scan ID"]=="bongo_plankton_1"]["MOTODA Fraction"].values[0] == 16
+    assert res_5.loc[res_5["List scan ID"]=="bongo_plankton_1"]["MOTODA check"].values[0] == "Motoda OK"
 
 #TODO JCE
 def test_subBlock_acquisition_check_motoda_comparaison(dash_duo) : 

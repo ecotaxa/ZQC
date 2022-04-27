@@ -1,0 +1,5 @@
+scanid;sampleid;scanop;fracid;fracmin;fracsup;fracnb;observation;code;submethod;cellpart;replicates;volini;volprec
+wp220210621_d1_1;wp220210621;laetitia_jalabert;d1;1000;999999;1;no;1;motoda;1;1;1;1
+wp220210728_d1_1;wp220210728;yassine_goliat;d1;1000;999999;2;no;1;motoda;1;1;1;1
+wp220210728_d2_1;wp220210728;tarik_baibai;d2;100;1000;16;no;1;motoda;1;1;1;1
+wp220210621_d2_1;wp220210621;yassine_goliat;d2;100;1000;64;no;1;motoda;1;1;1;1

@@ -1,0 +1,2 @@
+sampleid;ship;scientificprog;stationid;date;latitude;longitude;depth;ctdref;otherref;townb;towtype;nettype;netmesh;netsurf;zmax;zmin;vol;sample_comment;vol_qc;depth_qc;sample_qc;barcode;latitude_end;longitude_end;net_duration;ship_speed_knots;cable_length;cable_angle;cable_speed;nb_jar
+wp220210621;sagitta;radezoo;ptb;20210621-1200;43.41;-7.18;85;NaN;NaN;2;3;wp2;200;0.25;75;0;37.5;nan;2;3;1111;ptb021172wp1;43.41;-7.18;99999;99999;99999;99999;99999;1
