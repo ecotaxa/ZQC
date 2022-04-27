@@ -73,7 +73,6 @@ def test_subBlock_acquisition_check_sieve_bug(dash_duo) :
     assert res_5.loc[res_5["List scan ID"]=="wp_d1_1"]["Sieve Bug"].values[0] == "#ACQ MIN = ACQ MAX"
     
 
-#TODO JCE
 def test_subBlock_acquisition_check_motoda_check(dash_duo) : 
     # In the column 'MOTODA Fraction' of the report table, is reported :
     # the fraction acq_sub_part of the tables ecotaxa_scanID.tsv of the subdirectories of the _work directories.
@@ -105,8 +104,6 @@ def test_subBlock_acquisition_check_motoda_check(dash_duo) :
     ## wp_d2_1
     assert res_3.loc[res_3["List scan ID"]=="wp_d2_1"]["MOTODA Fraction"].values[0] == "4"
     assert res_3.loc[res_3["List scan ID"]=="wp_d2_1"]["MOTODA check"].values[0] == "#Identical Motoda"
-    
-
 
     project_4="zooscan_test/test_subBlock_acquisition_check_motoda_check_4/" 
     data_4 = localData.getdata(Mode.TSV, project_4)
@@ -134,9 +131,6 @@ def test_subBlock_acquisition_check_motoda_check(dash_duo) :
     ## bongo_plankton_1 (here test with plankton/bongo/1)
     assert res_4.loc[res_4["List scan ID"]=="bongo_plankton_1"]["MOTODA Fraction"].values[0] == 1
     assert res_4.loc[res_4["List scan ID"]=="bongo_plankton_1"]["MOTODA check"].values[0] == "#Motoda Fraction ≠ ^2"
-
-
-
 
     project_5="zooscan_test/test_subBlock_acquisition_check_motoda_check_5/" 
     data_5 = localData.getdata(Mode.TSV, project_5)
@@ -180,6 +174,7 @@ def test_subBlock_acquisition_check_motoda_comparaison(dash_duo) :
     # In the column 'MOTODA comparison' of the report table :
     # "#NOT NUMERIC": if the acq_sub_part value is not numeric
     # "#MISSING ecotaxa table": if no ecotaxa_scanID.tsv table
+    
     # "#Motoda frac (dN-1) ≥ Motoda frac (dN)": if does not respect acq_sub_part (N) < acq_sub_part (N+1).  Example : acq_sub_part (d1) > acq_sub_part (d2)
     # "#Motoda comparison OK" : if everything is OK
                 
