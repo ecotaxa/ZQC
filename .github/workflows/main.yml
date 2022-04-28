@@ -35,6 +35,9 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pytest dash[testing]
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Test with pytest
+      - name: Test integration with pytest
         run: |
           DASH_ENV=TEST pytest dash_test/test_integration.py
+      - name: Test unit_zooscan_acquisition with pytest
+        run: |
+          DASH_ENV=TEST pytest dash_test/test_unit_zooscan_acquisition.py
