@@ -42,7 +42,7 @@ errors = {
 
     "acquisition.motoda.check.identique": "#Identical Motoda",
     #TODO JCE : talk with AMANDA 2^0==1
-    "acquisition.motoda.check.cas1": "#Motoda Fraction ≠ 1 ou ≠ ^2",
+    "acquisition.motoda.check.cas1": "#Motoda Fraction ≠ 1 or ≠ ^2",
     "acquisition.motoda.check.cas2": "#Motoda Fraction ≠ ^2",
     
     "acquisition.motoda.comparaison.ko": "#Motoda frac",

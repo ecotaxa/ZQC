@@ -32,4 +32,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run unit tests
-        run: python3 -m pytest --import-mode=append tests/
+        run: DASH_ENV=TEST python -m pytest dash_test/
