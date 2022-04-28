@@ -26,10 +26,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python3 -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install -e .
+          python3.8 -m pip install --upgrade pip
+          python3.8 pip install -r requirements.txt
+          python3.8 pip install -e .
 
       # Runs a single command using the runners shell
       - name: Run unit tests
-        run: DASH_ENV=TEST python -m pytest dash_test/
+        run: python -m pytest dash_test/
