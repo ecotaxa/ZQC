@@ -1,30 +1,13 @@
-import pytest
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.utils import ChromeType
-from selenium import webdriver
 
 
-@pytest.fixture()
-def setup(request):
-    chrome_service = Service(ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install())
+def pytest_setup_options():
 
-    chrome_options = Options()
-    options = [
-    "--headless",
-    "--disable-gpu",
-    "--window-size=1920,1200",
-    "--ignore-certificate-errors",
-    "--disable-extensions",
-    "--no-sandbox",
-    "--disable-dev-shm-usage"
-]
-    for option in options:
-        chrome_options.add_argument(option)
+    # Set up some options for how we want the Chrome webdriver to be configured
+    options = Options()
+    options.add_argument('--disable-gpu')
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
 
-    request.cls.driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
-
-
-    yield request.cls.driver
-    request.cls.driver.close()
+    return options
