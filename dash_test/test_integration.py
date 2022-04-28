@@ -26,6 +26,6 @@ def test_multi_page_app_is_running(dash_duo) :
    
     # Go from doc to app
     dash_duo.wait_for_page(dash_duo.server_url + '/QC/zooscan/doc', timeout=5)
-    e = dash_duo.driver.find_element(by=By.CSS_SELECTOR, value=".go-qc")
-    e.click()
+    e_go_qc = dash_duo.driver.find_element(by=By.CSS_SELECTOR, value=".go-qc")
+    e_go_qc.click()
     assert dash_duo.driver.find_element(by=By.CSS_SELECTOR, value="h1").text == "Data quality checks"
