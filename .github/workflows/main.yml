@@ -35,4 +35,4 @@ jobs:
         run: pip install requests webdriver-manager selenium pytest
       - name: Test with pytest
         run: |
-          pytest
+          pytest dash_test/test_CI.py
