@@ -44,9 +44,9 @@ def test_subBlock_acquisition_check_sieve_bug(dash_duo) :
     assert res_3.loc[res_3["List scan ID"]=="wp_2_d1_1"]["Sieve Bug"].values[0] == "#SIEVE different from others (d1)"
     # "#ACQ MIN (dN) ≠ ACQ MAX (dN+1)" : if for the same sampleID whose FracID = d1 or d2 or d3 (comparison between several scanIDs of the same sampleID) the acq_min (dN) ≠ acq_max (d+1)
     ## wp_2_d2_1
-    assert res_3.loc[res_3["List scan ID"]=="wp_2_d2_1"]["acq min mesh"].values[0] == 1000
-    assert res_3.loc[res_3["List scan ID"]=="wp_2_d2_1"]["acq max mesh"].values[0] == 999999
-    assert res_3.loc[res_3["List scan ID"]=="wp_2_d2_1"]["Sieve Bug"].values[0] == "#ACQ MIN (d1) ≠ ACQ MAX (d2)"
+    assert res_3.loc[res_3["List scan ID"]=="wp_1_d2_1"]["acq min mesh"].values[0] == 1000
+    assert res_3.loc[res_3["List scan ID"]=="wp_1_d2_1"]["acq max mesh"].values[0] == 999999
+    assert res_3.loc[res_3["List scan ID"]=="wp_1_d2_1"]["Sieve Bug"].values[0] == "#ACQ MIN (d1) ≠ ACQ MAX (d2)"
 
 
     project_4="Zooscan_test/test_subBlock_acquisition_check_sieve_bug_4" 
