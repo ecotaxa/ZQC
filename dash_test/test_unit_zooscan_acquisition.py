@@ -42,11 +42,6 @@ def test_subBlock_acquisition_check_sieve_bug(dash_duo) :
     assert res_3.loc[res_3["List scan ID"]=="wp_2_d1_1"]["acq min mesh"].values[0] == 10
     assert res_3.loc[res_3["List scan ID"]=="wp_2_d1_1"]["acq max mesh"].values[0] == 1000
     assert res_3.loc[res_3["List scan ID"]=="wp_2_d1_1"]["Sieve Bug"].values[0] == "#SIEVE different from others (d1)"
-    # "sieve OK" : If everything is OK
-    ## wp_1_d2_1
-    assert res_3.loc[res_3["List scan ID"]=="wp_1_d2_1"]["acq min mesh"].values[0] == 1000
-    assert res_3.loc[res_3["List scan ID"]=="wp_1_d2_1"]["acq max mesh"].values[0] == 999999
-    assert res_3.loc[res_3["List scan ID"]=="wp_1_d2_1"]["Sieve Bug"].values[0] == "sieve OK"
     # "#ACQ MIN (dN) ≠ ACQ MAX (dN+1)" : if for the same sampleID whose FracID = d1 or d2 or d3 (comparison between several scanIDs of the same sampleID) the acq_min (dN) ≠ acq_max (d+1)
     ## wp_2_d2_1
     assert res_3.loc[res_3["List scan ID"]=="wp_2_d2_1"]["acq min mesh"].values[0] == 1000
@@ -71,6 +66,27 @@ def test_subBlock_acquisition_check_sieve_bug(dash_duo) :
     assert res_5.loc[res_5["List scan ID"]=="wp_d1_1"]["acq min mesh"].values[0] == 100
     assert res_5.loc[res_5["List scan ID"]=="wp_d1_1"]["acq max mesh"].values[0] == 100
     assert res_5.loc[res_5["List scan ID"]=="wp_d1_1"]["Sieve Bug"].values[0] == "#ACQ MIN = ACQ MAX"
+
+    project_6="Zooscan_test/test_subBlock_acquisition_check_sieve_bug_6" 
+    data_6 = localData.getdata(Mode.TSV, project_6)
+    res_6 = impl.check_sieve_bug("check_sieve_bug", Mode.TSV, data_6)
+    # "sieve OK" : If everything is OK
+    ## wp_1_d1_1
+    assert res_6.loc[res_6["List scan ID"]=="wp_1_d1_1"]["acq min mesh"].values[0] == 1000
+    assert res_6.loc[res_6["List scan ID"]=="wp_1_d1_1"]["acq max mesh"].values[0] == 999999
+    assert res_6.loc[res_6["List scan ID"]=="wp_1_d1_1"]["Sieve Bug"].values[0] == "sieve OK"
+    ## wp_1_d2_1
+    assert res_6.loc[res_6["List scan ID"]=="wp_1_d2_1"]["acq min mesh"].values[0] == 100
+    assert res_6.loc[res_6["List scan ID"]=="wp_1_d2_1"]["acq max mesh"].values[0] == 1000
+    assert res_6.loc[res_6["List scan ID"]=="wp_1_d2_1"]["Sieve Bug"].values[0] == "sieve OK"
+    ## wp_2_d1_1
+    assert res_6.loc[res_6["List scan ID"]=="wp_2_d1_1"]["acq min mesh"].values[0] == 1000
+    assert res_6.loc[res_6["List scan ID"]=="wp_2_d1_1"]["acq max mesh"].values[0] == 999999
+    assert res_6.loc[res_6["List scan ID"]=="wp_2_d1_1"]["Sieve Bug"].values[0] == "sieve OK"
+    ## wp_2_d2_1
+    assert res_6.loc[res_6["List scan ID"]=="wp_2_d2_1"]["acq min mesh"].values[0] == 100
+    assert res_6.loc[res_6["List scan ID"]=="wp_2_d2_1"]["acq max mesh"].values[0] == 1000
+    assert res_6.loc[res_6["List scan ID"]=="wp_2_d2_1"]["Sieve Bug"].values[0] == "sieve OK"
     
 
 def test_subBlock_acquisition_check_motoda_check(dash_duo) : 
