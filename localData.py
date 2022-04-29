@@ -17,7 +17,7 @@ def get_path_from_env(env) :
     elif env == "DEV" :
         return os.path.expanduser("../local_plankton/zooscan/")
     else :
-        return os.path.expanduser("./dash_test/data/")
+        return os.path.expanduser("/dash_test/data/")
 try :   
     env = os.environ['DASH_ENV']
 except : 
