@@ -36,17 +36,12 @@ def test_subBlock_acquisition_check_sieve_bug(dash_duo) :
     res_3 = impl.check_sieve_bug("check_sieve_bug", Mode.TSV, data_3)
     # "#SIEVE different from others" : If the acq_min of 1 or more scans differs from the other scans with the same frac ID or the acq_max of 1 or more scans diverges from the other scans with the same frac ID
     ## wp_1_d1_1 & wp_2_d1_1
-    assert res_3.loc[res_3["List scan ID"]=="wp_1_d1_1"]["acq min mesh"].values[0] == 100
-    assert res_3.loc[res_3["List scan ID"]=="wp_1_d1_1"]["acq max mesh"].values[0] == 1000
+    assert res_3.loc[res_3["List scan ID"]=="wp_1_d1_1"]["acq min mesh"].values[0] == 1000
+    assert res_3.loc[res_3["List scan ID"]=="wp_1_d1_1"]["acq max mesh"].values[0] == 999999
     assert res_3.loc[res_3["List scan ID"]=="wp_1_d1_1"]["Sieve Bug"].values[0] == "#SIEVE different from others (d1)"
-    assert res_3.loc[res_3["List scan ID"]=="wp_2_d1_1"]["acq min mesh"].values[0] == 10
-    assert res_3.loc[res_3["List scan ID"]=="wp_2_d1_1"]["acq max mesh"].values[0] == 1000
+    assert res_3.loc[res_3["List scan ID"]=="wp_2_d1_1"]["acq min mesh"].values[0] == 100
+    assert res_3.loc[res_3["List scan ID"]=="wp_2_d1_1"]["acq max mesh"].values[0] == 999999
     assert res_3.loc[res_3["List scan ID"]=="wp_2_d1_1"]["Sieve Bug"].values[0] == "#SIEVE different from others (d1)"
-    # "#ACQ MIN (dN) ≠ ACQ MAX (dN+1)" : if for the same sampleID whose FracID = d1 or d2 or d3 (comparison between several scanIDs of the same sampleID) the acq_min (dN) ≠ acq_max (d+1)
-    ## wp_2_d2_1
-    assert res_3.loc[res_3["List scan ID"]=="wp_1_d2_1"]["acq min mesh"].values[0] == 1000
-    assert res_3.loc[res_3["List scan ID"]=="wp_1_d2_1"]["acq max mesh"].values[0] == 999999
-    assert res_3.loc[res_3["List scan ID"]=="wp_1_d2_1"]["Sieve Bug"].values[0] == "#ACQ MIN (d1) ≠ ACQ MAX (d2)"
 
 
     project_4="Zooscan_test/test_subBlock_acquisition_check_sieve_bug_4" 
@@ -87,6 +82,19 @@ def test_subBlock_acquisition_check_sieve_bug(dash_duo) :
     assert res_6.loc[res_6["List scan ID"]=="wp_2_d2_1"]["acq min mesh"].values[0] == 100
     assert res_6.loc[res_6["List scan ID"]=="wp_2_d2_1"]["acq max mesh"].values[0] == 1000
     assert res_6.loc[res_6["List scan ID"]=="wp_2_d2_1"]["Sieve Bug"].values[0] == "sieve OK"
+
+    project_7="Zooscan_test/test_subBlock_acquisition_check_sieve_bug_7" 
+    data_7 = localData.getdata(Mode.TSV, project_7)
+    res_7 = impl.check_sieve_bug("check_sieve_bug", Mode.TSV, data_7)
+    # "#ACQ MIN (dN) ≠ ACQ MAX (dN+1)" : if for the same sampleID whose FracID = d1 or d2 or d3 (comparison between several scanIDs of the same sampleID) the acq_min (dN) ≠ acq_max (d+1)
+    ## wp_d1_1
+    assert res_7.loc[res_7["List scan ID"]=="wp_d1_1"]["acq min mesh"].values[0] == 1000
+    assert res_7.loc[res_7["List scan ID"]=="wp_d1_1"]["acq max mesh"].values[0] == 999999
+    assert res_7.loc[res_7["List scan ID"]=="wp_d1_1"]["Sieve Bug"].values[0] == "#ACQ MIN (d1) ≠ ACQ MAX (d2)"
+    ## wp_d2_1
+    assert res_7.loc[res_7["List scan ID"]=="wp_d2_1"]["acq min mesh"].values[0] == 100
+    assert res_7.loc[res_7["List scan ID"]=="wp_d2_1"]["acq max mesh"].values[0] == 10000
+    assert res_7.loc[res_7["List scan ID"]=="wp_d2_1"]["Sieve Bug"].values[0] == "#ACQ MIN (d1) ≠ ACQ MAX (d2)"
     
 
 def test_subBlock_acquisition_check_motoda_check(dash_duo) : 
