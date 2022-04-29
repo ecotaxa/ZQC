@@ -13,11 +13,11 @@ logging.basicConfig(filename="logs/"+str(now.year)+"-"+str(now.month)+".log", le
 
 def get_path_from_env(env) :
     if env == "PROD" :
-        return "/piqv/plankton/"
+        return os.path.expanduser("/piqv/plankton/")
     elif env == "DEV" :
-        return "../local_plankton/zooscan/"
+        return os.path.expanduser("../local_plankton/zooscan/")
     else :
-        return "./dash_test/data/"
+        return os.path.expanduser("./dash_test/data/")
 try :   
     env = os.environ['DASH_ENV']
 except : 
