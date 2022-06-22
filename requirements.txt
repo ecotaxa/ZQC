@@ -7,7 +7,7 @@ cffi==1.15.0
 charset-normalizer==2.0.12
 click==8.1.2
 cryptography==37.0.0
-dash==2.3.1
+dash==2.5.1
 dash-core-components==2.0.0
 dash-html-components==2.0.0
 dash-table==5.0.0

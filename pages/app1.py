@@ -1,5 +1,5 @@
-from dash import dcc
-from dash import html
+import json
+from dash import html, ctx
 from dash.dcc.Tab import Tab
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
@@ -8,6 +8,7 @@ from app import app
 import localData as ad
 import componants
 import libQC_zooscan
+import pdf_generator
 
 ######--- Generate header panel ---######
 header = componants.generate_header()
@@ -65,22 +66,43 @@ def render_content_before_scan(tab, click_run, projects, drive):
 
 # during_analysis Tabs related callbacks ##
 
-@app.callback([Output('tabs-content-during_analysis', 'children'), Output("runQC-btn-during_analysis", 'n_clicks'), Output("tabs-during_analysis", 'value')],
+@app.callback([Output('tabs-content-during_analysis', 'children'), Output("runQC-btn-during_analysis", 'n_clicks'), Output("tabs-during_analysis", 'value'), Output('intermediate-value-during_analysis', 'data'),Output("saveQC-btn-during_analysis", 'hidden')],
               [Input("tabs-during_analysis", 'value'), Input("runQC-btn-during_analysis", 'n_clicks'), Input('app-1-dropdown-projects', "value")],
               [State('app-1-dropdown-drives', 'value')], prevent_initial_call=True)
 def render_content_during_analysis(tab, click_run, projects, drive):
     if not click_run:
         if tab == 'tab-details-during_analysis':
-            return componants.generate_details(checksBlocks[1]), 0, tab
+            return componants.generate_details(checksBlocks[1]), 0, tab, None, True
         elif tab == 'tab-result-during_analysis':
-            return componants.generate_result(componants.emptyResult("during_analysis", projects)), 0, tab
+            return componants.generate_result(componants.emptyResult("during_analysis", projects)), 0, tab, None, True
         else:
-            return [], 0, tab
+            return [], 0, tab, None, True
     else:
         if len(projects) > 0:
             QC_execution = lib_qc_zooscan.runCallback(projects, drive, "during_analysis")
-            return componants.generate_result(QC_execution), 0, 'tab-result-during_analysis'
-    return componants.generate_result(componants.emptyResult("during_analysis", projects)), 0, 'tab-result-during_analysis'
+            jstr = json.dumps(QC_execution["pdf"] , default=lambda df: json.loads(df.to_json()))
+            return componants.generate_result(QC_execution["dash"]), 0, 'tab-result-during_analysis', jstr, False
+
+    return componants.generate_result(componants.emptyResult("during_analysis", projects)), 0, 'tab-result-during_analysis', None, True
+
+@app.callback(Output("saveQC-btn-during_analysis", 'n_clicks'),
+              [Input("saveQC-btn-during_analysis", 'n_clicks'), Input('intermediate-value-during_analysis', 'data')],
+               prevent_initial_call=True)
+def save_report(click_save_pdf, jsonified_pdf_data):
+    
+    # if missing infos
+    if click_save_pdf == 0 or not jsonified_pdf_data:
+        return 0
+    if ctx.triggered_id == 'intermediate-value-during_analysis':
+        return 0
+    # if already saved
+    elif click_save_pdf > 1:
+        return click_save_pdf
+    # if everything is ok for save : save
+    else :
+        pdf_data = json.loads(jsonified_pdf_data)
+        pdf_generator.generate(pdf_data)
+        return click_save_pdf
 
 ## after_ecotaxa_classif Tabs related callbacks ##
 

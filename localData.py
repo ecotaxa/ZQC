@@ -4,9 +4,10 @@ import os
 import labels
 from zipfile import ZipFile
 from zipfile import BadZipFile 
-from enums import Mode
+from enums import SUPPORTED_DATA_COMPONANT, Mode
 import logging
 from datetime import datetime
+from fpdf import FPDF
 
 now= datetime.now()
 logging.basicConfig(filename="logs/"+str(now.year)+"-"+str(now.month)+".log", level = logging.INFO, format="%(asctime)s | %(levelname)s | %(threadName)s |%(message)s")
@@ -235,6 +236,12 @@ def headerToGlobalData(header_files) :
     return dataframe
 
 #TODO JCE : impl
-def saveQcExecution(title, result):
-    """Save an execution as html (or pdf)"""
-    return
+def saveQcExecution(pdf, subpath, title):
+    """Save an execution as pdf"""
+    path = base_path+subpath+"Zooscan_reports/"
+    
+    # Create a new directory because it does not exist 
+    if not os.path.exists(path): 
+        os.makedirs(path)
+
+    pdf.output(path+title+".pdf", 'F')

@@ -36,6 +36,8 @@ def generate_project_selector(drives):
 
 def generate_check_block(checkBlock):
     return html.Div([  # -- check list title --###
+                    # dcc.Store stores the intermediate value
+                    dcc.Store(id='intermediate-value-'+ checkBlock["id"]),
                     html.Div([
                         html.Div(
                             checkBlock["title"],
@@ -47,7 +49,15 @@ def generate_check_block(checkBlock):
                             src="../assets/play.png",
                             alt="Run "+checkBlock["title"]+" QCs",
                             title="Run "+checkBlock["title"]+" QCs",
-                            n_clicks=0)
+                            n_clicks=0),
+                        html.Img(
+                            className="runQC-btn",
+                            id="saveQC-btn-" + checkBlock["id"],
+                            src="../assets/download.png",
+                            alt="Save "+checkBlock["title"]+" QCs on plankton server",
+                            title="Save "+checkBlock["title"]+" QCs on plankton server",
+                            n_clicks=0,
+                            hidden=True)
                     ],
                         className="check-block-title"),
                     ###-- check list tab --###

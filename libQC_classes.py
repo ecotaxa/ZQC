@@ -44,10 +44,12 @@ class Block:
 
     def runCallback(self, projects, drive):
         """Run block's QC, and return execution result as dash componants"""
-        QC_execution = []
+        QC_execution = {"dash" : [], "pdf" : []}
         logging.info("--- run for {} projects : {} ---".format(len(projects), projects))
         for project in projects:
             start_time = time.time()
+            pdf = {"project" : project, 
+                   "subBlocks" : []}
             try :
                 # Get data
                 local_data = localData.getdata(self.mode, drive + "/" + project)
@@ -57,13 +59,19 @@ class Block:
                     qcExecutionData="The QC can't execute for this project because of : "+ local_data["dataframe"]["STATUS"][0]
                 else : 
                     # Run blocks
-                    qcExecutionData = [subBlock.runCallback(self.mode, local_data) for subBlock in self.subBlocks]
+                    qcExecutionData = [subBlock.runCallback(self.mode, local_data, pdf) for subBlock in self.subBlocks]
             except Exception as e:
                 qcExecutionData="The QC can't execute for this project because of : "+ str(e)
                 logging.warning("***** runCallback error for project '{}' : {}".format(project, e))
             
             # Generate and agregate dash componants
-            QC_execution.append(componants.qc_execution_result(project, qcExecutionData))
+            QC_execution["dash"].append(componants.qc_execution_result(project, qcExecutionData))
+
+            # Save the created pdf 
+            pdf["path"]=drive + "/" + project+ "/"
+            pdf["title"] = "QC_"+self.title+"_"+project+"_"+str(datetime.now())
+            QC_execution["pdf"].append(pdf)
+
         return QC_execution
 
     def listChecks(self):
@@ -88,7 +96,7 @@ class SubBlock:
     def getCheck(self, _id):
         return next((x for x in self.checks if x.id == _id), None)
 
-    def runCallback(self, mode, local_data):
+    def runCallback(self, mode, local_data, pdf):
         """Run sub block's QC, save the result in project forlder and return execution result as dash componants"""
         # For eatch checks of this sub block, run its callback and store the result in frames array.
         frames = [{"type": check.type, "fig_number" : check.fig_number, "data" : check.callback(check.id, mode, local_data) } for check in self.checks]
@@ -101,7 +109,7 @@ class SubBlock:
             result.append({"dataframe" : pd.concat(dataframe_for_fig_n).groupby([dataframe_for_fig_n[0].columns[0]]).first().reset_index(), "type" : type_for_fig_n[0]})
 
         # Save the result of the execution as html in the project folder
-        localData.saveQcExecution(self.title, result)
+        pdf["subBlocks"].append({"title" : self.title, "data" : result})
 
         # Generate the dash layout, depending on execution result type
         resultLayout = componants.sub_block_execution_result(self.title, result)
