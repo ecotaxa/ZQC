@@ -120,7 +120,8 @@ def save_pdf(pdf, path, title):
 def generate(pdfs_data):
     for data in pdfs_data :
         print(data)
-        pdf = create_pdf_report_for_project(data["project"])
-        for subBlock in data["subBlocks"] :
-            add_sub_block_execution(pdf, subBlock["title"], subBlock["data"])
-        save_pdf(pdf, data["path"], data["title"])
+        if len(data["subBlocks"]) > 0 :
+            pdf = create_pdf_report_for_project(data["project"])
+            for subBlock in data["subBlocks"] :
+                add_sub_block_execution(pdf, subBlock["title"], subBlock["data"])
+            save_pdf(pdf, data["path"], data["title"])
