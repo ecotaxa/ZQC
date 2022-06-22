@@ -17,7 +17,7 @@ def generate_project_selector(drives):
         html.H2("Drive"),
         dcc.Dropdown(
             id='app-1-dropdown-drives',
-            value="zooscan_lov" if "zooscan_lov" in drives else "",
+            value="zooscan_lov" if "zooscan_lov" in [drive["label"] for drive in drives] else "zooscan_embrc",
             clearable = False,
             options=[
                 {'label': drive['label'] + " 🔒" if drive['disabled'] else drive['label'], 
