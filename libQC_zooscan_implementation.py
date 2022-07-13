@@ -672,7 +672,7 @@ def check_motoda_quality(_id, _mode, local_data):
     result['motoda_quality']=""
     # Get only usefull file name : .jpg in /Zooscan_scan/_work/ folder
     fs = local_data.get("fs")
-    dataToTest = fs.loc[([True if "/Zooscan_scan/_work/" in i else False for i in fs['path'].values])
+    dataToTest = fs.loc[([True if ("/Zooscan_scan/_work/" in i and "multiples_to_separate" not in i)else False for i in fs['path'].values])
                         & (fs['extension'].values == "jpg"), ["name", "extension"]]
 
     # fill with motoda OK or associated generic error code
