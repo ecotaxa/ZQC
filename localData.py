@@ -42,6 +42,7 @@ def getDrives():
 
 def getProjects(drive):
     logging.info("************Get projects in************")
+    drive = drive if drive else ""
     projects = getDir(drive+'/')
     #Keep only the one that begin with Zooscan_
     projects = [p for p in projects if p['label'].startswith('Zooscan_')]
