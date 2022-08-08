@@ -109,6 +109,7 @@ def  getTsv(subpath):
     #needed tsv cols for data testing
     cols = [
             'sample_id',
+            'object_id',
             'process_img_background_img', 
             'process_particle_bw_ratio', 
             "process_particle_pixel_size_mm",

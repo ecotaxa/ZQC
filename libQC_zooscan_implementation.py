@@ -77,7 +77,7 @@ def check_frame_type(_id, _mode, local_data):
     start_time = time.time()
 
     # Get only usefull columns
-    result = local_data.get("dataframe")[['scan_id', 'process_img_background_img']]
+    result = local_data.get("dataframe")[['scan_id', 'process_img_background_img']].drop_duplicates()
 
     # Get only usefull file name : .ini in Zooscan_config folder
     fs = local_data.get("fs")
@@ -174,7 +174,7 @@ def check_scan_weight(_id, _mode, local_data):
     # Get only usefull column size :  where path contains /_raw/ and extension == .tif
     fs = local_data.get("fs")
     dataToTest = fs.loc[([True if "/_raw/" in i else False for i in fs['path'].values]) & (fs['extension'].values == "tif"), "size"]
-    result = local_data.get("dataframe")[['scan_id']]
+    result = local_data.get("dataframe")[['scan_id']].drop_duplicates()
 
     # check that all these tif have the same weight
     if len(dataToTest.unique()) == 1:
@@ -268,6 +268,59 @@ def check_process_post_scan(_id, _mode, local_data):
     logging.info("-- TIME : {} seconds -- : {} : {} : callback check_process_post_scan".format((time.time() - start_time), _id, _mode))
     return result
 
+def check_nb_lines_tsv(_id, _mode, local_data):
+    """ Checks that the number of lines in the tsv file is consistent with the number of images in the related folder.
+
+    In the column "Nb tsv lines" of the report table:
+        - "#MISSING ecotaxa table" : if no ecotaxa_scanID.tsv table.
+        - "#Images nb ≠ TSV lignes nb" : if the number of lines in a tsv file is différents than the number of images in the related folder
+        - "Nb lines TSV OK" : if the count of lines and images are as expected
+    """
+    start_time = time.time()
+
+    # Get only usefull data : where path contains /_raw/
+    fs = local_data.get("fs")
+    dataToTest = fs.loc[([True if ("/Zooscan_scan/_work/" in i and "multiples_to_separate" not in i)else False for i in fs['path'].values])
+                        & (fs['extension'].values == "jpg"), ["name", "extension"]]
+
+    result = local_data.get("dataframe")[['scan_id', 'object_id']].groupby("scan_id").size().reset_index(name='nb_objects')
+    result["nb_lines_tsv"] = ""
+    
+    temp =  local_data.get("dataframe")[['scan_id', 'object_id']].groupby('scan_id').first().reset_index()
+
+    # Extract scan ids
+    ids = result["scan_id"].values
+
+    # foreatch scan id
+    for id in ids:
+        #get lines related to curent id
+        data_img_list = dataToTest.loc[([True if id in i else False for i in dataToTest['name'].values]), ["name", "extension"]]
+
+        # count number of img in work
+        count_img = len(data_img_list)
+
+        # get number of object for id
+        count_tsv_lines = result[result["scan_id"]==id]["nb_objects"].values[0]
+        # if missing TSV
+        if temp[temp["scan_id"] == id]["object_id"].values[0]==labels.errors["global.missing_ecotaxa_table"] : 
+            result.loc[result["scan_id"] == id, 'nb_lines_tsv'] += labels.errors["global.missing_ecotaxa_table"]
+        # if nb of img == nb of object in tsv
+        elif count_img == count_tsv_lines :
+            result.loc[result["scan_id"] == id, 'nb_lines_tsv'] += labels.sucess["process.nb_lines_tsv.ok"]
+        # if nb of img != nb of object in tsv
+        else :
+            result.loc[result["scan_id"] == id, 'nb_lines_tsv'] += labels.errors["process.nb_lines_tsv.diff"]
+            
+                
+    #drop usless collumns
+    result.drop(columns=["nb_objects"], inplace=True)
+
+    # Rename collums to match the desiered output
+    result.rename(columns={'scan_id': 'List scan ID', 'nb_lines_tsv': 'Nb tsv lines'}, inplace=True)
+
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_nb_lines_tsv".format((time.time() - start_time), _id, _mode))
+    return result
+
 def check_bw_ratio(_id, _mode, local_data):
     """In order to ensure the quality of the process, the value of the B/W ratio must be strictly less than 0.25.
 
@@ -280,7 +333,7 @@ def check_bw_ratio(_id, _mode, local_data):
     start_time = time.time()
 
     # Get only usefull columns
-    result = local_data.get("dataframe")[['scan_id', 'process_particle_bw_ratio']]
+    result = local_data.get("dataframe")[['scan_id', 'process_particle_bw_ratio']].drop_duplicates()
 
     # Replace by ratio OK or associated error code
     result.process_particle_bw_ratio = result.process_particle_bw_ratio.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
@@ -389,7 +442,7 @@ def check_process_post_sep(_id, _mode, local_data):
     start_time = time.time()
 
     # Get only usefull column : scan_id and process_particle_sep_mask
-    result = local_data.get("dataframe")[['scan_id', 'process_particle_sep_mask']]
+    result = local_data.get("dataframe")[['scan_id', 'process_particle_sep_mask']].drop_duplicates()
 
     # Replace by large or narrow or associated error code
     result.process_particle_sep_mask = result.process_particle_sep_mask.map(lambda x: labels.sucess["process.post_sep.ok"] if "include" in x
@@ -455,6 +508,7 @@ def check_sieve_bug(_id, _mode, local_data):
             elif acq_min_mesh > acq_max_mesh :
                 result.loc[result["scan_id"] == id, 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_sup_max"]
 
+    ## TODO JCE  
     #For the same sampleID whose FracID = d1 or d2 ... dN (comparison between several scanIDs of the same sampleID), check the following conditions:
     # - the acq_min (dN) ≠ acq_max (dN+1), put a warning "ACQ MIN (dN) ≠ ACQ MAX (dN+1)"
     data_by_sample_id = result.groupby("sample_id")

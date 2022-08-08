@@ -31,6 +31,7 @@ errors = {
 
     "process.post_sep.unprocessed": "#UNPROCESSED",
     "process.post_sep.not_included": "#SEP MSK NOT INCLUDED",
+    "process.nb_lines_tsv.diff" : "#Images nb ≠ TSV lignes nb",
 
     #TODO JCE : talk with AMANDA for better understanding of this QC
     "acquisition.sieve.bug.different": "#SIEVE different from others",
@@ -59,10 +60,10 @@ sucess = {
     "process.post_scan.ok": "Process OK",
     "process.sep_mask.ok": "Sep mask OK",
     "process.post_sep.ok": "process OK",
+    "process.nb_lines_tsv.ok" : "Nb lines TSV OK",
 
     "acquisition.sieve.bug.ok": "sieve OK",
     "acquisition.motoda.check.ok": "Motoda OK",
     "acquisition.motoda.comparaison.ok": "Motoda comparison OK",
     "acquisition.motoda.quality.ok": "Motoda OK",
-
 }
