@@ -582,24 +582,25 @@ def check_motoda_check(_id, _mode, local_data):
     # If Motoda identique
     if len(dataToTest.acq_sub_part.unique()) == 1 :
         result['motoda_check'] =  np.where(result['motoda_check'] == labels.sucess["acquisition.motoda.check.ok"],labels.errors["acquisition.motoda.check.identique"], result['motoda_check'])
+    nb_scans = len(dataToTest.scan_id)
+    if (nb_scans>2) :
+        for i in range(0, nb_scans):
+            id = dataToTest.scan_id.values[i]
+            motoda_check = result.loc[result["scan_id"] == id, 'motoda_check'].values[0]
+            sample_net_type = dataToTest.sample_net_type.values[i]
+            fracID = dataToTest.fracID.values[i]
+            acq_sub_part = dataToTest.acq_sub_part.values[i]
 
-    for i in range(0, len(dataToTest.scan_id)):
-        id = dataToTest.scan_id.values[i]
-        motoda_check = result.loc[result["scan_id"] == id, 'motoda_check'].values[0]
-        sample_net_type = dataToTest.sample_net_type.values[i]
-        fracID = dataToTest.fracID.values[i]
-        acq_sub_part = dataToTest.acq_sub_part.values[i]
-
-        if motoda_check == labels.sucess["acquisition.motoda.check.ok"]:
-            result.loc[result["scan_id"] == id, 'acq_sub_part'] = int(acq_sub_part) if is_int(acq_sub_part) else acq_sub_part
-            if(fracID=="_d1_" or ( fracID=="_tot_" and sample_net_type=="rg")) :
-                #should be (1 or )puissance de 2
-                if not is_power_of_two(int(acq_sub_part)) : 
-                    result.loc[result["scan_id"] == id, 'motoda_check'] = labels.errors["acquisition.motoda.check.cas1"]
-            elif (fracID.startswith("_d") or fracID=="_tot_" or fracID=="_plankton_") and sample_net_type != "rg"  :
-                if int(acq_sub_part)==1 or not is_power_of_two(int(acq_sub_part)) :
-                    #should be ^2 but not 1
-                    result.loc[result["scan_id"] == id, 'motoda_check'] = labels.errors["acquisition.motoda.check.cas2"]
+            if motoda_check == labels.sucess["acquisition.motoda.check.ok"]:
+                result.loc[result["scan_id"] == id, 'acq_sub_part'] = int(acq_sub_part) if is_int(acq_sub_part) else acq_sub_part
+                if(fracID=="_d1_" or ( fracID=="_tot_" and sample_net_type=="rg")) :
+                    #should be (1 or )puissance de 2
+                    if not is_power_of_two(int(acq_sub_part)) :
+                        result.loc[result["scan_id"] == id, 'motoda_check'] = labels.errors["acquisition.motoda.check.cas1"]
+                elif (fracID.startswith("_d") or fracID=="_tot_" or fracID=="_plankton_") and sample_net_type != "rg"  :
+                    if int(acq_sub_part)==1 or not is_power_of_two(int(acq_sub_part)) :
+                        #should be ^2 but not 1
+                        result.loc[result["scan_id"] == id, 'motoda_check'] = labels.errors["acquisition.motoda.check.cas2"]
 
     # Keep only one line by couples : id / motoda fraction
     result = result.drop_duplicates()
