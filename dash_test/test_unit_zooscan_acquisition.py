@@ -199,7 +199,7 @@ def test_subBlock_acquisition_check_motoda_check(dash_duo) :
     # "#NOT NUMERIC": if the acq_sub_part value is not numeric
     # "#MISSING ecotaxa table": if no ecotaxa_scanID.tsv table
     
-    # "#Motoda frac (dN-1) ≥ Motoda frac (dN)": if does not respect acq_sub_part (N) < acq_sub_part (N+1).  Example : acq_sub_part (d1) > acq_sub_part (d2)
+    # "#Motoda frac (dN-1) > Motoda frac (dN)": if does not respect acq_sub_part (N) <= acq_sub_part (N+1).  Example : acq_sub_part (d1) > acq_sub_part (d2)
     # "#Motoda comparison OK" : if everything is OK
                 
     # In the columns 'Sample Comment' and 'Observation' of the report table, are reported respectively :
