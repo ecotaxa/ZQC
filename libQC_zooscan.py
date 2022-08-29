@@ -55,7 +55,7 @@ class Lib_zooscan():
       block_after_ecotaxa_classif.addSubBlocks(subBlock_multiples)
 
       #Fill sub blocks with checks
-      subBlock_process.addChecks(check_raw_files, check_nb_lines_tsv, check_frame_type, check_scan_weight, check_process_post_scan ,check_bw_ratio, check_pixel_size, check_sep_mask, check_process_post_sep)#check_nb_lines_tsv
+      subBlock_process.addChecks(check_raw_files, check_frame_type, check_scan_weight, check_process_post_scan ,check_bw_ratio, check_pixel_size, check_sep_mask, check_process_post_sep, check_nb_lines_tsv)
       subBlock_acquisition.addChecks(check_sieve_bug, check_motoda_check, check_motoda_comparaison, check_motoda_quality, check_spelling)
       subBlock_sample.addChecks(checks_gps, checks_date, checks_other_data, checks_distance_parcourue, checks_filtred_volume)
 

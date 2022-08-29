@@ -708,11 +708,11 @@ def check_motoda_quality(_id, _mode, local_data):
                     When Nettype is rg and motoda_frac strictly equal to 1
                         → the number of .jpg images in the _work subdirectory must not be > 1500
                     When Nettype is rg and motoda_frac strictly > 1
-                        → the number of .jpg images in the _work subdirectory must be between 800 and 1500
+                        → the number of .jpg images in the _work subdirectory must be between 500 and 1500
                     When Nettype ≠ rg and FracID = d1 and motoda_frac strictly equal to 1
                         → the number of .jpg images in the _work subdirectory must not be > 1500
                     When Nettype ≠ rg and FracID = d1 and the motoda_frac strictly > 1 
-                        → the number of .jpg images in the _work subdirectory must be between 800 and 1500
+                        → the number of .jpg images in the _work subdirectory must be between 500 and 1500
                     When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly equal to 1
                         → the number of .jpg images in the _work subdirectory must not be > 2500
                     When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly >1
@@ -762,8 +762,8 @@ def check_motoda_quality(_id, _mode, local_data):
                     result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"] if count_img <= 1500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img)
                 # When Nettype = rg and motoda_frac strictly >1
                 elif motoda_frac>1 :
-                    # the number of .jpg images in the _work subdirectory must be between 800 and 1500
-                    result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 800 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 1500 else labels.sucess["acquisition.motoda.quality.ok"] 
+                    # the number of .jpg images in the _work subdirectory must be between 500 and 1500
+                    result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 1500 else labels.sucess["acquisition.motoda.quality.ok"] 
                 else : 
                     result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"]
             #For all other Nettype:
@@ -775,8 +775,8 @@ def check_motoda_quality(_id, _mode, local_data):
                         result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"] if count_img <= 1500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img)
                     # When Nettype ≠ rg and FracID = d1 and the motoda_frac strictly >1 
                     elif motoda_frac > 1 :
-                        # the number of .jpg images in the _work subdirectory must be between 800 and 1500
-                        result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 800 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 1500 else labels.sucess["acquisition.motoda.quality.ok"] 
+                        # the number of .jpg images in the _work subdirectory must be between 500 and 1500
+                        result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 1500 else labels.sucess["acquisition.motoda.quality.ok"] 
                 
                 elif (frac_id.startswith("_d") or frac_id=="_tot_" or frac_id=="_plankton_") : 
                     # When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly =1

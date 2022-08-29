@@ -227,11 +227,11 @@ def test_subBlock_acquisition_check_motoda_check(dash_duo) :
     #         When Nettype is rg and motoda_frac strictly equal to 1
     #             → the number of .jpg images in the _work subdirectory must not be > 1500
     #         When Nettype is rg and motoda_frac strictly > 1
-    #             → the number of .jpg images in the _work subdirectory must be between 800 and 1500
+    #             → the number of .jpg images in the _work subdirectory must be between 500 and 1500
     #         When Nettype ≠ rg and FracID = d1 and motoda_frac strictly equal to 1
     #             → the number of .jpg images in the _work subdirectory must not be > 1500
     #         When Nettype ≠ rg and FracID = d1 and the motoda_frac strictly > 1 
-    #             → the number of .jpg images in the _work subdirectory must be between 800 and 1500
+    #             → the number of .jpg images in the _work subdirectory must be between 500 and 1500
     #         When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly equal to 1
     #             → the number of .jpg images in the _work subdirectory must not be > 2500
     #         When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly >1
