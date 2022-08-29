@@ -615,7 +615,7 @@ def check_motoda_comparaison(_id, _mode, local_data):
         In the column 'MOTODA comparison' of the report table :
             - "#NOT NUMERIC": if the acq_sub_part value is not numeric
             - "#MISSING ecotaxa table": if no ecotaxa_scanID.tsv table
-            - "#Motoda frac (dN-1) ≥ Motoda frac (dN)": if does not respect acq_sub_part (N) < acq_sub_part (N+1). 
+            - "#Motoda frac (dN-1) > Motoda frac (dN)": if does not respect acq_sub_part (N) <= acq_sub_part (N+1). 
               Example : acq_sub_part (d1) > acq_sub_part (d2)
             - "#Motoda comparison OK" : if everything is OK
             
@@ -656,12 +656,12 @@ def check_motoda_comparaison(_id, _mode, local_data):
                     break
 
                 #Compare d_i and d_i+1
-                #Should respect "acq_sub_part (N) < acq_sub_part (N+1)"
+                #Should respect "acq_sub_part (N) <= acq_sub_part (N+1)"
                 di_acq_sub_part = int(d_i.acq_sub_part.values[0]) if is_int(d_i.acq_sub_part.values[0]) else d_i.acq_sub_part.values[0]
                 di_plus_un_acq_sub_part = int(d_i_plus_1.acq_sub_part.values[0]) if is_int(d_i_plus_1.acq_sub_part.values[0]) else d_i_plus_1.acq_sub_part.values[0]
-                if di_acq_sub_part >= di_plus_un_acq_sub_part :
-                    result.loc[result["scan_id"] == d_i.scan_id.values[0], 'motoda_comp'] = labels.errors["acquisition.motoda.comparaison.ko"]+" (d"+str(i)+") ≥ Motoda frac (d"+str(i+1)+")"
-                    result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'motoda_comp'] = labels.errors["acquisition.motoda.comparaison.ko"]+" (d"+str(i)+") ≥ Motoda frac (d"+str(i+1)+")"
+                if di_acq_sub_part > di_plus_un_acq_sub_part :
+                    result.loc[result["scan_id"] == d_i.scan_id.values[0], 'motoda_comp'] = labels.errors["acquisition.motoda.comparaison.ko"]+" (d"+str(i)+") > Motoda frac (d"+str(i+1)+")"
+                    result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'motoda_comp'] = labels.errors["acquisition.motoda.comparaison.ko"]+" (d"+str(i)+") > Motoda frac (d"+str(i+1)+")"
     
     # Extract scan ids
     ids = result["scan_id"].values
