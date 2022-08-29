@@ -553,6 +553,7 @@ def check_sieve_bug(_id, _mode, local_data):
 
 def check_motoda_check(_id, _mode, local_data):
     """This control performs a numerical check on the motoda fraction used. 
+    This quality test identifies data generated with an earlier version of Zooprocess that did not take motoda into account. The ecotaxa.tsv tables all had the same motoda fraction number.
 
         In the column 'MOTODA Fraction' of the report table, is reported :
             - the fraction acq_sub_part of the tables ecotaxa_scanID.tsv of the subdirectories of the _work directories.
