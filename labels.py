@@ -6,6 +6,7 @@ errors = {
     "global.bad_meta_txt_file": "#BAD TXT FILE",
     "global.missing_meta_txt_file": "#MISSING Meta txt file",
     "global.missing_directory.work": "#MISSING _work DIRECTORY",
+    "global.missing_directory.ecotaxa": "#MISSING ecotaxa DIRECTORY",
     "global.not_numeric": "#NOT NUMERIC",
 
     "process.frame_type.not_ok" : "#Frame NOT OK",
@@ -51,6 +52,9 @@ errors = {
     "acquisition.motoda.quality.missing": "#MISSING images",
     "acquisition.motoda.quality.low": "#Images nb LOW : ",
     "acquisition.motoda.quality.high": "#Images nb HIGH : ",
+
+    "multiples.level.high" : "#HIGH multiples level : ",
+    "multiples.no_zip_file" : "No zip file available in the ecotaxa/ forder of the selected project, please generate it on ecotaxa."
 }
 
 sucess = {

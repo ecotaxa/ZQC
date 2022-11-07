@@ -5,7 +5,7 @@ import labels
 
 def generate_header():
     return html.Div([
-                    html.H1('Data quality checks', className="inline"),
+                    html.H1('Zooscan Quality Checks', className="inline"),
                     dcc.Link(html.Img(className="help-btn", src="../assets/help.png", alt="help", title="Help"), href='/QC/zooscan/doc'),
                     html.Span(className='elementor-divider-separator')
                     ],
@@ -174,7 +174,7 @@ def sub_block_execution_result(subBlock, data):
 
 def qc_execution_result(project, qcExecutionLayout):
     return html.Div([
-        html.P("🎃 "+project+" 🎃", className="project-sep"),
+        html.P("❄️ "+project+" ❄️", className="project-sep"),
         html.Div(qcExecutionLayout)
     ], className="result-project-title")
 

@@ -12,13 +12,13 @@ class Lib_zooscan():
       #Create empty Blocks 
       block_before_scan = Block("Before scan", "before_scan", Mode.HEADER)
       block_during_analysis = Block("During analysis", "during_analysis", Mode.TSV)
-      block_after_ecotaxa_classif = Block("After EcoTaxa classif", "after_ecotaxa_classif", Mode.TSV)
+      block_after_ecotaxa_classif = Block("After EcoTaxa classif", "after_ecotaxa_classif", Mode.TSV_2)
       
       #Create empty sub blocks
       subBlock_sample = SubBlock("Sample", " This feature will be available in a future release of the QC application. This quality check will gives an overview of the quality of the data related to the acquisition of the sample.", 1, "sample")
       subBlock_acquisition = SubBlock("Acquisition", "This quality check gives an overview of the quality of the data related to the acquisition of the scan on the Zooscan.", 2, "acquisition")
       subBlock_process = SubBlock("Process", "This quality check gives an overview and notes the quality of the steps performed by the sample during its acquisition (SCAN) at the Zooscan and its processing (PROCESS) via the Zooprocess application.", 1, "process")
-      subBlock_multiples = SubBlock("Multiples", "This feature will be available in a future release of the QC application", 1, "multiples")
+      subBlock_multiples = SubBlock("Multiples", "This quality check gives an overview of the quality of the data related to the classification.", 1, "multiples")
       
 
       #Create checks
@@ -43,7 +43,8 @@ class Lib_zooscan():
       checks_other_data = Check("Check other data", libQC_zooscan_implementation.noCb.__doc__ , "other data", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.noCb)
       checks_distance_parcourue = Check("Distance covered by the net", libQC_zooscan_implementation.noCb.__doc__ , "distance", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.noCb)
       checks_filtred_volume = Check("Filtered volume", libQC_zooscan_implementation.noCb.__doc__ , "volume", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.noCb)
-
+      
+      checks_multiples = Check("Proportion of multiples", libQC_zooscan_implementation.checks_multiples.__doc__ , "proportion_of_multiples", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.checks_multiples)
 
       #Fill library with blocks
       self.lib.addBlocks(block_before_scan, block_during_analysis, block_after_ecotaxa_classif)
@@ -58,6 +59,7 @@ class Lib_zooscan():
       subBlock_process.addChecks(check_raw_files, check_frame_type, check_scan_weight, check_process_post_scan ,check_bw_ratio, check_pixel_size, check_sep_mask, check_process_post_sep, check_nb_lines_tsv)
       subBlock_acquisition.addChecks(check_sieve_bug, check_motoda_check, check_motoda_comparaison, check_motoda_quality, check_spelling)
       subBlock_sample.addChecks(checks_gps, checks_date, checks_other_data, checks_distance_parcourue, checks_filtred_volume)
+      subBlock_multiples.addChecks(checks_multiples)
 
    def listChecks(self) :
       """Return an object containing all availables quallity checks"""

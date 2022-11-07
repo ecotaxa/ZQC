@@ -3,6 +3,7 @@ from enum import Enum
 class Mode(str, Enum):
     TSV = "TSV"
     HEADER = "HEADER"
+    TSV_2 = "TSV_2"
 
 
 class EXECUTION_STATUS(str, Enum):

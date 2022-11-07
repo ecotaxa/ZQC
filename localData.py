@@ -23,10 +23,21 @@ try :
     env = os.environ['DASH_ENV']
 except : 
     env="err"
+
 base_path=get_path_from_env(env)
 
+def get_newest_zip(zips) : 
+    """ Return the newest object based on the "zip" property of the array of object "zips" """
+    newest_zip = max(zips, key=lambda x: x["zip"])
+    return newest_zip
+
 def missingCol(cols, path):
-    read_cols = pd.read_csv(path, nrows=0, encoding="ISO-8859-1", sep="\t").columns
+    """ Return two lists, first cols that had been find, second missing cols """
+    if type(path) is dict :
+        zip_file = ZipFile(path["zip"])
+        read_cols = pd.read_csv(zip_file.open(path["tsv"]), nrows=0, encoding="utf-8", sep="\t").columns
+    else :
+        read_cols = pd.read_csv(path, nrows=0, encoding="ISO-8859-1", sep="\t").columns
     cols_ko = list(set(cols) - set(read_cols))
     cols_ok = list(set(cols) - set(cols_ko))
     return cols_ok, cols_ko
@@ -42,7 +53,7 @@ def getDrives():
 
 def getProjects(drive):
     logging.info("************Get projects in************")
-    drive = drive if drive else ""
+    #drive = drive if drive else ""
     projects = getDir(drive+'/')
     #Keep only the one that begin with Zooscan_
     projects = [p for p in projects if p['label'].startswith('Zooscan_')]
@@ -88,6 +99,13 @@ def getdata(mode, subpath) :
         # Format given data 
         dataframe = headerToGlobalData(header_files)
         return dataframe
+    
+    if mode==Mode.TSV_2 :
+        # Get all tsv files from specific dir
+        tsv_files = getProjectTsv(subpath)
+        # Format given data 
+        dataframe = tsv_files[0]
+        return {"dataframe" : dataframe}
 
 def getMeta(fs) : 
     meta_files = {}
@@ -144,6 +162,71 @@ def  getTsv(subpath):
     except IOError as e:
         df = pd.DataFrame(data={'scan_id': ["NOSCANID"], 'STATUS': labels.errors["global.missing_directory.work"]})
         df[cols]= labels.errors["global.missing_directory.work"]   
+        tsv_files.append(df)
+        logging.warning("{}".format(e))
+    return tsv_files
+
+def  getProjectTsv(subpath):
+    """Read the project ecotaxa table (tsv file) for the given project. Return it as a pandas dataframes"""
+    tsv_files = []
+    # AVAILABLE COLS NAME
+    # object_id	object_lat	object_lon	object_date	object_time	object_link	object_depth_min	object_depth_max	object_annotation_status	
+    # object_annotation_person_name	object_annotation_person_email	object_annotation_date	object_annotation_time	object_annotation_category	
+    # object_annotation_hierarchy	object_lat_end	object_lon_end	object_area	object_mean	object_stddev	object_mode	object_min	object_max	
+    # object_x	object_y	object_xm	object_ym	object_perim.	object_bx	object_by	object_width	object_height	object_major	
+    # object_minor	object_angle	object_circ.	object_feret	object_intden	object_median	object_skew	object_kurt	object_%area	
+    # object_xstart	object_ystart	object_area_exc	object_fractal	object_skelarea	object_slope	object_histcum1	object_histcum2	object_histcum3	
+    # object_xmg5	object_ymg5	object_nb1	object_nb2	object_nb3	object_compentropy	object_compmean	object_compslope	object_compm1	
+    # object_compm2	object_compm3	object_symetrieh	object_symetriev	object_symetriehc	object_symetrievc	object_convperim	
+    # object_convarea	object_fcons	object_thickr	object_tag	object_esd	object_elongation	object_range	object_meanpos	object_centroids
+    # object_cv	object_sr	object_perimareaexc	object_feretareaexc	object_perimferet	object_perimmajor	object_circex	object_cdexc	
+    # sample_id	sample_dataportal_descriptor	sample_scan_operator	sample_ship	sample_program	sample_stationid	sample_bottomdepth	
+    # sample_ctdrosettefilename	sample_other_ref	sample_tow_nb	sample_tow_type	sample_net_type	sample_net_mesh	sample_net_surf	sample_zmax	
+    # sample_zmin	sample_tot_vol	sample_comment	sample_tot_vol_qc	sample_depth_qc	sample_sample_qc	sample_barcode	sample_duration	
+    # sample_ship_speed	sample_cable_length	sample_cable_angle	sample_cable_speed	sample_nb_jar	sample_open	process_id	process_date	
+    # process_time	process_img_software_version	process_img_resolution	process_img_od_grey	process_img_od_std	process_img_background_img	
+    # process_particle_version	process_particle_threshold	process_particle_pixel_size_mm	process_particle_min_size_mm	
+    # process_particle_max_size_mm	process_particle_sep_mask	process_particle_bw_ratio	process_software	acq_id	acq_instrument	acq_min_mesh
+    # acq_max_mesh	acq_sub_part	acq_sub_method	acq_hardware	acq_software	acq_author	acq_imgtype	acq_scan_date	acq_scan_time	
+    # acq_quality	acq_bitpixel acq_greyfrom	acq_scan_resolution	acq_rotation	acq_miror	acq_xsize	acq_ysize	acq_xoffset	acq_yoffset	
+    # acq_lut_color_balance	acq_lut_filter	acq_lut_min	acq_lut_max	acq_lut_odrange	acq_lut_ratio	acq_lut_16b_median
+    
+    # Needed tsv cols for data testing
+    cols = [
+            'object_id', 
+            'object_annotation_hierarchy', 
+            'object_annotation_category', 
+            'object_area'
+        ]
+    try : 
+        folder_name = base_path+subpath+"/ecotaxa/"        
+        try: 
+            zips=[]
+            for file in os.listdir(folder_name):
+                if file.endswith(".zip") :
+                    zips.append({"zip" : os.path.join(folder_name, file), "tsv" : "ecotaxa_"+file.replace('.zip', '.tsv')})
+            if len(zips)>0 :
+                zip_path = get_newest_zip(zips)
+            else :
+                raise ValueError(labels.errors["multiples.no_zip_file"])
+            cols_ok, cols_ko = missingCol(cols, zip_path)
+
+            zip_file = ZipFile(zip_path["zip"])
+            df = pd.read_csv(zip_file.open(zip_path["tsv"]), encoding = "utf-8", usecols=cols_ok, sep="\t")
+            df['STATUS']=""
+            df['scan_id'] = folder_name
+
+            if cols_ko :
+                df[cols_ko]=labels.errors["global.missing_column"]
+            tsv_files.append(df.drop(0))  
+        except IOError as e:
+            df = pd.DataFrame(data={'scan_id': [folder_name], 'STATUS': labels.errors["global.missing_ecotaxa_table"]})
+            df[cols]= labels.errors["global.missing_ecotaxa_table"]   
+            tsv_files.append(df)
+            logging.warning("{}".format(e))
+    except IOError as e:
+        df = pd.DataFrame(data={'scan_id': ["NOSCANID"], 'STATUS': labels.errors["global.missing_directory.work"]})
+        df[cols]= labels.errors["global.missing_directory.ecotaxa"]   
         tsv_files.append(df)
         logging.warning("{}".format(e))
     return tsv_files

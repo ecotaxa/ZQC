@@ -1,3 +1,4 @@
+import math
 import labels
 import time
 import numpy as np
@@ -819,3 +820,157 @@ def check_spelling(_id, _mode, local_data):
 
     logging.info("-- TIME : {} seconds -- : {} : {} : callback check_spelling".format((time.time() - start_time), _id, _mode))
     return result
+
+def checks_multiples(_id, _mode, local_data) : 
+    """ Checks that: all multiples < 20% of living, other multiples < 15% of (living - Copepoda), and Copepoda multiples < 15% of total Copepoda, all in both number (n) and biovolume (vol);
+    
+    NB: morphological sub-categories such as head, part, dead, are never counted.
+
+        In the column 'colname' of the report table, is reported :
+            - 
+
+        In the column 'colname' of the report table :
+            - "#MISSING ecotaxa table" : if no ecotaxa_scanID.tsv table
+            - "#MISSING column" : if 'name', 'lineage' or 'area' column is missing from the ecotaxa.tsv table.
+            - ...
+
+    eliminate "head", "part", "dead", "Insecta", "wing", "seaweed"
+    % multiple totaux (multiple (other) + multiple (copepoda)) > 20% of (total living) abundance
+    % multiple totaux (multiple (other) + multiple (copepoda)) > 20% of (total living) biovolume
+    % multiple (other) > 15% of (living - Copepoda et enfants) abundance
+    % multiple (other) > 15% of (living - Copepoda et enfants) biovolume
+    % multiple (Copepoda) / Copepoda (avec enfants) > 15% of total abundance
+    % multiple (Copepoda) / Copepoda (avec enfants) > 15% of total biovolume
+    """
+    start_time = time.time()
+    # Get only usefull columns
+    dataToTest = local_data.get("dataframe")[["object_id",'object_annotation_hierarchy', 'object_annotation_category', 'object_area']]
+    # result.multiples_check = result.acq_sub_part.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
+    #                                                        else x if x==labels.errors["global.missing_column"]
+    #                                                        else labels.errors["global.not_numeric"] if not is_int(x)
+    #                                                        else labels.sucess["classification.multiples.check.ok"]) 
+    # remove not relevant categories
+    dataToTest = dataToTest[dataToTest['object_annotation_hierarchy'].str.startswith("not-living")== False]
+    # morpho stuff
+    dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("head")== False]
+    dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("part")== False]
+    dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("dead")== False]
+
+    # not plankton
+    dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("Insecta")== False]
+    dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("wing")== False]
+    dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("seaweed")== False]
+
+    # compute scan id and biovolume
+    # d$vol <- 4/3 * pi * sqrt(d$area / pi)
+    # d$scan_id <- str_replace(d$id, "_1_[0-9]+$", "")
+    # d <- group_by(d, scan_id)
+    dataToTest["vol"]= [4/3 * math.pi * math.sqrt(float(area) / math.pi) for area in dataToTest.object_area]
+    dataToTest["scan_id"]=dataToTest.object_id.str.replace("_1_[0-9]+$", "", regex=True)
+
+
+    # compute statistics by scan id  # missing means not counted = 0
+
+    result = dataToTest.groupby("scan_id").agg( vol_tot=('vol', 'sum'), n_tot=('object_id', np.size)
+        ).join(dataToTest[dataToTest["object_annotation_category"].str.contains("multiple")].groupby("scan_id").agg( vol_mult=('vol', 'sum'), n_mult=('object_id', np.size))
+        ).join(dataToTest[dataToTest["object_annotation_hierarchy"].str.contains("Copepoda")].groupby("scan_id").agg( vol_cop=('vol', 'sum'), n_cop=('object_id', np.size))
+        ).join(dataToTest[dataToTest["object_annotation_hierarchy"].str.contains("Copepoda>multiple")].groupby("scan_id").agg( vol_mult_cop=('vol', 'sum'), n_mult_cop=('object_id', np.size))
+        ).join( dataToTest[dataToTest["object_annotation_hierarchy"].str.contains("other>multiple")].groupby("scan_id").agg( vol_mult_other=('vol', 'sum'), n_mult_other=('object_id', np.size))
+        ).fillna(0)
+
+
+    # # compute percent multiples
+    # stats <- transmute(s,
+    #     scan_id = scan_id,
+    #     `% mult` = n_mult / n_tot * 100,
+    #     `%vol mult` = vol_mult / vol_tot * 100,
+    #     `% mult (non cop)` = n_mult_other / (n_tot - n_cop) * 100,
+    #     `%vol mult (non cop)` = vol_mult_other / (vol_tot - vol_cop) * 100,
+    #     `% mult (cop)` = n_mult_cop / n_cop * 100,
+    #     `%vol mult (cop)` = vol_mult_cop / vol_cop * 100
+    # )
+    # # implement checks
+    # ok <- apply(stats[,-1], 1, function(x) {
+    #     all(na.omit(x <= c(20, 20, 15, 15, 15, 15)))
+    # })
+    result['p_mult'] = result.apply(lambda row: labels.errors["multiples.level.high"]+str(round(row.n_mult / row.n_tot * 100, 4)) if (row.n_mult / row.n_tot) > 0.2 else round(row.n_mult / row.n_tot * 100, 4), axis=1)
+    result['p_vol_mult'] = result.apply(lambda row: labels.errors["multiples.level.high"]+str( round(row.vol_mult / row.vol_tot * 100, 4)) if (row.vol_mult / row.vol_tot) > 0.2 else round(row.vol_mult / row.vol_tot * 100, 4), axis=1)
+    result['p_mult_non_cop'] = result.apply(lambda row: labels.errors["multiples.level.high"]+str(round(row.n_mult_other /(row.n_tot - row.n_cop) * 100, 4)) if (row.n_mult_other /(row.n_tot - row.n_cop)) > 0.15 else round(row.n_mult_other /(row.n_tot - row.n_cop) * 100, 4), axis=1)
+    result['p_vol_mult_non_cop'] = result.apply(lambda row: labels.errors["multiples.level.high"]+str(round(row.vol_mult_other / (row.vol_tot - row.vol_cop) * 100, 4)) if (row.vol_mult_other / (row.vol_tot - row.vol_cop)) > 0.15 else round(row.vol_mult_other / (row.vol_tot - row.vol_cop) * 100, 4), axis=1)
+    result['p_mult_cop'] = result.apply(lambda row: labels.errors["multiples.level.high"]+str(round(row.n_mult_cop / row.n_cop * 100, 4)) if (row.n_mult_cop / row.n_cop) > 0.15 else round(row.n_mult_cop / row.n_cop * 100, 4), axis=1)
+    result['p_vol_mult_cop'] = result.apply(lambda row: labels.errors["multiples.level.high"]+str(round(row.vol_mult_cop / row.vol_cop * 100, 4)) if (row.vol_mult_cop / row.vol_cop) > 0.15 else round(row.vol_mult_cop / row.vol_cop * 100, 4), axis=1)
+
+    # Keep only one line by couples : id / motoda fraction
+    result = result.reset_index()
+    result.drop(columns=["vol_tot", "n_tot", "vol_mult", "n_mult", "vol_cop", "n_cop", "vol_mult_cop", "n_mult_cop", "vol_mult_other", "n_mult_other"], inplace=True)
+
+    # Rename collums to match the desiered output
+    result.rename(columns={ 'scan_id': 'List scan ID', 
+                            'p_mult' : "% mult",#"%Ab multiples : (other+cop) / living",
+                            'p_vol_mult' : "%vol mult",#"%Bv multiples (other+cop) / living",
+                            'p_mult_non_cop' : "% mult (non cop)",#"%Ab multiples other / (living - cop)",
+                            'p_vol_mult_non_cop' : "%vol mult (non cop)",#"%Bv multiples other / (living - cop)",
+                            'p_mult_cop' : "% mult (cop)", #"%Ab multiples cop / (living - other)",
+                            'p_vol_mult_cop' : "%vol mult (cop)",#"%Bv multiples cop / (living - other)"
+                        }, inplace=True)
+
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_motoda_check".format((time.time() - start_time), _id, _mode))
+    return result
+
+"""
+    
+    # remove not relevant categories
+  d <- filter(d,
+    # not living
+    ! stringr::str_detect(lineage, "^not-living"),
+    # morpho stuff
+    ! name %in% c("head", "part", "dead"),
+    # not plankton
+    ! name %in% c("Insecta", "wing", "seaweed")
+  )
+  
+  # compute scan id and biovolume
+  d$vol <- 4/3 * pi * sqrt(d$area / pi)
+  d$scan_id <- str_replace(d$id, "_1_[0-9]+$", "")
+  d <- group_by(d, scan_id)
+  
+  # compute statistics
+  s <- summarise(d, n_tot=n(), vol_tot=sum(vol)) %>% 
+    full_join(summarise(filter(d, stringr::str_detect(name, "multiple")), n_mult=n(), vol_mult=sum(vol)), by="scan_id") %>% 
+    full_join(summarise(filter(d, stringr::str_detect(lineage, "Copepoda")), n_cop=n(), vol_cop=sum(vol)), by="scan_id") %>%
+    full_join(summarise(filter(d, stringr::str_detect(lineage, "Copepoda>multiple")), n_mult_cop=n(), vol_mult_cop=sum(vol)), by="scan_id") %>% 
+    full_join(summarise(filter(d, stringr::str_detect(lineage, "other>multiple")), n_mult_other=n(), vol_mult_other=sum(vol)), by="scan_id")
+  # missing means not counted = 0
+  s[is.na(s)] <- 0
+  
+  # compute percent multiples
+  stats <- transmute(s,
+    scan_id = scan_id,
+    `% mult` = n_mult / n_tot * 100,
+    `%vol mult` = vol_mult / vol_tot * 100,
+    `% mult (non cop)` = n_mult_other / (n_tot - n_cop) * 100,
+    `%vol mult (non cop)` = vol_mult_other / (vol_tot - vol_cop) * 100,
+    `% mult (cop)` = n_mult_cop / n_cop * 100,
+    `%vol mult (cop)` = vol_mult_cop / vol_cop * 100
+  )
+  # implement checks
+  ok <- apply(stats[,-1], 1, function(x) {
+    all(na.omit(x <= c(20, 20, 15, 15, 15, 15)))
+  })
+  # TODO make this into a boolean matrix and use it in the formating of the HTML table below
+  
+  return(
+    list(
+      test=all(ok),
+      message=html_table(stats[!ok,], class="table table-condensed", digits=1, classes=rlang::quos(
+        `% mult`=format_condition(`% mult`>20, "danger"),
+        `%vol mult`=format_condition(`%vol mult`>20, "danger"),
+        `% mult (non cop)`=format_condition(`% mult (non cop)`>15, "danger"),
+        `%vol mult (non cop)`=format_condition(`%vol mult (non cop)`>15, "danger"),
+        `% mult (cop)`=format_condition(`% mult (cop)`>15, "danger"),
+        `%vol mult (cop)`=format_condition(`%vol mult (cop)`>15, "danger")
+      ))
+    )
+  )
+  
+    """
