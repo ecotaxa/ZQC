@@ -823,24 +823,21 @@ def check_spelling(_id, _mode, local_data):
 
 def checks_multiples(_id, _mode, local_data) : 
     """ Checks that: all multiples < 20% of living, other multiples < 15% of (living - Copepoda), and Copepoda multiples < 15% of total Copepoda, all in both number (n) and biovolume (vol);
-    
-    NB: morphological sub-categories such as head, part, dead, are never counted.
+        NB: morphological sub-categories such as "head", "part", "dead", "Insecta", "wing" and "seaweed" are never counted.
+        This QC is based on the newest ecotaxa default export zip file located in the "ecotaxa/" folder of your project.
 
-        In the column 'colname' of the report table, is reported :
-            - 
+        In followings coluns of the report table, are respectively reported :
+            - List scan ID : the scan id.
+            - "% mult"              = n_mult / n_tot * 100,                       | "%Ab multiples : (other+cop) / living", | % multiple totaux (multiple (other) + multiple (copepoda)) > 20% of (total living) abundance
+            - "%vol mult"           = vol_mult / vol_tot * 100,                   | "%Bv multiples (other+cop) / living",   | % multiple totaux (multiple (other) + multiple (copepoda)) > 20% of (total living) biovolume
+            - "% mult (non cop)"    = n_mult_other / (n_tot - n_cop) * 100,       | "%Ab multiples other / (living - cop)", | % multiple (other) > 15% of (living - Copepoda et enfants) abundance
+            - "%vol mult (non cop)" = vol_mult_other / (vol_tot - vol_cop) * 100, | "%Bv multiples other / (living - cop)", | % multiple (other) > 15% of (living - Copepoda et enfants) biovolume
+            - "% mult (cop)"        = n_mult_cop / n_cop * 100,                   | "%Ab multiples cop / (living - other)", | % multiple (Copepoda) / Copepoda (avec enfants) > 15% of total abundance
+            - "%vol mult (cop)"     = vol_mult_cop / vol_cop * 100                | "%Bv multiples cop / (living - other)"  | % multiple (Copepoda) / Copepoda (avec enfants) > 15% of total biovolume
 
-        In the column 'colname' of the report table :
-            - "#MISSING ecotaxa table" : if no ecotaxa_scanID.tsv table
-            - "#MISSING column" : if 'name', 'lineage' or 'area' column is missing from the ecotaxa.tsv table.
-            - ...
+        In the above listed columns of the report table can appear an error code:
+            - "#HIGH multiples level" : it means that the % of multiples is to high for the related sample.
 
-    eliminate "head", "part", "dead", "Insecta", "wing", "seaweed"
-    % multiple totaux (multiple (other) + multiple (copepoda)) > 20% of (total living) abundance
-    % multiple totaux (multiple (other) + multiple (copepoda)) > 20% of (total living) biovolume
-    % multiple (other) > 15% of (living - Copepoda et enfants) abundance
-    % multiple (other) > 15% of (living - Copepoda et enfants) biovolume
-    % multiple (Copepoda) / Copepoda (avec enfants) > 15% of total abundance
-    % multiple (Copepoda) / Copepoda (avec enfants) > 15% of total biovolume
     """
     start_time = time.time()
     # Get only usefull columns

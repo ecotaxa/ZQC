@@ -202,9 +202,13 @@ def  getProjectTsv(subpath):
         folder_name = base_path+subpath+"/ecotaxa/"        
         try: 
             zips=[]
-            for file in os.listdir(folder_name):
-                if file.endswith(".zip") :
-                    zips.append({"zip" : os.path.join(folder_name, file), "tsv" : "ecotaxa_"+file.replace('.zip', '.tsv')})
+            try:
+                for file in os.listdir(folder_name):
+                    if file.endswith(".zip") :
+                        zips.append({"zip" : os.path.join(folder_name, file), "tsv" : "ecotaxa_"+file.replace('.zip', '.tsv')})
+            except : 
+                raise ValueError(labels.errors["global.missing_directory.ecotaxa"])
+
             if len(zips)>0 :
                 zip_path = get_newest_zip(zips)
             else :
@@ -214,16 +218,14 @@ def  getProjectTsv(subpath):
             zip_file = ZipFile(zip_path["zip"])
             df = pd.read_csv(zip_file.open(zip_path["tsv"]), encoding = "utf-8", usecols=cols_ok, sep="\t")
             df['STATUS']=""
-            df['scan_id'] = folder_name
+            df['scan_id'] = zip_file.filename
 
             if cols_ko :
                 df[cols_ko]=labels.errors["global.missing_column"]
             tsv_files.append(df.drop(0))  
         except IOError as e:
-            df = pd.DataFrame(data={'scan_id': [folder_name], 'STATUS': labels.errors["global.missing_ecotaxa_table"]})
-            df[cols]= labels.errors["global.missing_ecotaxa_table"]   
-            tsv_files.append(df)
             logging.warning("{}".format(e))
+            raise ValueError(str(e))
     except IOError as e:
         df = pd.DataFrame(data={'scan_id': ["NOSCANID"], 'STATUS': labels.errors["global.missing_directory.work"]})
         df[cols]= labels.errors["global.missing_directory.ecotaxa"]   
