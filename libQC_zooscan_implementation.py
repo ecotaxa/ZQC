@@ -828,12 +828,12 @@ def checks_multiples(_id, _mode, local_data) :
 
         In followings coluns of the report table, are respectively reported :
             - List scan ID : the scan id.
-            - "% mult"              = n_mult / n_tot * 100,                       | "%Ab multiples : (other+cop) / living", | % multiple totaux (multiple (other) + multiple (copepoda)) > 20% of (total living) abundance
-            - "%vol mult"           = vol_mult / vol_tot * 100,                   | "%Bv multiples (other+cop) / living",   | % multiple totaux (multiple (other) + multiple (copepoda)) > 20% of (total living) biovolume
-            - "% mult (non cop)"    = n_mult_other / (n_tot - n_cop) * 100,       | "%Ab multiples other / (living - cop)", | % multiple (other) > 15% of (living - Copepoda et enfants) abundance
-            - "%vol mult (non cop)" = vol_mult_other / (vol_tot - vol_cop) * 100, | "%Bv multiples other / (living - cop)", | % multiple (other) > 15% of (living - Copepoda et enfants) biovolume
-            - "% mult (cop)"        = n_mult_cop / n_cop * 100,                   | "%Ab multiples cop / (living - other)", | % multiple (Copepoda) / Copepoda (avec enfants) > 15% of total abundance
-            - "%vol mult (cop)"     = vol_mult_cop / vol_cop * 100                | "%Bv multiples cop / (living - other)"  | % multiple (Copepoda) / Copepoda (avec enfants) > 15% of total biovolume
+            - "% mult" : %Ab multiples (other+cop) / living, should be < 20% of (total living) abundance
+            - "%vol mult" : %Bv multiples (other+cop) / living, should be < 20% of (total living) biovolume
+            - "% mult (non cop)" : %Ab multiples other / (living - cop), should be < 15% of (living - Copepoda et enfants) abundance
+            - "%vol mult (non cop)" : %Bv multiples other / (living - cop), should be < 15% of (living - Copepoda et enfants) biovolume
+            - "% mult (cop)" : %Ab multiples cop / (living - other), should be < 15% of total abundance
+            - "%vol mult (cop)" : %Bv multiples cop / (living - other), should be < 15% of total biovolume
 
         In the above listed columns of the report table can appear an error code:
             - "#HIGH multiples level" : it means that the % of multiples is to high for the related sample.
@@ -842,33 +842,24 @@ def checks_multiples(_id, _mode, local_data) :
     start_time = time.time()
     # Get only usefull columns
     dataToTest = local_data.get("dataframe")[["object_id",'object_annotation_hierarchy', 'object_annotation_category', 'object_area']]
-    # result.multiples_check = result.acq_sub_part.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
-    #                                                        else x if x==labels.errors["global.missing_column"]
-    #                                                        else labels.errors["global.not_numeric"] if not is_int(x)
-    #                                                        else labels.sucess["classification.multiples.check.ok"]) 
-    # remove not relevant categories
+
+    # Remove not relevant categories
     dataToTest = dataToTest[dataToTest['object_annotation_hierarchy'].str.startswith("not-living")== False]
     # morpho stuff
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("head")== False]
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("part")== False]
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("dead")== False]
-
     # not plankton
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("Insecta")== False]
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("wing")== False]
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("seaweed")== False]
-
-    # compute scan id and biovolume
-    # d$vol <- 4/3 * pi * sqrt(d$area / pi)
-    # d$scan_id <- str_replace(d$id, "_1_[0-9]+$", "")
-    # d <- group_by(d, scan_id)
-    dataToTest["vol"]= [4/3 * math.pi * math.sqrt(float(area) / math.pi) for area in dataToTest.object_area]
+    # Compute scan id and biovolume
+    # The math.pi constant returns the value of PI: 3.141592653589793. The python pi const returns the value of PI : 3.141593 
+    dataToTest["vol"]= [4/3 * 3.141593 * math.sqrt(float(area) / 3.141593) for area in dataToTest.object_area]#maybe here
     dataToTest["scan_id"]=dataToTest.object_id.str.replace("_1_[0-9]+$", "", regex=True)
 
-
-    # compute statistics by scan id  # missing means not counted = 0
-
-    result = dataToTest.groupby("scan_id").agg( vol_tot=('vol', 'sum'), n_tot=('object_id', np.size)
+    # Compute statistics by scan id  # missing means not counted = 0
+    result = dataToTest.drop_duplicates().groupby("scan_id").agg( vol_tot=('vol', 'sum'), n_tot=('object_id', np.size)
         ).join(dataToTest[dataToTest["object_annotation_category"].str.contains("multiple")].groupby("scan_id").agg( vol_mult=('vol', 'sum'), n_mult=('object_id', np.size))
         ).join(dataToTest[dataToTest["object_annotation_hierarchy"].str.contains("Copepoda")].groupby("scan_id").agg( vol_cop=('vol', 'sum'), n_cop=('object_id', np.size))
         ).join(dataToTest[dataToTest["object_annotation_hierarchy"].str.contains("Copepoda>multiple")].groupby("scan_id").agg( vol_mult_cop=('vol', 'sum'), n_mult_cop=('object_id', np.size))
@@ -876,28 +867,33 @@ def checks_multiples(_id, _mode, local_data) :
         ).fillna(0)
 
 
-    # # compute percent multiples
-    # stats <- transmute(s,
-    #     scan_id = scan_id,
-    #     `% mult` = n_mult / n_tot * 100,
-    #     `%vol mult` = vol_mult / vol_tot * 100,
-    #     `% mult (non cop)` = n_mult_other / (n_tot - n_cop) * 100,
-    #     `%vol mult (non cop)` = vol_mult_other / (vol_tot - vol_cop) * 100,
-    #     `% mult (cop)` = n_mult_cop / n_cop * 100,
-    #     `%vol mult (cop)` = vol_mult_cop / vol_cop * 100
-    # )
-    # # implement checks
-    # ok <- apply(stats[,-1], 1, function(x) {
-    #     all(na.omit(x <= c(20, 20, 15, 15, 15, 15)))
-    # })
-    result['p_mult'] = result.apply(lambda row: labels.errors["multiples.level.high"]+str(round(row.n_mult / row.n_tot * 100, 4)) if (row.n_mult / row.n_tot) > 0.2 else round(row.n_mult / row.n_tot * 100, 4), axis=1)
-    result['p_vol_mult'] = result.apply(lambda row: labels.errors["multiples.level.high"]+str( round(row.vol_mult / row.vol_tot * 100, 4)) if (row.vol_mult / row.vol_tot) > 0.2 else round(row.vol_mult / row.vol_tot * 100, 4), axis=1)
-    result['p_mult_non_cop'] = result.apply(lambda row: labels.errors["multiples.level.high"]+str(round(row.n_mult_other /(row.n_tot - row.n_cop) * 100, 4)) if (row.n_mult_other /(row.n_tot - row.n_cop)) > 0.15 else round(row.n_mult_other /(row.n_tot - row.n_cop) * 100, 4), axis=1)
-    result['p_vol_mult_non_cop'] = result.apply(lambda row: labels.errors["multiples.level.high"]+str(round(row.vol_mult_other / (row.vol_tot - row.vol_cop) * 100, 4)) if (row.vol_mult_other / (row.vol_tot - row.vol_cop)) > 0.15 else round(row.vol_mult_other / (row.vol_tot - row.vol_cop) * 100, 4), axis=1)
-    result['p_mult_cop'] = result.apply(lambda row: labels.errors["multiples.level.high"]+str(round(row.n_mult_cop / row.n_cop * 100, 4)) if (row.n_mult_cop / row.n_cop) > 0.15 else round(row.n_mult_cop / row.n_cop * 100, 4), axis=1)
-    result['p_vol_mult_cop'] = result.apply(lambda row: labels.errors["multiples.level.high"]+str(round(row.vol_mult_cop / row.vol_cop * 100, 4)) if (row.vol_mult_cop / row.vol_cop) > 0.15 else round(row.vol_mult_cop / row.vol_cop * 100, 4), axis=1)
+    # Compute percent multiples
+    result['p_mult'] = result.apply(lambda row: 
+                                        labels.errors["multiples.level.high"]+str(round(row.n_mult / row.n_tot * 100, 1)) 
+                                        if (row.n_mult / row.n_tot) > 0.2 
+                                        else round(row.n_mult / row.n_tot * 100, 1), axis=1)
+    result['p_vol_mult'] = result.apply(lambda row: 
+                                        labels.errors["multiples.level.high"]+str( round(row.vol_mult / row.vol_tot * 100, 1)) 
+                                        if (row.vol_mult / row.vol_tot) > 0.2 
+                                        else round(row.vol_mult / row.vol_tot * 100, 1), axis=1)
+    result['p_mult_non_cop'] = result.apply(lambda row: 
+                                        labels.errors["multiples.level.high"]+str(round(row.n_mult_other /(row.n_tot - row.n_cop) * 100, 1)) 
+                                        if (row.n_mult_other /(row.n_tot - row.n_cop)) > 0.15 
+                                        else round(row.n_mult_other /(row.n_tot - row.n_cop) * 100, 1), axis=1)
+    result['p_vol_mult_non_cop'] = result.apply(lambda row: 
+                                        labels.errors["multiples.level.high"]+str(round(row.vol_mult_other / (row.vol_tot - row.vol_cop) * 100, 1)) 
+                                        if (row.vol_mult_other / (row.vol_tot - row.vol_cop)) > 0.15 
+                                        else round(row.vol_mult_other / (row.vol_tot - row.vol_cop) * 100, 1), axis=1)
+    result['p_mult_cop'] = result.apply(lambda row: 
+                                        labels.errors["multiples.level.high"]+str(round(row.n_mult_cop / row.n_cop * 100, 1)) 
+                                        if (row.n_mult_cop / row.n_cop) > 0.15 
+                                        else round(row.n_mult_cop / row.n_cop * 100, 1), axis=1)
+    result['p_vol_mult_cop'] = result.apply(lambda row: 
+                                        labels.errors["multiples.level.high"]+str(round(row.vol_mult_cop / row.vol_cop * 100, 1)) 
+                                        if (row.vol_mult_cop / row.vol_cop) > 0.15 
+                                        else round(row.vol_mult_cop / row.vol_cop * 100, 1), axis=1)
 
-    # Keep only one line by couples : id / motoda fraction
+    # Clean cols
     result = result.reset_index()
     result.drop(columns=["vol_tot", "n_tot", "vol_mult", "n_mult", "vol_cop", "n_cop", "vol_mult_cop", "n_mult_cop", "vol_mult_other", "n_mult_other"], inplace=True)
 

@@ -28,15 +28,16 @@ def test_subBlock_multiples_check_multiples(dash_duo) :
     data_2 = localData.getdata(Mode.TSV_2, project_2)
     assert data_2.get("dataframe")["scan_id"][1] == './dash_test/data/zooscan_test/Zooscan_test_subBlock_multiples_check_multiples_2/ecotaxa/export_436_20221107_1723.zip'
 
-    # # TODO JCE
-    # # all multiples % are OK
-    # project_3 = "zooscan_test/Zooscan_test_subBlock_multiples_check_multiples_3" 
-    # data_3 = localData.getdata(Mode.TSV_2, project_3)
-    # res_3 = impl.checks_multiples("checks_multiples", Mode.TSV_2, data_3)
-    # assert res_0.loc[res_0["List scan ID"]=="wp_d2_1"]["acq max mesh"].values[0] == 10000
-    
-    # # TODO JCE
-    # # all multiples % are too high 20/20/15/15/15/15
-    # project_4 = "zooscan_test/Zooscan_test_subBlock_multiples_check_multiples_4" 
-    # data_4 = localData.getdata(Mode.TSV_2, project_4)
-    # res_4 = impl.checks_multiples("checks_multiples", Mode.TSV_2, data_4)
+    # Test values
+    project_3 = "zooscan_test/Zooscan_test_subBlock_multiples_check_multiples_3" 
+    data_3 = localData.getdata(Mode.TSV_2, project_3)
+    res_3 = impl.checks_multiples("checks_multiples", Mode.TSV_2, data_3)
+
+    # all multiples % are OK
+    # all multiples % are too high 20/20/15/15/15/15
+    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["% mult"].values[0] == 9.1
+    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["%vol mult"].values[0] == 13.1
+    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["% mult (non cop)"].values[0] == "#HIGH multiples level : 33.3"
+    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["%vol mult (non cop)"].values[0] == "#HIGH multiples level : 36.8"
+    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["% mult (cop)"].values[0] == 5.5
+    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["%vol mult (cop)"].values[0] == 8.1   
