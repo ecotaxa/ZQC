@@ -848,11 +848,13 @@ def checks_multiples(_id, _mode, local_data) :
     # morpho stuff
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("head")== False]
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("part")== False]
+    dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("trunk")== False]
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("dead")== False]
     # not plankton
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("Insecta")== False]
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("wing")== False]
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("seaweed")== False]
+
     # Compute scan id and biovolume
     # The math.pi constant returns the value of PI: 3.141592653589793. The python pi const returns the value of PI : 3.141593 
     dataToTest["vol"]= [4/3 * 3.141593 * math.sqrt(float(area) / 3.141593) for area in dataToTest.object_area]#maybe here
