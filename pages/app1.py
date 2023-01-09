@@ -89,10 +89,10 @@ def render_content_during_analysis(tab, click_run, projects, drive):
     Input("close-during_analysis", "n_clicks"), 
     Input("saveQC-btn-during_analysis", 'n_clicks'),
     Input('intermediate-value-during_analysis', 'data'), 
-    Input('operator_first_name', 'value'),
-    Input('operator_last_name', 'value'),
-    Input('operator_first_name', 'pattern'),
-    Input('operator_last_name', 'pattern')],
+    Input('operator_first_name-during_analysis', 'value'),
+    Input('operator_last_name-during_analysis', 'value'),
+    Input('operator_first_name-during_analysis', 'pattern'),
+    Input('operator_last_name-during_analysis', 'pattern')],
     [State("modal-during_analysis", "is_open")],
     prevent_initial_call=True)
 def save_report_during_analysis(n_clicks_open, n_clicks_close, n_clicks_save, jsonified_pdf_data, operator_first_name, operator_last_name, operator_first_name_pattern, operator_last_name_pattern, is_open):
@@ -143,10 +143,10 @@ def render_content_after_ecotaxa_classif(tab, click_run, projects, drive):
     Input("close-after_ecotaxa_classif", "n_clicks"), 
     Input("saveQC-btn-after_ecotaxa_classif", 'n_clicks'),
     Input('intermediate-value-after_ecotaxa_classif', 'data'), 
-    Input('operator_first_name', 'value'),
-    Input('operator_last_name', 'value'),
-    Input('operator_first_name', 'pattern'),
-    Input('operator_last_name', 'pattern')],
+    Input('operator_first_name-after_ecotaxa_classif', 'value'),
+    Input('operator_last_name-after_ecotaxa_classif', 'value'),
+    Input('operator_first_name-after_ecotaxa_classif', 'pattern'),
+    Input('operator_last_name-after_ecotaxa_classif', 'pattern')],
     [State("modal-after_ecotaxa_classif", "is_open")],
     prevent_initial_call=True)
 def save_report_after_ecotaxa_classif(n_clicks_open, n_clicks_close, n_clicks_save, jsonified_pdf_data, operator_first_name, operator_last_name, operator_first_name_pattern, operator_last_name_pattern, is_open):

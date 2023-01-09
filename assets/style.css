@@ -320,12 +320,12 @@ button {
     size: 20px;
 }
 
-#operator_last_name:invalid {
+.operator_last_name:invalid {
     outline: solid #ed433772 4px;
     border-radius: 1.5px;
 }
 
-#operator_first_name:invalid {
+.operator_first_name:invalid {
     outline: solid #ed433772 4px;
     border-radius: 1.5px;
 }

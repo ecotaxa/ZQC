@@ -217,7 +217,8 @@ def generate_name_of_saver(checkblock):
                                                         [
                                                         html.P('Last name', className="label-popup"),
                                                         dcc.Input(
-                                                            id="operator_last_name",
+                                                            className="operator_last_name",
+                                                            id="operator_last_name-"+ checkblock["id"],
                                                             type="text",
                                                             placeholder="Nom",
                                                             required=True,
@@ -227,7 +228,8 @@ def generate_name_of_saver(checkblock):
                                                         ),
                                                         html.P('First name', className="label-popup"),
                                                         dcc.Input(
-                                                            id="operator_first_name",
+                                                            className="operator_first_name",
+                                                            id="operator_first_name-"+ checkblock["id"],
                                                             type="text",
                                                             placeholder="Prénom",
                                                             required=True,
