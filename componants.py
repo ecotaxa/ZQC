@@ -1,4 +1,5 @@
 from dash import dash_table, dcc, html
+import dash_bootstrap_components as dbc
 from enums import SUPPORTED_DATA_COMPONANT
 import labels
 
@@ -50,14 +51,7 @@ def generate_check_block(checkBlock):
                             alt="Run "+checkBlock["title"]+" QCs",
                             title="Run "+checkBlock["title"]+" QCs",
                             n_clicks=0),
-                        html.Img(
-                            className="runQC-btn",
-                            id="saveQC-btn-" + checkBlock["id"],
-                            src="../assets/download.png",
-                            alt="Save "+checkBlock["title"]+" QCs on plankton server",
-                            title="Save "+checkBlock["title"]+" QCs on plankton server",
-                            n_clicks=0,
-                            hidden=True)
+                        generate_name_of_saver(checkBlock)
                     ],
                         className="check-block-title"),
                     ###-- check list tab --###
@@ -202,3 +196,52 @@ def style_table_data(dataframe):
         }for col in dataframe.columns
         ]
     return ret
+
+def generate_name_of_saver(checkblock):
+    return html.Div([
+                        html.Img(
+                            className="runQC-btn",
+                            id="open-"+checkblock["id"],
+                            src="../assets/download.png",
+                            alt="Save "+checkblock["title"]+" QCs on plankton server",
+                            title="Save "+checkblock["title"]+" QCs on plankton server",
+                            n_clicks=0,
+                            hidden=True),
+                        dbc.Modal(
+                            [
+                                dbc.ModalHeader("Save "+checkblock["title"]+" report"),
+                                dbc.ModalBody(
+                                            html.Div([
+                                                    "Please enter your FULL first name and last name",
+                                                    html.Div(
+                                                        [
+                                                        html.P('Last name', className="label-popup"),
+                                                        dcc.Input(
+                                                            id="operator_last_name",
+                                                            type="text",
+                                                            placeholder="Nom",
+                                                            required=True,
+                                                            autoFocus=True,
+                                                            pattern=u"^[^-\s][^0-9]*[A-Za-zÀ-ÖØ-öø-ÿ]+",
+                                                            debounce = True
+                                                        ),
+                                                        html.P('First name', className="label-popup"),
+                                                        dcc.Input(
+                                                            id="operator_first_name",
+                                                            type="text",
+                                                            placeholder="Prénom",
+                                                            required=True,
+                                                            pattern=u"^[^-\s][^0-9]*[A-Za-zÀ-ÖØ-öø-ÿ]+",
+                                                            debounce = True
+                                                        )]
+                                                    )
+                                                ])
+                                            ),
+                                dbc.ModalFooter([
+                                    dbc.Button("SAVE", id="saveQC-btn-" + checkblock["id"], className="ml-auto"),
+                                    dbc.Button("CANCEL", id="close-"+checkblock["id"], className="ml-auto", outline=True, color="secondary")]
+                                ),
+                            ],
+                            id="modal-"+checkblock["id"],
+                        ),
+                    ])

@@ -1,4 +1,5 @@
 import json
+import re
 from dash import html, ctx
 from dash.dcc.Tab import Tab
 from dash.dependencies import Input, Output, State
@@ -65,8 +66,7 @@ def render_content_before_scan(tab, click_run, projects, drive):
     return componants.generate_result("This feature will be available in a future release of the QC application."), 0, 'tab-result-before_scan'
 
 # during_analysis Tabs related callbacks ##
-
-@app.callback([Output('tabs-content-during_analysis', 'children'), Output("runQC-btn-during_analysis", 'n_clicks'), Output("tabs-during_analysis", 'value'), Output('intermediate-value-during_analysis', 'data'),Output("saveQC-btn-during_analysis", 'hidden')],
+@app.callback([Output('tabs-content-during_analysis', 'children'), Output("runQC-btn-during_analysis", 'n_clicks'), Output("tabs-during_analysis", 'value'), Output('intermediate-value-during_analysis', 'data'),Output("open-during_analysis", 'hidden')],
               [Input("tabs-during_analysis", 'value'), Input("runQC-btn-during_analysis", 'n_clicks'), Input('app-1-dropdown-projects', "value")],
               [State('app-1-dropdown-drives', 'value')], prevent_initial_call=True)
 def render_content_during_analysis(tab, click_run, projects, drive):
@@ -82,30 +82,45 @@ def render_content_during_analysis(tab, click_run, projects, drive):
             QC_execution = lib_qc_zooscan.runCallback(projects, drive, "during_analysis")
             jstr = json.dumps(QC_execution["pdf"] , default=lambda df: json.loads(df.to_json()))
             return componants.generate_result(QC_execution["dash"]), 0, 'tab-result-during_analysis', jstr, False
-
     return componants.generate_result(componants.emptyResult("during_analysis", projects)), 0, 'tab-result-during_analysis', None, True
 
-@app.callback(Output("saveQC-btn-during_analysis", 'n_clicks'),
-              [Input("saveQC-btn-during_analysis", 'n_clicks'), Input('intermediate-value-during_analysis', 'data')],
-               prevent_initial_call=True)
-def save_report_during_analysis(click_save_pdf, jsonified_pdf_data):
-    
+@app.callback(Output("saveQC-btn-during_analysis", 'n_clicks'), Output("open-during_analysis", "n_clicks"), Output("close-during_analysis", "n_clicks"),Output("modal-during_analysis", "is_open"),
+    [Input("open-during_analysis", "n_clicks"), 
+    Input("close-during_analysis", "n_clicks"), 
+    Input("saveQC-btn-during_analysis", 'n_clicks'),
+    Input('intermediate-value-during_analysis', 'data'), 
+    Input('operator_first_name', 'value'),
+    Input('operator_last_name', 'value'),
+    Input('operator_first_name', 'pattern'),
+    Input('operator_last_name', 'pattern')],
+    [State("modal-during_analysis", "is_open")],
+    prevent_initial_call=True)
+def save_report_during_analysis(n_clicks_open, n_clicks_close, n_clicks_save, jsonified_pdf_data, operator_first_name, operator_last_name, operator_first_name_pattern, operator_last_name_pattern, is_open):
+    # Open and close the modal
+    if n_clicks_open or n_clicks_close:
+        return n_clicks_save, 0, 0, not is_open
     # if missing infos
-    if click_save_pdf == 0 or not jsonified_pdf_data:
-        return 0
+    if n_clicks_save == 0 or not jsonified_pdf_data:
+        return 0, n_clicks_open, n_clicks_close, is_open
     if ctx.triggered_id == 'intermediate-value-during_analysis':
-        return 0
+        return 0, n_clicks_open, n_clicks_close, is_open
     # if already saved
-    elif click_save_pdf > 1:
-        return click_save_pdf
+    elif n_clicks_save > 1:
+        return n_clicks_save, n_clicks_open, n_clicks_close, is_open
     # if everything is ok for save : save
-    else :
-        pdf_data = json.loads(jsonified_pdf_data)
-        pdf_generator.generate(pdf_data)
-        return click_save_pdf
+    elif n_clicks_save==1:
+        if operator_first_name and operator_last_name_pattern and re.search(operator_first_name_pattern, operator_first_name) and re.search(operator_last_name_pattern, operator_last_name) :
+            pdf_data = json.loads(jsonified_pdf_data)
+            for i in (0,len(pdf_data)-1) :
+                pdf_data[i]["operator"] = operator_last_name.upper() + " " + operator_first_name.title()
+            pdf_generator.generate(pdf_data)
+            return 0, n_clicks_open, n_clicks_close, False
+        else :
+            return 0, n_clicks_open, n_clicks_close, is_open
+    return n_clicks_save, n_clicks_open, n_clicks_close, is_open
 
 ## after_ecotaxa_classif Tabs related callbacks ##
-@app.callback([Output('tabs-content-after_ecotaxa_classif', 'children'), Output("runQC-btn-after_ecotaxa_classif", 'n_clicks'), Output("tabs-after_ecotaxa_classif", 'value'), Output('intermediate-value-after_ecotaxa_classif', 'data'),Output("saveQC-btn-after_ecotaxa_classif", 'hidden')],
+@app.callback([Output('tabs-content-after_ecotaxa_classif', 'children'), Output("runQC-btn-after_ecotaxa_classif", 'n_clicks'), Output("tabs-after_ecotaxa_classif", 'value'), Output('intermediate-value-after_ecotaxa_classif', 'data'),Output("open-after_ecotaxa_classif", 'hidden')],
               [Input("tabs-after_ecotaxa_classif", 'value'), Input("runQC-btn-after_ecotaxa_classif", 'n_clicks'), Input('app-1-dropdown-projects', "value")],
               [State('app-1-dropdown-drives', 'value')], prevent_initial_call=True)
 def render_content_after_ecotaxa_classif(tab, click_run, projects, drive):
@@ -123,25 +138,40 @@ def render_content_after_ecotaxa_classif(tab, click_run, projects, drive):
             return componants.generate_result(QC_execution["dash"]), 0, 'tab-result-after_ecotaxa_classif', jstr, False
     return componants.generate_result(componants.emptyResult("after_ecotaxa_classif", projects)), 0, 'tab-result-after_ecotaxa_classif', None, True
 
-@app.callback(Output("saveQC-btn-after_ecotaxa_classif", 'n_clicks'),
-              [Input("saveQC-btn-after_ecotaxa_classif", 'n_clicks'), Input('intermediate-value-after_ecotaxa_classif', 'data')],
-               prevent_initial_call=True)
-def save_report_after_ecotaxa_classif(click_save_pdf, jsonified_pdf_data):
-    
+@app.callback(Output("saveQC-btn-after_ecotaxa_classif", 'n_clicks'), Output("open-after_ecotaxa_classif", "n_clicks"), Output("close-after_ecotaxa_classif", "n_clicks"),Output("modal-after_ecotaxa_classif", "is_open"),
+    [Input("open-after_ecotaxa_classif", "n_clicks"), 
+    Input("close-after_ecotaxa_classif", "n_clicks"), 
+    Input("saveQC-btn-after_ecotaxa_classif", 'n_clicks'),
+    Input('intermediate-value-after_ecotaxa_classif', 'data'), 
+    Input('operator_first_name', 'value'),
+    Input('operator_last_name', 'value'),
+    Input('operator_first_name', 'pattern'),
+    Input('operator_last_name', 'pattern')],
+    [State("modal-after_ecotaxa_classif", "is_open")],
+    prevent_initial_call=True)
+def save_report_after_ecotaxa_classif(n_clicks_open, n_clicks_close, n_clicks_save, jsonified_pdf_data, operator_first_name, operator_last_name, operator_first_name_pattern, operator_last_name_pattern, is_open):
+    # Open and close the modal
+    if n_clicks_open or n_clicks_close:
+        return n_clicks_save, 0, 0, not is_open
     # if missing infos
-    if click_save_pdf == 0 or not jsonified_pdf_data:
-        return 0
+    if n_clicks_save == 0 or not jsonified_pdf_data:
+        return 0, n_clicks_open, n_clicks_close, is_open
     if ctx.triggered_id == 'intermediate-value-after_ecotaxa_classif':
-        return 0
+        return 0, n_clicks_open, n_clicks_close, is_open
     # if already saved
-    elif click_save_pdf > 1:
-        return click_save_pdf
+    elif n_clicks_save > 1:
+        return n_clicks_save, n_clicks_open, n_clicks_close, is_open
     # if everything is ok for save : save
-    else :
-        pdf_data = json.loads(jsonified_pdf_data)
-        pdf_generator.generate(pdf_data)
-        return click_save_pdf
-
+    elif n_clicks_save==1:
+        if operator_first_name and operator_last_name_pattern and re.search(operator_first_name_pattern, operator_first_name) and re.search(operator_last_name_pattern, operator_last_name) :
+            pdf_data = json.loads(jsonified_pdf_data)
+            for i in (0,len(pdf_data)-1) :
+                pdf_data[i]["operator"] = operator_last_name.upper() + " " + operator_first_name.title()
+            pdf_generator.generate(pdf_data)
+            return 0, n_clicks_open, n_clicks_close, False
+        else :
+            return 0, n_clicks_open, n_clicks_close, is_open
+    return n_clicks_save, n_clicks_open, n_clicks_close, is_open
 
 checksSelector = html.Div([
     html.H2("Project checks", className="inline"),
@@ -149,7 +179,6 @@ checksSelector = html.Div([
     #TODO JCE COM FOR PROD html.Img(className="runQC-btn", src="../assets/run-all-blocks.png", alt="Run all", title="Run all"),
     html.Div(checksBlocks_layout, className="QC-types")],
     className="container-checks-selector")
-
 
 ######--- Generate main layout ---######
 layout = html.Div([html.Div([

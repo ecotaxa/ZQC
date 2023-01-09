@@ -1,7 +1,7 @@
-body{
+body {
     margin: 0;
     padding: 20px;
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif;
     font-size: 1rem;
     font-weight: 200;
     line-height: 1.5;
@@ -10,33 +10,37 @@ body{
 }
 
 /* center the app container */
-.parent-container{
+.parent-container {
     display: flex;
     justify-content: center;
 }
-.container-qc{
-    min-width: 450px; 
+
+.container-qc {
+    min-width: 450px;
     max-width: 1440px;
-    width : 100%
+    width: 100%
 }
-.container-qc>div{
+
+.container-qc>div {
     margin-bottom: 20px;
 }
-.check-block-title{
+
+.check-block-title {
     margin: 20px 0px;
 }
-.container-prj-selector{
+
+.container-prj-selector {
     max-width: 850px;
 }
 
-h1{
+h1 {
     color: #10698d;
     font-family: "IMTITLE", Sans-serif;
     font-size: 30px;
     line-height: 1.3em;
 }
 
-h2{
+h2 {
     color: #333;
     font-family: "IMTITLE", Sans-serif;
     font-size: 20px;
@@ -45,7 +49,7 @@ h2{
     font-weight: 200;
 }
 
-h3{
+h3 {
     color: #5cc0cd;
     font-family: "IMTITLE", Sans-serif;
     font-size: 16px;
@@ -55,7 +59,7 @@ h3{
     margin: 0px;
 }
 
-.label{
+.label {
     color: #10698d;
     font-family: "IMTITLE", Sans-serif;
     font-size: 20px;
@@ -64,33 +68,34 @@ h3{
     /* line-height: 1.3em; */
     margin: 10px 0px 0px 0px;
 }
-h5{
+
+h5 {
     color: #333;
     font-family: "IMTITLE", Sans-serif;
     font-size: 16px;
     font-weight: 200;
-    margin: 0px; 
+    margin: 0px;
 }
 
-.inline{
+.inline {
     display: inline-block;
 }
 
-p{
+p {
     color: #9b9b9b;
     font-family: "IMTITLE", Sans-serif;
     font-size: 14px;
     font-style: bold;
-    margin: 0px 0px 5px 0px; 
+    margin: 0px 0px 5px 0px;
 }
 
-button{
+button {
     padding: 6px 12px;
-    margin : 20px 0px 20px 0px;
+    margin: 20px 0px 20px 0px;
     font-size: 14px;
     color: #fff;
     line-height: 1.42857143;
-    width : 140px;
+    width: 140px;
 
     font-weight: 400;
     text-align: center;
@@ -106,35 +111,38 @@ button{
 
 
 /**********DETAILS PANEL**********/
-.QC-types{
-    margin-left: 0px; /* 25px? JCE #TODO */
+.QC-types {
+    margin-left: 0px;
+    /* 25px? JCE #TODO */
 }
-.checks-block{
+
+.checks-block {
     padding: 10px 10px;
     max-width: 70%;
     text-align: justify;
 }
 
-.sub-block{
+.sub-block {
     padding: 10px 10px;
 }
 
-.details{
+.details {
     padding: 0px 10px;
 }
 
-.details_doc{
+.details_doc {
     color: #9b9b9b;
     font-family: "IMTITLE", Sans-serif;
     font-size: 14px;
     font-style: bold;
 }
-.results{
+
+.results {
     padding: 10px;
 }
 
 /**********SEPARATOR**********/
-.elementor-divider-separator{
+.elementor-divider-separator {
     border-top: 3px solid #5cc0cd;
     width: 118px;
     height: 1px;
@@ -143,15 +151,15 @@ button{
 }
 
 /**********DROPDOWN**********/
-.Select--multi .Select-value{ 
-    color:#333 !important;
+.Select--multi .Select-value {
+    color: #333 !important;
     background-color: #efefef !important;
-    border-color:#efefef !important;
+    border-color: #efefef !important;
 }
 
-.is-focused:not(.is-open)>.Select-control{
-    border-color:#10698d !important;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 0 3px #106a8d21 !important;
+.is-focused:not(.is-open)>.Select-control {
+    border-color: #10698d !important;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 0 3px #106a8d21 !important;
 }
 
 .VirtualizedSelectFocusedOption {
@@ -159,30 +167,33 @@ button{
 }
 
 /**********RUN IMG**********/
-.runQC-btn{
+.runQC-btn {
     /* width: 20px;
     height: auto; */
     height: 19px;
     cursor: pointer;
     margin: 0px 10px;
 }
+
 /**********help IMG**********/
-.help-btn{
+.help-btn {
     /* width: 20px;
     height: auto; */
     height: 19px;
     cursor: pointer;
     margin: 0px 10px;
 }
+
 /**********app IMG**********/
-.app-btn{
+.app-btn {
     /* width: 20px;
     height: auto; */
     height: 19px;
     cursor: pointer;
     margin: 0px 10px;
 }
-.go-qc{
+
+.go-qc {
     float: right;
 }
 
@@ -191,6 +202,7 @@ button{
 .custom-tabs-container {
     width: 100%;
 }
+
 .custom-tabs {
     border-top-left-radius: 3px;
     background-color: #fff;
@@ -199,7 +211,7 @@ button{
 }
 
 .custom-tab {
-    color:#586069;
+    color: #586069;
     border-top-left-radius: 3px;
     border-top: 3px solid transparent !important;
     border-left: 0px !important;
@@ -213,6 +225,7 @@ button{
     justify-content: center;
     max-width: 200px;
 }
+
 .custom-tab--selected {
     color: black;
     box-shadow: 1px 1px 0px lightgrey;
@@ -221,7 +234,7 @@ button{
     border-top: 3px solid #5cc0cd !important;
 }
 
-.tab-div-common{
+.tab-div-common {
     border-bottom: lightgrey solid 1px;
     border-left: lightgrey solid 1px;
     border-right: lightgrey solid 1px;
@@ -229,62 +242,90 @@ button{
     border-radius: 4px;
 }
 
-.project-sep{
+.project-sep {
     text-align: center;
     font-size: 18px;
     /* choix 1 et 2 : */
     /* color : #123249;
     border-bottom: 1px solid #123249; */
     /* choix 1/2 ou3 :  */
-    color : #5cc0cd;
+    color: #5cc0cd;
     border-bottom: 1px solid #5cc0cd;
     /* choix 3 */
     margin-left: -15px;
     margin-right: -15px;
 }
-.result-project-title{
+
+.result-project-title {
     /*choix 1: */
-    /* background-color: #eeeeee; */     
+    /* background-color: #eeeeee; */
     /*choix 2: */
     /* background-color: #fafafa; */
     /*choix 3: */
-    background-color: white;       
-    padding : 10px;
+    background-color: white;
+    padding: 10px;
     /* choix 1 et 2 */
     /* margin-bottom: 40px; */
     /* choix 3 */
     margin-bottom: 20px;
 }
+
 /**********DATA TABLE**********/
-.sub-block-div{
+.sub-block-div {
     margin-bottom: 10px;
 }
-.dash-table-container{
+
+.dash-table-container {
     margin-bottom: 20px;
 }
+
 /***********LOADER************/
-.loader{
+.loader {
     align-self: flex-start;
     animation: fadeIn 2s;
     margin-top: 5px;
 }
+
 @keyframes fadeIn {
-    0% {opacity:0;}
-    100% {opacity:1;}
-  }
-.tabs-content{
-    height:100%;
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.tabs-content {
+    height: 100%;
     transition: all 10ms linear;
     transition-delay: 250ms;
 }
-.tabs-content[data-dash-is-loading="true"]{
-    height: 50px;    
+
+.tabs-content[data-dash-is-loading="true"] {
+    height: 50px;
 }
 
 /************PLAYER********/
-#doc_player{
+#doc_player {
     margin-left: auto;
     margin-right: auto;
     width: 90%;
     max-width: 1920px;
+}
+
+/************SAVE********/
+.label-popup {
+    margin-top: 20px;
+    size: 20px;
+}
+
+#operator_last_name:invalid {
+    outline: solid #ed433772 4px;
+    border-radius: 1.5px;
+}
+
+#operator_first_name:invalid {
+    outline: solid #ed433772 4px;
+    border-radius: 1.5px;
 }

@@ -18,6 +18,12 @@ def write_title(pdf, text):
     pdf.write(5,text)
     pdf.ln(pdf.font_size * 1.5*SPACING)
 
+def write_operator(pdf, text):
+    set_font_size(pdf, '', 12)
+    pdf.set_text_color(51, 51, 51)
+    pdf.write(4, text) 
+    pdf.ln(pdf.font_size * 1.5*SPACING)
+
 def write_sub_title(pdf, text):
     set_font_size(pdf, '', 16)
     pdf.ln(pdf.font_size * 1.5*SPACING)    
@@ -93,7 +99,7 @@ def write_multiline_row(row, pdf, line_height, col_width):
 
     pdf.ln(row_height_lines * line_height)
 
-def create_pdf_report_for_project(project):
+def create_pdf_report_for_project(project, operator):
     pdf = FPDF('L','mm', 'A4')
     ## https://github.com/reingart/pyfpdf/issues/86
     pdf.add_font('ArialUnicode',fname='assets/fonts/Arial-Unicode-Regular.ttf',uni=True)
@@ -103,6 +109,7 @@ def create_pdf_report_for_project(project):
     ##
     pdf.add_page()
     write_title(pdf, project)
+    write_operator(pdf, "Saved by : "+operator)
     return pdf
 
 def add_sub_block_execution(pdf, title, data):
@@ -119,9 +126,8 @@ def save_pdf(pdf, path, title):
 
 def generate(pdfs_data):
     for data in pdfs_data :
-        print(data)
         if len(data["subBlocks"]) > 0 :
-            pdf = create_pdf_report_for_project(data["project"])
+            pdf = create_pdf_report_for_project(data["project"], data["operator"])
             for subBlock in data["subBlocks"] :
                 add_sub_block_execution(pdf, subBlock["title"], subBlock["data"])
             save_pdf(pdf, data["path"], data["title"])
