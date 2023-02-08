@@ -51,6 +51,14 @@ def generate_check_block(checkBlock):
                             alt="Run "+checkBlock["title"]+" QCs",
                             title="Run "+checkBlock["title"]+" QCs",
                             n_clicks=0),
+                        html.Img(
+                            className="runQC-btn",
+                            id="open-"+checkBlock["id"],
+                            src="../assets/download.svg",
+                            alt="Save "+checkBlock["title"]+" QCs on plankton server",
+                            title="Save "+checkBlock["title"]+" QCs on plankton server",
+                            n_clicks=0,
+                            hidden=True),
                         generate_name_of_saver(checkBlock)
                     ],
                         className="check-block-title"),
@@ -168,7 +176,7 @@ def sub_block_execution_result(subBlock, data):
 
 def qc_execution_result(project, qcExecutionLayout):
     return html.Div([
-        html.P("❄️ "+project+" ❄️", className="project-sep"),
+        html.P("💙 "+project+" 💙", className="project-sep"),
         html.Div(qcExecutionLayout)
     ], className="result-project-title")
 
@@ -199,14 +207,14 @@ def style_table_data(dataframe):
 
 def generate_name_of_saver(checkblock):
     return html.Div([
-                        html.Img(
-                            className="runQC-btn",
-                            id="open-"+checkblock["id"],
-                            src="../assets/download.png",
-                            alt="Save "+checkblock["title"]+" QCs on plankton server",
-                            title="Save "+checkblock["title"]+" QCs on plankton server",
-                            n_clicks=0,
-                            hidden=True),
+                        # html.Img(
+                        #     className="runQC-btn",
+                        #     id="open-"+checkblock["id"],
+                        #     src="../assets/download.png",
+                        #     alt="Save "+checkblock["title"]+" QCs on plankton server",
+                        #     title="Save "+checkblock["title"]+" QCs on plankton server",
+                        #     n_clicks=0,
+                        #     hidden=True),
                         dbc.Modal(
                             [
                                 dbc.ModalHeader("Save "+checkblock["title"]+" report"),
