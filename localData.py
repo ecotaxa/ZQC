@@ -207,7 +207,7 @@ def  getProjectTsv(subpath):
                     if file.endswith(".zip") :
                         zips.append({"zip" : os.path.join(folder_name, file), "tsv" : "ecotaxa_"+file.replace('.zip', '.tsv')})
             except : 
-                raise ValueError(labels.errors["global.missing_directory.ecotaxa"])
+                raise ValueError(labels.errors["multiples.missing_directory.ecotaxa"])
 
             if len(zips)>0 :
                 zip_path = get_newest_zip(zips)
