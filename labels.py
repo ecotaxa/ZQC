@@ -6,7 +6,6 @@ errors = {
     "global.bad_meta_txt_file": "#BAD TXT FILE",
     "global.missing_meta_txt_file": "#MISSING Meta txt file",
     "global.missing_directory.work": "#MISSING _work DIRECTORY",
-    "global.missing_directory.ecotaxa": "#MISSING ecotaxa DIRECTORY",
     "global.not_numeric": "#NOT NUMERIC",
 
     "process.frame_type.not_ok" : "#Frame NOT OK",
@@ -54,7 +53,9 @@ errors = {
     "acquisition.motoda.quality.high": "#Images nb HIGH : ",
 
     "multiples.level.high" : "#HIGH multiples level : ",
-    "multiples.no_zip_file" : "No zip file available in the ecotaxa/ forder of the selected project, please generate it on ecotaxa."
+    "multiples.no_zip_file" : "No zip file available in the ecotaxa/ forder of the selected project, please generate it on ecotaxa.",
+    "multiples.missing_directory.ecotaxa": "Please create manually a folder at the root of your project directory and name it “ecotaxa”. Then run this QC again."
+
 }
 
 sucess = {
