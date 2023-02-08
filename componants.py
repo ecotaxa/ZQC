@@ -235,6 +235,16 @@ def generate_name_of_saver(checkblock):
                                                             required=True,
                                                             pattern=u"^[^-\s][^0-9]*[A-Za-zÀ-ÖØ-öø-ÿ]+",
                                                             debounce = True
+                                                        ),
+                                                        html.P('First name', className="label-popup"),
+                                                        dcc.Input(
+                                                            className="operator_email",
+                                                            id="operator_email-"+ checkblock["id"],
+                                                            type="text",
+                                                            placeholder="Email",
+                                                            required=True,
+                                                            pattern=u"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$",
+                                                            debounce = True
                                                         )]
                                                     )
                                                 ])

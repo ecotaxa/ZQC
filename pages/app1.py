@@ -90,12 +90,14 @@ def render_content_during_analysis(tab, click_run, projects, drive):
     Input("saveQC-btn-during_analysis", 'n_clicks'),
     Input('intermediate-value-during_analysis', 'data'), 
     Input('operator_first_name-during_analysis', 'value'),
+    Input('operator_email-during_analysis', 'value'),
     Input('operator_last_name-during_analysis', 'value'),
     Input('operator_first_name-during_analysis', 'pattern'),
+    Input('operator_email-during_analysis', 'pattern'),
     Input('operator_last_name-during_analysis', 'pattern')],
     [State("modal-during_analysis", "is_open")],
     prevent_initial_call=True)
-def save_report_during_analysis(n_clicks_open, n_clicks_close, n_clicks_save, jsonified_pdf_data, operator_first_name, operator_last_name, operator_first_name_pattern, operator_last_name_pattern, is_open):
+def save_report_during_analysis(n_clicks_open, n_clicks_close, n_clicks_save, jsonified_pdf_data, operator_first_name, operator_email, operator_last_name, operator_first_name_pattern, operator_email_pattern, operator_last_name_pattern, is_open):
     # Open and close the modal
     if n_clicks_open or n_clicks_close:
         return n_clicks_save, 0, 0, not is_open
@@ -109,10 +111,10 @@ def save_report_during_analysis(n_clicks_open, n_clicks_close, n_clicks_save, js
         return n_clicks_save, n_clicks_open, n_clicks_close, is_open
     # if everything is ok for save : save
     elif n_clicks_save==1:
-        if operator_first_name and operator_last_name_pattern and re.search(operator_first_name_pattern, operator_first_name) and re.search(operator_last_name_pattern, operator_last_name) :
+        if operator_first_name and operator_email and operator_last_name_pattern and re.search(operator_first_name_pattern, operator_first_name) and  re.search(operator_email_pattern, operator_email) and re.search(operator_last_name_pattern, operator_last_name) :
             pdf_data = json.loads(jsonified_pdf_data)
             for i in (0,len(pdf_data)-1) :
-                pdf_data[i]["operator"] = operator_last_name.upper() + " " + operator_first_name.title()
+                pdf_data[i]["operator"] = operator_last_name.upper() + " " + operator_first_name.title() + " ( " + operator_email.lower() +" )"
             pdf_generator.generate(pdf_data)
             return 0, n_clicks_open, n_clicks_close, False
         else :
@@ -144,12 +146,14 @@ def render_content_after_ecotaxa_classif(tab, click_run, projects, drive):
     Input("saveQC-btn-after_ecotaxa_classif", 'n_clicks'),
     Input('intermediate-value-after_ecotaxa_classif', 'data'), 
     Input('operator_first_name-after_ecotaxa_classif', 'value'),
+    Input('operator_email-after_ecotaxa_classif', 'value'),
     Input('operator_last_name-after_ecotaxa_classif', 'value'),
     Input('operator_first_name-after_ecotaxa_classif', 'pattern'),
+    Input('operator_email-after_ecotaxa_classif', 'pattern'),
     Input('operator_last_name-after_ecotaxa_classif', 'pattern')],
     [State("modal-after_ecotaxa_classif", "is_open")],
     prevent_initial_call=True)
-def save_report_after_ecotaxa_classif(n_clicks_open, n_clicks_close, n_clicks_save, jsonified_pdf_data, operator_first_name, operator_last_name, operator_first_name_pattern, operator_last_name_pattern, is_open):
+def save_report_after_ecotaxa_classif(n_clicks_open, n_clicks_close, n_clicks_save, jsonified_pdf_data, operator_first_name, operator_email, operator_last_name, operator_first_name_pattern, operator_email_pattern, operator_last_name_pattern, is_open):
     # Open and close the modal
     if n_clicks_open or n_clicks_close:
         return n_clicks_save, 0, 0, not is_open
@@ -163,10 +167,10 @@ def save_report_after_ecotaxa_classif(n_clicks_open, n_clicks_close, n_clicks_sa
         return n_clicks_save, n_clicks_open, n_clicks_close, is_open
     # if everything is ok for save : save
     elif n_clicks_save==1:
-        if operator_first_name and operator_last_name_pattern and re.search(operator_first_name_pattern, operator_first_name) and re.search(operator_last_name_pattern, operator_last_name) :
+        if operator_first_name and operator_email and operator_last_name_pattern and re.search(operator_first_name_pattern, operator_first_name) and  re.search(operator_email_pattern, operator_email) and re.search(operator_last_name_pattern, operator_last_name) :
             pdf_data = json.loads(jsonified_pdf_data)
             for i in (0,len(pdf_data)-1) :
-                pdf_data[i]["operator"] = operator_last_name.upper() + " " + operator_first_name.title()
+                pdf_data[i]["operator"] = operator_last_name.upper() + " " + operator_first_name.title() + " ( " + operator_email.lower() + " )"
             pdf_generator.generate(pdf_data)
             return 0, n_clicks_open, n_clicks_close, False
         else :

@@ -329,3 +329,8 @@ button {
     outline: solid #ed433772 4px;
     border-radius: 1.5px;
 }
+
+.operator_email:invalid {
+    outline: solid #ed433772 4px;
+    border-radius: 1.5px;
+}
