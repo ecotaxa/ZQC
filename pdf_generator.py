@@ -125,9 +125,13 @@ def save_pdf(pdf, path, title):
     localData.saveQcExecution(pdf, path, title)
 
 def generate(pdfs_data):
+    execution_data=[]
     for data in pdfs_data :
         if len(data["subBlocks"]) > 0 :
             pdf = create_pdf_report_for_project(data["project"], data["operator"])
             for subBlock in data["subBlocks"] :
                 add_sub_block_execution(pdf, subBlock["title"], subBlock["data"])
             save_pdf(pdf, data["path"], data["title"])
+            execution_data.append({"type" : "SUCESS", "title" : "Saved file", "message" : data["path"] +"Zooscan_reports/" + data["title"] + ".pdf"})
+    return execution_data
+    #return {"type" : "ERROR", "title" : "Can't save file", "message" : data["path"] + data["title"] + ".pdf"}

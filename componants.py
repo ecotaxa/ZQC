@@ -2,13 +2,17 @@ from dash import dash_table, dcc, html
 import dash_bootstrap_components as dbc
 from enums import SUPPORTED_DATA_COMPONANT
 import labels
+import dash_mantine_components as dmc
+from dash_iconify import DashIconify
 
 
 def generate_header():
     return html.Div([
                     html.H1('Zooscan Quality Checks', className="inline"),
                     dcc.Link(html.Img(className="help-btn", src="../assets/help.png", alt="help", title="Help"), href='/QC/zooscan/doc'),
-                    html.Span(className='elementor-divider-separator')
+                    html.Span(className='elementor-divider-separator'),
+                    enable_notification(),
+                    generate_name_of_saver()
                     ],
                     className="container-header")
 
@@ -59,7 +63,6 @@ def generate_check_block(checkBlock):
                             title="Save "+checkBlock["title"]+" QCs on plankton server",
                             n_clicks=0,
                             hidden=True),
-                        generate_name_of_saver(checkBlock)
                     ],
                         className="check-block-title"),
                     ###-- check list tab --###
@@ -136,12 +139,12 @@ def emptyResult(block_id, projects):
     return emptyResLayout
 
 
-def sub_block_execution_result(subBlock, data):
+def sub_block_execution_result(project, subBlock, data):
     results_content= [html.H3(subBlock)]
-    for result in data :
+    for indice, result in enumerate(data) :
         if result["type"] == SUPPORTED_DATA_COMPONANT.DATA_TABLE or result["type"] == SUPPORTED_DATA_COMPONANT.DATA_TABLE_XS:
             dash_comp = dash_table.DataTable(
-                id='tbl-' + subBlock,
+                id='tbl-' + subBlock + "-" + project + "-" + str(indice),
                 data=result["dataframe"].to_dict('records'),  # the contents of the table
                 columns=[{"name": i, "id": i} for i in result["dataframe"].columns],
                 filter_action="native",     # allow filtering of data by user ('native') or not ('none')
@@ -205,7 +208,7 @@ def style_table_data(dataframe):
         ]
     return ret
 
-def generate_name_of_saver(checkblock):
+def generate_name_of_saver():
     return html.Div([
                         # html.Img(
                         #     className="runQC-btn",
@@ -217,7 +220,7 @@ def generate_name_of_saver(checkblock):
                         #     hidden=True),
                         dbc.Modal(
                             [
-                                dbc.ModalHeader("Save "+checkblock["title"]+" report"),
+                                dbc.ModalHeader("Save report"),
                                 dbc.ModalBody(
                                             html.Div([
                                                     "Please enter your FULL first name and last name",
@@ -226,7 +229,7 @@ def generate_name_of_saver(checkblock):
                                                         html.P('Last name', className="label-popup"),
                                                         dcc.Input(
                                                             className="operator_last_name",
-                                                            id="operator_last_name-"+ checkblock["id"],
+                                                            id="operator_last_name",
                                                             type="text",
                                                             placeholder="Nom",
                                                             required=True,
@@ -237,7 +240,7 @@ def generate_name_of_saver(checkblock):
                                                         html.P('First name', className="label-popup"),
                                                         dcc.Input(
                                                             className="operator_first_name",
-                                                            id="operator_first_name-"+ checkblock["id"],
+                                                            id="operator_first_name",
                                                             type="text",
                                                             placeholder="Prénom",
                                                             required=True,
@@ -247,7 +250,7 @@ def generate_name_of_saver(checkblock):
                                                         html.P('First name', className="label-popup"),
                                                         dcc.Input(
                                                             className="operator_email",
-                                                            id="operator_email-"+ checkblock["id"],
+                                                            id="operator_email",
                                                             type="text",
                                                             placeholder="Email",
                                                             required=True,
@@ -258,10 +261,28 @@ def generate_name_of_saver(checkblock):
                                                 ])
                                             ),
                                 dbc.ModalFooter([
-                                    dbc.Button("SAVE", id="saveQC-btn-" + checkblock["id"], className="ml-auto"),
-                                    dbc.Button("CANCEL", id="close-"+checkblock["id"], className="ml-auto", outline=True, color="secondary")]
+                                    dbc.Button("SAVE", id="saveQC-btn", className="ml-auto"),
+                                    dbc.Button("CANCEL", id="close", className="ml-auto", outline=True, color="secondary")]
                                 ),
                             ],
-                            id="modal-"+checkblock["id"],
+                            id="modal-save",
                         ),
                     ])
+
+def enable_notification():
+    return  html.Div(id="notifications-container")
+
+def notification(data_array):
+
+    tmp=[]
+    for execution_data in data_array :
+        tmp.append(dmc.Notification(
+                        title=execution_data["title"],
+                        id="sucess-pdf-saved-notify-"+execution_data["message"],
+                        action="show",
+                        message=execution_data["message"],
+                        color="green",
+                        #autoClose=False,
+                        icon=DashIconify(icon="akar-icons:circle-check")
+                    ))
+    return tmp

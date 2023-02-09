@@ -69,7 +69,7 @@ class Block:
 
             # Save the created pdf 
             pdf["path"]=drive + "/" + project+ "/"
-            pdf["title"] = "QC_"+self.title+"_"+project+"_"+str(datetime.now())
+            pdf["title"] = ("QC_"+self.title+"_"+project+"_"+str(datetime.now())).replace(" ", "")
             QC_execution["pdf"].append(pdf)
 
         return QC_execution
@@ -112,7 +112,7 @@ class SubBlock:
         pdf["subBlocks"].append({"title" : self.title, "data" : result})
 
         # Generate the dash layout, depending on execution result type
-        resultLayout = componants.sub_block_execution_result(self.title, result)
+        resultLayout = componants.sub_block_execution_result(pdf["project"], self.title, result)
 
         return resultLayout
 

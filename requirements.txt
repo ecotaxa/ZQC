@@ -111,3 +111,5 @@ Werkzeug==2.0.2
 wrapt==1.14.0
 wsproto==1.1.0
 dash-bootstrap-components===1.2.1
+dash_mantine_components==0.11.1
+dash_iconify==0.1.2
