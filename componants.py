@@ -247,7 +247,7 @@ def generate_name_of_saver():
                                                             pattern=u"^[^-\s][^0-9]*[A-Za-zÀ-ÖØ-öø-ÿ]+",
                                                             debounce = True
                                                         ),
-                                                        html.P('First name', className="label-popup"),
+                                                        html.P('Email', className="label-popup"),
                                                         dcc.Input(
                                                             className="operator_email",
                                                             id="operator_email",
