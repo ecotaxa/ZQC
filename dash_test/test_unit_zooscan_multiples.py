@@ -14,7 +14,7 @@ def test_subBlock_multiples_check_multiples(dash_duo) :
     try :
         data_0 = localData.getdata(Mode.TSV_2, project_0)
     except ValueError as e:
-        assert str(e) == "#MISSING ecotaxa DIRECTORY"
+        assert str(e) == "Please create manually a folder at the root of your project directory and name it “ecotaxa”. Then run this QC again."
 
     # NO ZIP
     project_1 = "zooscan_test/Zooscan_test_subBlock_multiples_check_multiples_1" 
