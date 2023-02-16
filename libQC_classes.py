@@ -69,7 +69,7 @@ class Block:
 
             # Save the created pdf 
             pdf["path"]=drive + "/" + project+ "/"
-            pdf["title"] = ("QC_"+self.title+"_"+project+"_"+str(datetime.now())).replace(" ", "")
+            pdf["title"] = ("QC_"+self.title+"_"+project+"_"+str(datetime.now())).replace(" ", "_").replace(":", "-")
             QC_execution["pdf"].append(pdf)
 
         return QC_execution
