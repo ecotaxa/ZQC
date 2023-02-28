@@ -179,7 +179,7 @@ def sub_block_execution_result(project, subBlock, data):
 
 def qc_execution_result(project, qcExecutionLayout):
     return html.Div([
-        html.P("💙 "+project+" 💙", className="project-sep"),
+        html.P("⭐️ "+project+" ⭐️", className="project-sep"),
         html.Div(qcExecutionLayout)
     ], className="result-project-title")
 
