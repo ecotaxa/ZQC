@@ -225,10 +225,10 @@ def sub_block_execution_result(project, subBlock, data):
         className="sub-block-div")
     return div
 
-
 def qc_execution_result(project, qcExecutionLayout):
+    icon=get_project_icon()
     return html.Div([
-        html.P("⭐️ "+project+" ⭐️", className="project-sep"),
+        html.P(icon+" "+project+" "+icon, className="project-sep"),
         html.Div(qcExecutionLayout)
     ], className="result-project-title")
 
