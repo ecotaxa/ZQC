@@ -2,6 +2,8 @@
 from datetime import datetime
 from fpdf import FPDF
 import pandas as pd
+from PIL import Image
+  
 
 from enums import SUPPORTED_DATA_COMPONANT
 import localData
@@ -24,6 +26,22 @@ def write_operator(pdf, text):
     pdf.write(4, text) 
     pdf.ln(pdf.font_size * 1.5*SPACING)
 
+def write_images(pdf, images, images_line_height):
+    current_x = pdf.get_x()
+    current_y = pdf.get_y()
+    for image in images :
+        # Read image
+        img = Image.open(image)
+        # Get width and height
+        width = img.width
+        height = img.height
+        # Rendering image :
+        pdf.image(image,x = current_x, y = current_y, h = images_line_height)
+        current_x =current_x + width*images_line_height/height + 10
+    pdf.set_y(current_y + images_line_height)
+    pdf.ln(images_line_height * 1.5*SPACING)
+
+
 def write_sub_title(pdf, text):
     set_font_size(pdf, '', 16)
     pdf.ln(pdf.font_size * 1.5*SPACING)    
@@ -35,6 +53,18 @@ def write_text(pdf, text):
     pdf.ln(pdf.font_size * 1.5*SPACING)
     pdf.set_text_color(51, 51, 51)
     pdf.write(4, text) 
+
+class PDF(FPDF):
+    def footer(self):
+        # Position cursor at 1.5 cm from bottom:
+        col_width = self.epw/10
+        self.set_y(-15)
+        self.set_font_size(8)
+        self.set_text_color(51, 51, 51)
+        # Printing piqv adress
+        self.multi_cell(0, 10, "Quantitative Imaging Platform \nStation Zoologique - 181 chemin du Lazaret \n06230 Villefranche sur Mer - France \n\n✉ piqv@imev-mer.fr", align="C", max_line_height=self.font_size *1.1*SPACING)
+        # Printing page number:
+        self.cell(0, 1, f"Page {self.page_no()}|{{nb}}", align="R")
 
 def write_multiline_datatable(pdf, df):
     # distribute content depending of the nuber of dataset's cols
@@ -100,7 +130,7 @@ def write_multiline_row(row, pdf, line_height, col_width):
     pdf.ln(row_height_lines * line_height)
 
 def create_pdf_report_for_project(project, operator):
-    pdf = FPDF('L','mm', 'A4')
+    pdf = PDF('L','mm', 'A4')
     ## https://github.com/reingart/pyfpdf/issues/86
     pdf.add_font('ArialUnicode',fname='assets/fonts/Arial-Unicode-Regular.ttf',uni=True)
     pdf.add_font('ArialUnicode', style='B', fname='assets/fonts/Arial-Unicode-Bold.ttf',uni=True)
@@ -108,6 +138,7 @@ def create_pdf_report_for_project(project, operator):
     pdf.set_text_color(51, 51, 51)
     ##
     pdf.add_page()
+    write_images(pdf, ["assets/PIQV.png", "assets/LOV.png", "assets/IMEV.png", "assets/SU.png", "assets/CNRS.png"], 20)
     write_title(pdf, project)
     write_operator(pdf, "Saved by : "+operator)
     return pdf
