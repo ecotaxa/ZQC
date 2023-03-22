@@ -3,8 +3,57 @@ import dash_bootstrap_components as dbc
 from enums import SUPPORTED_DATA_COMPONANT
 import labels
 import dash_mantine_components as dmc
+import random
+from datetime import datetime
 from dash_iconify import DashIconify
 
+availables_themes = [ 
+    {
+        "name" : "crepes",
+        "icon"  : ["🎉","🥞"],
+        "month" : [1]
+    }, 
+    {
+        "name" : "saint_valetin",
+        "icon"  : ["💙"],
+        "month" : [2]
+    }, 
+    {
+        "name" : "fete_du_citron",
+        "icon"  : ["🍋", "🍊", "🌷"],
+        "month" : [3]
+    }, 
+    {
+        "name" : "paques",
+        "icon"  : ["🔔","🍫","🐇", "🥚", "🐣"],
+        "month" : [4]
+    }, 
+    {
+        "name" : "haloween",
+        "icon"  : ["🎃", "🍂"],
+        "month" : [8,9]
+    },
+    {
+        "name" : "noel",
+        "icon"  : ["🎄", "❄️", "🎁"],
+        "month" : [12]
+    }, 
+    {
+        "name" : "default",
+        "icon"  : ["⭐️"],
+        "month" : [1,2,3,4,5,6,7,8,9,10,11,12]
+    }, 
+]
+
+def get_icons(month) :
+    for theme in availables_themes : 
+        if month in theme["month"] :
+            return theme["icon"]
+        
+def get_project_icon() : 
+    now = datetime.now().month
+    current_theme_icones = get_icons(now)
+    return current_theme_icones[random.randint(0, len(current_theme_icones)-1)]
 
 def generate_header():
     return html.Div([
