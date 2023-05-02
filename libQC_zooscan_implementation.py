@@ -625,7 +625,9 @@ def check_motoda_comparaison(_id, _mode, local_data):
         In the columns 'Sample Comment' and 'Observation' of the report table, are reported respectively :
             - the sample_comment, column EK of the ecotaxa_scanID.tsv tables of the subdirectories of the _work directories. 
               If the ecotaxa.tsv table is missing it is retrieved from the meta.txt.
-            - the Observation, from the meta.txt file of the _work directories.
+            - the Observation, from the meta.txt file of the _work directories. 
+              If the meta.txt file can't be read because of a special caractere in it, following code will be displayed : "#Unexcepted caractere in meta.txt"
+              If the meta.txt file can't be read for another raison, following code will be displayed : "#BAD TXT FILE"
     """
     start_time = time.time()
     # Get only usefull columns
@@ -667,7 +669,7 @@ def check_motoda_comparaison(_id, _mode, local_data):
                     result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'motoda_comp'] = labels.errors["acquisition.motoda.comparaison.ko"]+" (d"+str(i)+") > Motoda frac (d"+str(i+1)+")"
     
     # Extract scan ids
-    ids = result["scan_id"].values
+    ids = result["scan_id"].drop_duplicates().values
     if len(meta) == 0 :
         result['sample_comment'] = labels.errors["global.missing_meta_txt_file"]
         result['Observation'] = labels.errors["global.missing_meta_txt_file"]
@@ -682,12 +684,12 @@ def check_motoda_comparaison(_id, _mode, local_data):
                 
             if result.loc[result["scan_id"] == id ].motoda_comp.values[0] == labels.errors["global.missing_ecotaxa_table"] :
                 #get sample_comment
-                meta_sample_comment =  meta_for_scan_id if meta_for_scan_id == labels.errors["global.bad_meta_txt_file"] else [a.replace("Sample_comment= ", "") for a in meta_for_scan_id if a.startswith("Sample_comment= ")]
+                meta_sample_comment =  meta_for_scan_id if meta_for_scan_id[0] == labels.errors["global.bad_meta_txt_file"] or meta_for_scan_id[0] == labels.errors["global.unicode_decode_error"] else [a.replace("Sample_comment= ", "") for a in meta_for_scan_id if a.startswith("Sample_comment= ")]
                 #set sample_comment
                 result.loc[result["scan_id"] == id, "sample_comment"] = meta_sample_comment[0] if len(meta_sample_comment)>0 else labels.errors["global.missing_column"]+" in meta.txt"
             
             #get and set Observation
-            meta_observation =  meta_for_scan_id if meta_for_scan_id == labels.errors["global.bad_meta_txt_file"] else [a.replace("Observation= ", "") for a in meta_for_scan_id if a.startswith("Observation= ")]
+            meta_observation =  meta_for_scan_id if meta_for_scan_id[0] == labels.errors["global.bad_meta_txt_file"] or meta_for_scan_id[0] == labels.errors["global.unicode_decode_error"] else [a.replace("Observation= ", "") for a in meta_for_scan_id if a.startswith("Observation= ")]
             result.loc[result["scan_id"] == id, "Observation"] = meta_observation[0] if len(meta_observation)>0 else labels.errors["global.missing_column"]+"  in meta.txt"
 
     # Keep only one line by couples : id / motoda fraction

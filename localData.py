@@ -118,6 +118,8 @@ def getMeta(fs) :
             with open(path) as f:
                 lines = f.readlines()
                 meta_files[path] = lines
+        except UnicodeDecodeError as ude :
+            meta_files[path] = [labels.errors["global.unicode_decode_error"]]
         except :
             meta_files[path] = [labels.errors["global.bad_meta_txt_file"]]
     return meta_files
