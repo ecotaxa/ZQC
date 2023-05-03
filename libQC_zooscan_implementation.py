@@ -530,8 +530,8 @@ def check_sieve_bug(_id, _mode, local_data):
                 di_acq_min_mesh = int(d_i.acq_min_mesh.values[0]) if is_int(d_i.acq_min_mesh.values[0]) else d_i.acq_min_mesh.values[0]
                 di_plus_un_acq_max_mesh = int(d_i_plus_1.acq_max_mesh.values[0]) if is_int(d_i_plus_1.acq_max_mesh.values[0]) else d_i_plus_1.acq_max_mesh.values[0]
                 if di_acq_min_mesh != di_plus_un_acq_max_mesh :
-                    result.loc[result["scan_id"] == d_i.scan_id.values[0], 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_1"]+str(i)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_2"]+str(i+1)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_3"]
-                    result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_1"]+str(i)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_2"]+str(i+1)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_3"]
+                    result.loc[result["scan_id"] == d_i.scan_id.values[0], 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_1"]+str(i)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_2"]+str(i+1)+labels.sucess["acquisition.sieve.bug.min_dn_dif_max_dn+1_3"]
+                    result.loc[result["scan_id"] == d_i_plus_1.scan_id.values[0], 'sieve_bug'] = labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_1"]+str(i)+labels.errors["acquisition.sieve.bug.min_dn_dif_max_dn+1_2"]+str(i+1)+labels.sucess["acquisition.sieve.bug.min_dn_dif_max_dn+1_3"]
     
     #For the same handled Frac ID 
     data_by_frac_id = result.groupby("fracID")
@@ -681,7 +681,7 @@ def check_motoda_comparaison(_id, _mode, local_data):
                 if id in k :
                     meta_for_scan_id = v
                     break
-                
+
             if result.loc[result["scan_id"] == id ].motoda_comp.values[0] == labels.errors["global.missing_ecotaxa_table"] :
                 #get sample_comment
                 meta_sample_comment =  meta_for_scan_id if meta_for_scan_id[0] == labels.errors["global.bad_meta_txt_file"] or meta_for_scan_id[0] == labels.errors["global.unicode_decode_error"] else [a.replace("Sample_comment= ", "") for a in meta_for_scan_id if a.startswith("Sample_comment= ")]

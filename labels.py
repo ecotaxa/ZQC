@@ -40,7 +40,7 @@ errors = {
     "acquisition.sieve.bug.min_equ_max": "#ACQ MIN = ACQ MAX",
     "acquisition.sieve.bug.min_dn_dif_max_dn+1_1": "#ACQ MIN (d",
     "acquisition.sieve.bug.min_dn_dif_max_dn+1_2": ") ≠ ACQ MAX (d",
-    "acquisition.sieve.bug.min_dn_dif_max_dn+1_3": ")",
+    
 
     "acquisition.motoda.check.identique": "#Identical Motoda",
     #TODO JCE : talk with AMANDA 2^0==1
@@ -72,4 +72,6 @@ sucess = {
     "acquisition.motoda.check.ok": "Motoda OK",
     "acquisition.motoda.comparaison.ok": "Motoda comparison OK",
     "acquisition.motoda.quality.ok": "Motoda OK",
+    #error but this caracter can appear in correct strings that musn't marked as error (put in red)
+    "acquisition.sieve.bug.min_dn_dif_max_dn+1_3": ")",
 }
