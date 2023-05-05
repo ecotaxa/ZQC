@@ -29,6 +29,11 @@ availables_themes = [
         "month" : [4]
     }, 
     {
+        "name" : "Bebe",
+        "icon"  : ["🍼","🧸","🤱"],
+        "month" : [5]
+    }, 
+    {
         "name" : "haloween",
         "icon"  : ["🎃", "🍂"],
         "month" : [8,9]
