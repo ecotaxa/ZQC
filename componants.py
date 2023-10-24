@@ -36,7 +36,7 @@ availables_themes = [
     {
         "name" : "haloween",
         "icon"  : ["🎃", "🍂"],
-        "month" : [9,10]
+        "month" : [10,11]
     },
     {
         "name" : "noel",
