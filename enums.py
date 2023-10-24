@@ -5,7 +5,6 @@ class Mode(str, Enum):
     HEADER = "HEADER"
     TSV_2 = "TSV_2"
 
-
 class EXECUTION_STATUS(str, Enum):
     SUCESS = "Sucess"
     ERROR = "Error"

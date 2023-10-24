@@ -287,3 +287,23 @@ def test_subBlock_process_check_nb_lines_tsv(dash_duo) :
     # Nb lines TSV OK : if the count of lines and images are as expected
     # wp_d1_1
     assert res.loc[res["List scan ID"]=="wp_d1_1"]["Nb tsv lines"].values[0] == "Nb lines TSV OK"
+
+def test_subBlock_process_check_nb_process_CHECK(dash_duo) : 
+    project_ok="zooscan_test/Zooscan_test_subBlock_process_check_process_check_1/" 
+    project_ko="zooscan_test/Zooscan_test_subBlock_process_check_process_check_2/" 
+
+    data_ok = localData.getdata(Mode.TSV, project_ok)
+    data_ko = localData.getdata(Mode.TSV, project_ko)
+
+    res_ok = impl.check_zooprocess_check("check_zooprocess_check", Mode.TSV, data_ok)
+    res_ko = impl.check_zooprocess_check("check_zooprocess_check", Mode.TSV, data_ko)
+   
+    # MISSING checked_files : if no checked_files.txt file.
+    assert res_ko.loc[res_ko["List scan ID"]=="wp_d1_1"]["Process checked"].values[0] == "#NOT checked"
+    assert res_ko.loc[res_ko["List scan ID"]=="wp_d2_1"]["Process checked"].values[0] == "#NOT checked"
+
+    # No missintg lines checked_files OK : if all of the work scans id are listed in checked_files
+    assert res_ok.loc[res_ok["List scan ID"]=="wp_d1_1"]["Process checked"].values[0] == "#NOT checked"
+
+    # No missintg lines checked_files OK : if all of the work scans id are listed in checked_files
+    assert res_ok.loc[res_ok["List scan ID"]=="wp_d2_1"]["Process checked"].values[0] == "check process OK"

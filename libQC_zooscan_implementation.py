@@ -322,6 +322,35 @@ def check_nb_lines_tsv(_id, _mode, local_data):
     logging.info("-- TIME : {} seconds -- : {} : {} : callback check_nb_lines_tsv".format((time.time() - start_time), _id, _mode))
     return result
 
+def check_zooprocess_check(_id, _mode, local_data):
+    """In order to ensure the quality of the process, the zooprocess user can perform visual quality check on scans when it is done the value of the scan ID appear in the checked_files.txt in Zooscan_check/.
+
+        In the column "Check Zooprocess" of the report table:
+            - "#NOT checked" :  if the scan ID don't appear in the list of checked files located in checked_files.txt in Zooscan_check/.
+            - "check process OK" :  if the scan ID do appear in the list of checked files located in checked_files.txt in Zooscan_check/.
+    """
+    start_time = time.time()
+
+    # Get only usefull columns
+    result = local_data.get("dataframe")[['scan_id']].drop_duplicates()
+    result["check_zooprocess"] = ""
+    
+    checked_files = local_data.get("checked_files")
+    print(checked_files)
+
+    # Replace by process_checked OK or associated error code
+    result.check_zooprocess = result.check_zooprocess.map(lambda x: labels.sucess["process.process_checked.ok"] if any(x in checked_file  for checked_file in checked_files)
+                                                                    else labels.errors["process.process_checked.not_checked"])
+
+    # Keep only one line by couples : id / check zooprocess
+    result = result.drop_duplicates()
+
+    # Rename collums to match the desiered output
+    result.rename(columns={'scan_id': 'List scan ID', 'check_zooprocess': 'Check Zooprocess'}, inplace=True)
+
+    logging.info("-- TIME : {} seconds -- : {} : {} : callback check_bw_ratio".format((time.time() - start_time), _id, _mode))
+    return result
+
 def check_bw_ratio(_id, _mode, local_data):
     """In order to ensure the quality of the process, the value of the B/W ratio must be strictly less than 0.25.
 

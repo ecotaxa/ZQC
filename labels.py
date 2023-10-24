@@ -34,6 +34,8 @@ errors = {
     "process.post_sep.not_included": "#SEP MSK NOT INCLUDED",
     "process.nb_lines_tsv.diff" : "#Images nb ≠ TSV lignes nb",
 
+    "process.process_checked.not_checked" : "#NOT checked",
+
     #TODO JCE : talk with AMANDA for better understanding of this QC
     "acquisition.sieve.bug.different": "#SIEVE different from others",
     "acquisition.sieve.bug.min_sup_max": "#ACQ MIN > ACQ MAX",
@@ -67,6 +69,7 @@ sucess = {
     "process.sep_mask.ok": "Sep mask OK",
     "process.post_sep.ok": "process OK",
     "process.nb_lines_tsv.ok" : "Nb lines TSV OK",
+    "process.process_checked.ok" : "check process OK",
 
     "acquisition.sieve.bug.ok": "sieve OK",
     "acquisition.motoda.check.ok": "Motoda OK",
