@@ -299,11 +299,11 @@ def test_subBlock_process_check_nb_process_CHECK(dash_duo) :
     res_ko = impl.check_zooprocess_check("check_zooprocess_check", Mode.TSV, data_ko)
    
     # MISSING checked_files : if no checked_files.txt file.
-    assert res_ko.loc[res_ko["List scan ID"]=="wp_d1_1"]["Process checked"].values[0] == "#NOT checked"
-    assert res_ko.loc[res_ko["List scan ID"]=="wp_d2_1"]["Process checked"].values[0] == "#NOT checked"
+    assert res_ko.loc[res_ko["List scan ID"]=="wp_d1_1"]["Check Zooprocess"].values[0] == "#NOT checked"
+    assert res_ko.loc[res_ko["List scan ID"]=="wp_d2_1"]["Check Zooprocess"].values[0] == "#NOT checked"
 
     # No missintg lines checked_files OK : if all of the work scans id are listed in checked_files
-    assert res_ok.loc[res_ok["List scan ID"]=="wp_d1_1"]["Process checked"].values[0] == "#NOT checked"
+    assert res_ok.loc[res_ok["List scan ID"]=="wp_d1_1"]["Check Zooprocess"].values[0] == "#NOT checked"
 
     # No missintg lines checked_files OK : if all of the work scans id are listed in checked_files
-    assert res_ok.loc[res_ok["List scan ID"]=="wp_d2_1"]["Process checked"].values[0] == "Check OK"
+    assert res_ok.loc[res_ok["List scan ID"]=="wp_d2_1"]["Check Zooprocess"].values[0] == "Check OK"
