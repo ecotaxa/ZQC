@@ -66,11 +66,22 @@ class PDF(FPDF):
         # Printing page number:
         self.cell(0, 1, f"Page {self.page_no()}|{{nb}}", align="R")
 
-def write_multiline_datatable(pdf, df):
+def write_multiline_datatable_XL(pdf, df):
     # distribute content depending of the nuber of dataset's cols
-    col_width = pdf.epw /10#(len(df.head())+4)
-    pdf.ln(pdf.font_size * 1.5*SPACING)
+    col_width = pdf.epw /(len(df.columns)-1)
+    write_multiline_datatable(pdf, df, col_width)
+    return
+
     
+def write_multiline_datatable_XS(pdf, df):
+    # distribute content in small cols
+    col_width = pdf.epw /10
+    write_multiline_datatable(pdf, df, col_width)
+    return
+
+def write_multiline_datatable(pdf, df, col_width):
+
+    pdf.ln(pdf.font_size * 1.5*SPACING)
     write_multiline_row_headers(df.head(), pdf, col_width)
 
     # for row in data
@@ -148,9 +159,12 @@ def add_sub_block_execution(pdf, title, data):
     write_sub_title(pdf, title)
 
     for result in data:
-        if result["type"] == SUPPORTED_DATA_COMPONANT.DATA_TABLE or result["type"] == SUPPORTED_DATA_COMPONANT.DATA_TABLE_XS:
+        if result["type"] == SUPPORTED_DATA_COMPONANT.DATA_TABLE :
             df = pd.DataFrame.from_dict(result["dataframe"]).reset_index()  # make sure indexes pair with number of rows
-            write_multiline_datatable(pdf, df)
+            write_multiline_datatable_XL(pdf, df)
+        elif result["type"] == SUPPORTED_DATA_COMPONANT.DATA_TABLE_XS:
+            df = pd.DataFrame.from_dict(result["dataframe"]).reset_index()  # make sure indexes pair with number of rows
+            write_multiline_datatable_XS(pdf, df)
 
 def save_pdf(pdf, path, title):
     localData.saveQcExecution(pdf, path, title)

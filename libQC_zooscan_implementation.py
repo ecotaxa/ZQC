@@ -327,7 +327,7 @@ def check_zooprocess_check(_id, _mode, local_data):
 
         In the column "Check Zooprocess" of the report table:
             - "#NOT checked" :  if the scan ID don't appear in the list of checked files located in checked_files.txt in Zooscan_check/.
-            - "check process OK" :  if the scan ID do appear in the list of checked files located in checked_files.txt in Zooscan_check/.
+            - "Check OK" :  if the scan ID do appear in the list of checked files located in checked_files.txt in Zooscan_check/.
     """
     start_time = time.time()
 
@@ -336,7 +336,6 @@ def check_zooprocess_check(_id, _mode, local_data):
     result["check_zooprocess"] = ""
     
     checked_files = local_data.get("checked_files")
-    print(checked_files)
 
     # Replace by process_checked OK or associated error code
     result.check_zooprocess = result.check_zooprocess.map(lambda x: labels.sucess["process.process_checked.ok"] if any(x in checked_file  for checked_file in checked_files)

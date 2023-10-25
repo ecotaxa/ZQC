@@ -69,7 +69,7 @@ sucess = {
     "process.sep_mask.ok": "Sep mask OK",
     "process.post_sep.ok": "process OK",
     "process.nb_lines_tsv.ok" : "Nb lines TSV OK",
-    "process.process_checked.ok" : "check process OK",
+    "process.process_checked.ok" : "Check OK",
 
     "acquisition.sieve.bug.ok": "sieve OK",
     "acquisition.motoda.check.ok": "Motoda OK",

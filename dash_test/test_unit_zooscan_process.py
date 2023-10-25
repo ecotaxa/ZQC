@@ -306,4 +306,4 @@ def test_subBlock_process_check_nb_process_CHECK(dash_duo) :
     assert res_ok.loc[res_ok["List scan ID"]=="wp_d1_1"]["Process checked"].values[0] == "#NOT checked"
 
     # No missintg lines checked_files OK : if all of the work scans id are listed in checked_files
-    assert res_ok.loc[res_ok["List scan ID"]=="wp_d2_1"]["Process checked"].values[0] == "check process OK"
+    assert res_ok.loc[res_ok["List scan ID"]=="wp_d2_1"]["Process checked"].values[0] == "Check OK"

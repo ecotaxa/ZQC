@@ -17,7 +17,7 @@ requirement : python3.8
 ```shell
 git clone https://github.com/juliecoust/AQC.git
 cd AQC/
-virtualenv venvQC
+python3 -m venv "venvQC"  
 source venvQC/bin/activate
 pip3 install -r requirements.txt
 ```
