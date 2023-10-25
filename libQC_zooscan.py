@@ -27,7 +27,7 @@ class Lib_zooscan():
       check_scan_weight = Check("SCAN weight",  libQC_zooscan_implementation.check_scan_weight.__doc__ , "scan_weight", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_scan_weight)
       check_process_post_scan = Check("Process POST SCAN", libQC_zooscan_implementation.check_process_post_scan.__doc__ , "process_post_scan", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_process_post_scan)
       check_nb_lines_tsv = Check("Nb tsv lines", libQC_zooscan_implementation.check_nb_lines_tsv.__doc__ , "check_nb_lines_tsv", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_nb_lines_tsv)
-      check_zooprocess_check = Check("Nb tsv lines", libQC_zooscan_implementation.check_zooprocess_check.__doc__ , "zooprocess_check", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_zooprocess_check)
+      check_zooprocess_check = Check("Zooprocess check", libQC_zooscan_implementation.check_zooprocess_check.__doc__ , "zooprocess_check", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_zooprocess_check)
       check_bw_ratio = Check("B/W ratio", libQC_zooscan_implementation.check_bw_ratio.__doc__ , "bw_ratio", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_bw_ratio)
       check_pixel_size = Check("PIXEL size",  libQC_zooscan_implementation.check_pixel_size.__doc__ , "pixel_size", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_pixel_size)
       check_sep_mask = Check("SEP MASK", libQC_zooscan_implementation.check_sep_mask.__doc__ , "sep_mask", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1,  libQC_zooscan_implementation.check_sep_mask)
