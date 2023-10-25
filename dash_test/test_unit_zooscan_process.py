@@ -303,7 +303,7 @@ def test_subBlock_process_check_nb_process_CHECK(dash_duo) :
     assert res_ko.loc[res_ko["List scan ID"]=="wp_d2_1"]["Check Zooprocess"].values[0] == "#NOT checked"
 
     # No missintg lines checked_files OK : if all of the work scans id are listed in checked_files
-    assert res_ok.loc[res_ok["List scan ID"]=="wp_d1_1"]["Check Zooprocess"].values[0] == "#NOT checked"
+    assert res_ok.loc[res_ok["List scan ID"]=="wp_d1_1"]["Check Zooprocess"].values[0] == "Check OK" 
 
-    # No missintg lines checked_files OK : if all of the work scans id are listed in checked_files
-    assert res_ok.loc[res_ok["List scan ID"]=="wp_d2_1"]["Check Zooprocess"].values[0] == "Check OK"
+    # missintg lines wp_d2_1 in checked_files 
+    assert res_ok.loc[res_ok["List scan ID"]=="wp_d2_1"]["Check Zooprocess"].values[0] == "#NOT checked"
