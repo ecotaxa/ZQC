@@ -40,10 +40,10 @@ jobs:
           DASH_ENV=TEST pytest dash_test/test_integration.py
       - name: Test unit_zooscan_acquisition with pytest
         run: |
-          DASH_ENV=TEST pytest dash_test/test_unit_zooscan_process.py
-      - name: Test unit_zooscan_process with pytest
-        run: |
           DASH_ENV=TEST pytest dash_test/test_unit_zooscan_acquisition.py
       - name: Test unit_zooscan_multiples with pytest
         run: |
           DASH_ENV=TEST pytest dash_test/test_unit_zooscan_multiples.py
+      - name: Test unit_zooscan_process with pytest
+        run: |
+          DASH_ENV=TEST pytest dash_test/test_unit_zooscan_process.py
