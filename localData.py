@@ -293,9 +293,9 @@ def getCheckedFiles(subpath):
             lines = f.readlines()
             checked_files= lines
     except UnicodeDecodeError as ude:
-        checked_files[path] = [labels.errors["global.unicode_decode_error"]]
+        checked_files = [labels.errors["global.unicode_decode_error"]]
     except:
-        checked_files[path] = [labels.errors["global.bad_meta_txt_file"]]
+        checked_files = [labels.errors["global.bad_meta_txt_file"]]
     return checked_files
 
 
