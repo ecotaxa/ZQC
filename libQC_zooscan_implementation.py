@@ -338,8 +338,7 @@ def check_zooprocess_check(_id, _mode, local_data):
     checked_files = local_data.get("checked_files")
 
     # Replace by process_checked OK or associated error code
-    result.check_zooprocess = result.check_zooprocess.map(lambda x: labels.sucess["process.process_checked.ok"] if any(x in checked_file  for checked_file in checked_files)
-                                                                    else labels.errors["process.process_checked.not_checked"])
+    result["check_zooprocess"] = result["scan_id"].apply(lambda x:  labels.sucess["process.process_checked.ok"] if any(x in checked_file for checked_file in checked_files) else labels.errors["process.process_checked.not_checked"])
 
     # Keep only one line by couples : id / check zooprocess
     result = result.drop_duplicates()
