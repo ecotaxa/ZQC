@@ -30,10 +30,12 @@ class ChecksLib():
 
 
 class Block:
-    def __init__(self, _title, _id, _mode):
+    def __init__(self, _title, _id, _description, _pdf_orientation, _mode):
         self.subBlocks = []
         self.title = _title
         self.id = _id
+        self.description = _description
+        self.pdf_orientation = _pdf_orientation
         self.mode = _mode
 
     def addSubBlocks(self, *_subBlocks):
@@ -49,6 +51,7 @@ class Block:
         for project in projects:
             start_time = time.time()
             pdf = {"project" : project, 
+                   "block" : {"title" : self.title, "description" : self.description, "pdf_orientation" : self.pdf_orientation},
                    "subBlocks" : []}
             try :
                 # Get data

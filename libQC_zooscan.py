@@ -10,15 +10,15 @@ class Lib_zooscan():
       self.lib = ChecksLib()
 
       #Create empty Blocks 
-      block_before_scan = Block("Before scan", "before_scan", Mode.HEADER)
-      block_during_analysis = Block("During analysis", "during_analysis", Mode.TSV)
-      block_after_ecotaxa_classif = Block("After EcoTaxa classif", "after_ecotaxa_classif", Mode.TSV_2)
+      block_before_scan = Block("Before scan", "before_scan", "TODO ADD DESCRIPTION", 'L', Mode.HEADER)
+      block_during_analysis = Block("During analysis", "during_analysis", "TODO ADD DESCRIPTION",'L', Mode.TSV)
+      block_after_ecotaxa_classif = Block("After EcoTaxa classification", "after_ecotaxa_classif", "Control Quality on “multiples” categories", "P", Mode.TSV_2)
       
       #Create empty sub blocks
       subBlock_sample = SubBlock("Sample", " This feature will be available in a future release of the QC application. This quality check will gives an overview of the quality of the data related to the acquisition of the sample.", 1, "sample")
       subBlock_acquisition = SubBlock("Acquisition", "This quality check gives an overview of the quality of the data related to the acquisition of the scan on the Zooscan.", 2, "acquisition")
       subBlock_process = SubBlock("Process", "This quality check gives an overview and notes the quality of the steps performed by the sample during its acquisition (SCAN) at the Zooscan and its processing (PROCESS) via the Zooprocess application.", 1, "process")
-      subBlock_multiples = SubBlock("Multiples", "This quality check gives an overview of the quality of the data related to the classification.", 1, "multiples")
+      subBlock_multiples = SubBlock("Multiples", 'This quality control identifies the effort made to separate multiple objects by measuring the abundance and biovolume of the "multiple other" and "multiple copepoda" categories in relation to the other categories.', 1, "multiples")
       
 
       #Create checks

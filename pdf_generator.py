@@ -3,6 +3,8 @@ from datetime import datetime
 from fpdf import FPDF
 import pandas as pd
 from PIL import Image
+from datetime import datetime
+
   
 
 from enums import SUPPORTED_DATA_COMPONANT
@@ -10,50 +12,94 @@ import localData
 
 SPACING = 1
 
+def centred_h1(pdf,title):
+    set_font_size(pdf,'', 24)
+    #pdf.set_text_color(16, 105, 141)
+    # Calculate width of title and position
+    string_width = pdf.get_string_width(title) + 6
+    pdf.set_x((pdf.w - string_width) / 2)
+    #write centred title
+    pdf.cell(string_width, 9, title, 0, 1, 'C')
+
+def centred_h2(pdf,title):
+    set_font_size(pdf,'', 17)
+    # Calculate width of title and position
+    string_width = pdf.get_string_width(title) + 6
+    pdf.set_x((pdf.w - string_width) / 2)
+    #write centred title
+    pdf.cell(string_width, 9, title, 0, 1, 'C')
+
+def centred_h4(pdf,title):
+    # Set font and color
+    set_font_size(pdf, '', 12)
+    pdf.set_text_color(51, 51, 51)
+    # Calculate width of title and centered position
+    string_width = pdf.get_string_width(title) + 6
+    pdf.set_x((pdf.w - string_width) / 2)
+    #write centred title
+    pdf.cell(string_width, 9, title, 0, 1, 'C')
 
 def set_font_size(pdf, weight, size):
     pdf.set_font('ArialUnicode', weight, size)
 
-def write_title(pdf, text):
-    set_font_size(pdf,'', 24)
-    pdf.set_text_color(16, 105, 141)
-    pdf.write(5,text)
-    pdf.ln(pdf.font_size * 1.5*SPACING)
+def write_spacing(pdf, ratio=1.5):
+    pdf.ln(pdf.font_size * ratio*SPACING)
 
-def write_operator(pdf, text):
-    set_font_size(pdf, '', 12)
+def write_h3(pdf, text, mode=''):
+    #b for bold, u for underline, i for italic, '' for regular
+    set_font_size(pdf, mode, 14)
     pdf.set_text_color(51, 51, 51)
     pdf.write(4, text) 
-    pdf.ln(pdf.font_size * 1.5*SPACING)
-
-def write_images(pdf, images, images_line_height):
-    current_x = pdf.get_x()
-    current_y = pdf.get_y()
-    for image in images :
-        # Read image
-        img = Image.open(image)
-        # Get width and height
-        width = img.width
-        height = img.height
-        # Rendering image :
-        pdf.image(image,x = current_x, y = current_y, h = images_line_height)
-        current_x =current_x + width*images_line_height/height + 10
-    pdf.set_y(current_y + images_line_height)
-    pdf.ln(images_line_height * 1.5*SPACING)
-
-
-def write_sub_title(pdf, text):
-    set_font_size(pdf, '', 16)
-    pdf.ln(pdf.font_size * 1.5*SPACING)    
+   
+def write_h4(pdf, text, mode=''):
+    #b for bold, u for underline, i for italic, '' for regular
+    set_font_size(pdf, mode, 16)
     pdf.set_text_color(92, 192, 205)
     pdf.write(5,text)
 
-def write_text(pdf, text):
-    set_font_size(pdf, '', 12)
-    pdf.ln(pdf.font_size * 1.5*SPACING)
+def write_text(pdf, text, mode=''):
+    #b for bold, u for underline, i for italic, '' for regular
+    set_font_size(pdf, mode, 12)
     pdf.set_text_color(51, 51, 51)
     pdf.write(4, text) 
 
+def write_images(pdf, images):
+    default_images_line_height = 24
+    current_x = pdf.get_x()
+    current_y = pdf.get_y()
+    page_width = pdf.w - 2 * pdf.l_margin
+    SPACING_IMG = 10
+    BIG_LOGO_RATIO = 9
+
+    # Function to calculate total width of images at a given line height
+    def total_images_width():
+        total_width = 0
+        for image in images:
+            img = Image.open(image)
+            images_line_height = default_images_line_height + BIG_LOGO_RATIO if image == "assets/PIQV.png" else default_images_line_height
+            scale_factor = images_line_height / img.height
+            total_width += (img.width * scale_factor)
+        total_width += SPACING_IMG * (len(images) - 1)  # Add spacing between images
+        return total_width
+
+    # Adjust line height if images don't fit
+    while total_images_width() > page_width:
+        default_images_line_height -= 1  # Decrease line height
+        if default_images_line_height <= 0:
+            raise ValueError("Images cannot fit within the page width.")
+
+    # Render images at adjusted line height
+    for image in images:
+        img = Image.open(image)
+        images_line_height = default_images_line_height + BIG_LOGO_RATIO if image == "assets/PIQV.png" else default_images_line_height
+        scale_factor = images_line_height / img.height
+        scaled_width = img.width * scale_factor
+        # Rendering image
+        pdf.image(image, x=current_x, y=current_y, h=images_line_height)
+        current_x += scaled_width + SPACING_IMG
+
+    pdf.set_y(current_y + default_images_line_height)
+    pdf.ln(default_images_line_height * 1.5)
 class PDF(FPDF):
     def footer(self):
         # Position cursor at 1.5 cm from bottom:
@@ -80,10 +126,8 @@ def write_multiline_datatable_XS(pdf, df):
     return
 
 def write_multiline_datatable(pdf, df, col_width):
-
-    pdf.ln(pdf.font_size * 1.5*SPACING)
+    write_spacing(pdf)  
     write_multiline_row_headers(df.head(), pdf, col_width)
-
     # for row in data
     for i in df.index :
         row=[]
@@ -140,8 +184,8 @@ def write_multiline_row(row, pdf, line_height, col_width):
 
     pdf.ln(row_height_lines * line_height)
 
-def create_pdf_report_for_project(project, operator):
-    pdf = PDF('L','mm', 'A4')
+def create_pdf_report_for_project(project, block, operator):
+    pdf = PDF(block["pdf_orientation"],'mm', 'A4')
     ## https://github.com/reingart/pyfpdf/issues/86
     pdf.add_font('ArialUnicode',fname='assets/fonts/Arial-Unicode-Regular.ttf',uni=True)
     pdf.add_font('ArialUnicode', style='B', fname='assets/fonts/Arial-Unicode-Bold.ttf',uni=True)
@@ -149,15 +193,23 @@ def create_pdf_report_for_project(project, operator):
     pdf.set_text_color(51, 51, 51)
     ##
     pdf.add_page()
-    write_images(pdf, ["assets/PIQV.png", "assets/LOV.png", "assets/IMEV.png", "assets/SU.png", "assets/CNRS.png"], 20)
-    write_title(pdf, project)
-    write_operator(pdf, "Saved by : "+operator)
+    write_images(pdf, ["assets/LOV.png", "assets/IMEV.png", "assets/PIQV.png", "assets/CNRS.png", "assets/SU.png", "assets/EMBRC.png" ])
+    centred_h1(pdf, "ZQC Report : "+ block["title"])
+    write_spacing(pdf,0.2)
+    centred_h2(pdf, block["description"])
+    write_spacing(pdf,0.5)
+    centred_h4(pdf, "Saved by "+operator["name"]+" "+ operator["last_name"]+" ("+operator["email"]+") on "+datetime.utcnow().strftime("%d/%m/%Y at %I:%M:%S %p"))
+    write_spacing(pdf)
+    write_h3(pdf,"Project tested : ")
+    write_spacing(pdf)
+    write_h3(pdf,project,'b')
+    write_spacing(pdf)
+    write_spacing(pdf)
     return pdf
 
 def add_sub_block_execution(pdf, title, data):
     """Save an execution as html (or pdf)"""
-    write_sub_title(pdf, title)
-
+    write_h4(pdf, title)
     for result in data:
         if result["type"] == SUPPORTED_DATA_COMPONANT.DATA_TABLE :
             df = pd.DataFrame.from_dict(result["dataframe"]).reset_index()  # make sure indexes pair with number of rows
@@ -165,7 +217,7 @@ def add_sub_block_execution(pdf, title, data):
         elif result["type"] == SUPPORTED_DATA_COMPONANT.DATA_TABLE_XS:
             df = pd.DataFrame.from_dict(result["dataframe"]).reset_index()  # make sure indexes pair with number of rows
             write_multiline_datatable_XS(pdf, df)
-
+    write_spacing(pdf, 2)
 def save_pdf(pdf, path, title):
     localData.saveQcExecution(pdf, path, title)
 
@@ -173,7 +225,7 @@ def generate(pdfs_data):
     execution_data=[]
     for data in pdfs_data :
         if len(data["subBlocks"]) > 0 :
-            pdf = create_pdf_report_for_project(data["project"], data["operator"])
+            pdf = create_pdf_report_for_project(data["project"], data["block"], data["operator"])
             for subBlock in data["subBlocks"] :
                 add_sub_block_execution(pdf, subBlock["title"], subBlock["data"])
             save_pdf(pdf, data["path"], data["title"])

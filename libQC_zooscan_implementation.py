@@ -851,23 +851,36 @@ def check_spelling(_id, _mode, local_data):
     return result
 
 def checks_multiples(_id, _mode, local_data) : 
-    """ Checks that: all multiples < 20% of living, other multiples < 15% of (living - Copepoda), and Copepoda multiples < 15% of total Copepoda, all in both number (n) and biovolume (vol);
-        NB: morphological sub-categories such as "head", "part", "dead", "Insecta", "wing" and "seaweed" are never counted.
-        This QC is based on the newest ecotaxa default export zip file located in the "ecotaxa/" folder of your project.
+    """Checks that: all multiples < 20% of living, other multiples < 15% of (living - Copepoda), and Copepoda multiples < 15% of total Copepoda, all in both number (n) and biovolume (vol);
+This QC is based on the newest ecotaxa default export zip file located in the "ecotaxa/" folder of your project.
+NB: 
+    - Total living eliminate morphological sub-categories such as "head", "part", "dead", "Insecta", "wing", "seaweed"
+    - Ab for Abundance
+    - Bv for Biovolume
 
-        In followings coluns of the report table, are respectively reported :
-            - List scan ID : the scan id.
-            - "% mult" : %Ab multiples (other+cop) / living, should be < 20% of (total living) abundance
-            - "%vol mult" : %Bv multiples (other+cop) / living, should be < 20% of (total living) biovolume
-            - "% mult (non cop)" : %Ab multiples other / (living - cop), should be < 15% of (living - Copepoda et enfants) abundance
-            - "%vol mult (non cop)" : %Bv multiples other / (living - cop), should be < 15% of (living - Copepoda et enfants) biovolume
-            - "% mult (cop)" : %Ab multiples cop / (living - other), should be < 15% of total abundance
-            - "%vol mult (cop)" : %Bv multiples cop / (living - other), should be < 15% of total biovolume
+- Ratio (total multiple/total living)
+(multiple (other) + multiple (copepoda)) > 20% of (total living) 
 
-        In the above listed columns of the report table can appear an error code:
-            - "#HIGH multiples level" : it means that the % of multiples is to high for the related sample.
+- Ratio multiple (not copepoda)/living (not copepoda)  
+% multiple (other) > 15% of (living - (Copepoda and children))
+
+- Ratio multiple (copepoda)/total copepoda 
+% multiple (copepoda) > 15% of total Copepoda (with child)
+
+In followings coluns of the report table, are respectively reported :
+    - List scan ID : the scan id.
+    - % Ab (tot mult/tot liv.) : %Ab multiples (other+cop) / living, should be < 20% of (total living) abundance
+    - % Bv (tot mult/tot liv.) : %Bv multiples (other+cop) / living, should be < 20% of (total living) biovolume
+    - % Ab (tot mult/tot liv.) - cop : %Ab multiples other / (living - cop), should be < 15% of (living - Copepoda and children) abundance
+    - % Bv (tot mult/tot liv.) - cop : %Bv multiples other / (living - cop), should be < 15% of (living - Copepoda et children) biovolume
+    - % Ab (cop mult/tot cop) : %Ab multiples cop / (living - other), should be < 15% of total abundance
+    - % Bv (cop mult/tot cop) : %Bv multiples cop / (living - other), should be < 15% of total biovolume
+
+In the above listed columns of the report table can appear an error code:
+    - "#HIGH multiples level" : the sample's % of multiples is to high.
 
     """
+
     start_time = time.time()
     # Get only usefull columns
     dataToTest = local_data.get("dataframe")[["object_id",'object_annotation_hierarchy', 'object_annotation_category', 'object_area']]
@@ -930,12 +943,12 @@ def checks_multiples(_id, _mode, local_data) :
 
     # Rename collums to match the desiered output
     result.rename(columns={ 'scan_id': 'List scan ID', 
-                            'p_mult' : "% mult",#"%Ab multiples : (other+cop) / living",
-                            'p_vol_mult' : "%vol mult",#"%Bv multiples (other+cop) / living",
-                            'p_mult_non_cop' : "% mult (non cop)",#"%Ab multiples other / (living - cop)",
-                            'p_vol_mult_non_cop' : "%vol mult (non cop)",#"%Bv multiples other / (living - cop)",
-                            'p_mult_cop' : "% mult (cop)", #"%Ab multiples cop / (living - other)",
-                            'p_vol_mult_cop' : "%vol mult (cop)",#"%Bv multiples cop / (living - other)"
+                            'p_mult' : "% Ab (tot mult/tot liv.)",#"%Ab multiples : (other+cop) / living",
+                            'p_vol_mult' : "% Bv (tot mult/tot liv.)",#"%Bv multiples (other+cop) / living",
+                            'p_mult_non_cop' : "% Ab (tot mult/tot liv.) - cop",#"%Ab multiples other / (living - cop)",
+                            'p_vol_mult_non_cop' : "% Bv (tot mult/tot liv.) - cop",#"%Bv multiples other / (living - cop)",
+                            'p_mult_cop' : "% Ab (cop mult/tot cop)", #"%Ab multiples cop / (living - other)",
+                            'p_vol_mult_cop' : "% Bv (cop mult/tot cop)",#"%Bv multiples cop / (living - other)"
                         }, inplace=True)
 
     logging.info("-- TIME : {} seconds -- : {} : {} : callback check_motoda_check".format((time.time() - start_time), _id, _mode))
