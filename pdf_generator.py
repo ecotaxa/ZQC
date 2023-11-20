@@ -29,15 +29,39 @@ def centred_h2(pdf,title):
     #write centred title
     pdf.cell(string_width, 9, title, 0, 1, 'C')
 
-def centred_h4(pdf,title):
-    # Set font and color
+def centred_h4_with_email(pdf, operator):
+    # Split the title into parts
+    part1 = "Saved by " + operator["name"] + " " + operator["last_name"] + " ("
+    email = operator["email"]
+    part2 = ") on " + datetime.utcnow().strftime("%d/%m/%Y at %I:%M:%S %p")
+
+    # Set initial font and color for part1
     set_font_size(pdf, '', 12)
     pdf.set_text_color(51, 51, 51)
-    # Calculate width of title and centered position
-    string_width = pdf.get_string_width(title) + 6
-    pdf.set_x((pdf.w - string_width) / 2)
-    #write centred title
-    pdf.cell(string_width, 9, title, 0, 1, 'C')
+
+    # Calculate total width
+    string_width = pdf.get_string_width(part1 + email + part2) + 6
+
+    # Calculate starting position
+    start_x = (pdf.w - string_width) / 2
+    pdf.set_x(start_x)
+
+    # Write part1
+    pdf.cell(pdf.get_string_width(part1), 9, part1, 0, 0, 'L')
+
+    # Set font and color for email
+    pdf.set_text_color(0, 0, 255)  # Blue color
+    pdf.set_font('', 'U')  # Underline
+
+    # Write email
+    pdf.cell(pdf.get_string_width(email), 9, email, 0, 0, 'L')
+
+    # Reset font and color for part2
+    pdf.set_font('', '')  # Remove underline
+    pdf.set_text_color(51, 51, 51)
+
+    # Write part2
+    pdf.cell(pdf.get_string_width(part2), 9, part2, 0, 1, 'L')
 
 def set_font_size(pdf, weight, size):
     pdf.set_font('ArialUnicode', weight, size)
@@ -99,7 +123,7 @@ def write_images(pdf, images):
         current_x += scaled_width + SPACING_IMG
 
     pdf.set_y(current_y + default_images_line_height)
-    pdf.ln(default_images_line_height * 1.5)
+    pdf.ln(default_images_line_height * 2)
 class PDF(FPDF):
     def footer(self):
         # Position cursor at 1.5 cm from bottom:
@@ -198,7 +222,7 @@ def create_pdf_report_for_project(project, block, operator):
     write_spacing(pdf,0.2)
     centred_h2(pdf, block["description"])
     write_spacing(pdf,0.5)
-    centred_h4(pdf, "Saved by "+operator["name"]+" "+ operator["last_name"]+" ("+operator["email"]+") on "+datetime.utcnow().strftime("%d/%m/%Y at %I:%M:%S %p"))
+    centred_h4_with_email(pdf,operator)
     write_spacing(pdf)
     write_h3(pdf,"Project tested : ")
     write_spacing(pdf)
