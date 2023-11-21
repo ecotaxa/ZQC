@@ -29,39 +29,60 @@ def centred_h2(pdf,title):
     #write centred title
     pdf.cell(string_width, 9, title, 0, 1, 'C')
 
-def centred_h4_with_email(pdf, operator):
+def h4_with_email(pdf, operator):
     # Split the title into parts
     part1 = "Saved by " + operator["name"] + " " + operator["last_name"] + " ("
     email = operator["email"]
     part2 = ") on " + datetime.utcnow().strftime("%d/%m/%Y at %I:%M:%S %p")
 
     # Set initial font and color for part1
-    set_font_size(pdf, '', 12)
+    set_font_size(pdf, '', 10)
     pdf.set_text_color(51, 51, 51)
 
-    # Calculate total width
-    string_width = pdf.get_string_width(part1 + email + part2) + 6
-
-    # Calculate starting position
-    start_x = (pdf.w - string_width) / 2
-    pdf.set_x(start_x)
-
     # Write part1
-    pdf.cell(pdf.get_string_width(part1), 9, part1, 0, 0, 'L')
-
+    pdf.write(5,part1)
     # Set font and color for email
     pdf.set_text_color(0, 0, 255)  # Blue color
     pdf.set_font('', 'U')  # Underline
 
     # Write email
-    pdf.cell(pdf.get_string_width(email), 9, email, 0, 0, 'L')
+    pdf.write(5,email)
 
     # Reset font and color for part2
     pdf.set_font('', '')  # Remove underline
     pdf.set_text_color(51, 51, 51)
 
     # Write part2
-    pdf.cell(pdf.get_string_width(part2), 9, part2, 0, 1, 'L')
+    pdf.write(5,part2)
+
+def generate_checks_block(checks):
+    checks_layout = ""
+    for check in checks:
+            checks_layout+= check["title"] + "\n"
+            checks_layout+= check["description"] + "\n"
+    return checks_layout
+
+def generate_sub_block(sub_block):
+    sub_block_layout = ""
+    sub_block_layout += sub_block["title"] + " \n"
+    sub_block_layout += sub_block["description"] + " \n"+ "\n"
+    sub_block_layout += generate_checks_block(sub_block["checks"])
+    return sub_block_layout 
+
+
+def generate_details(checkBlock):
+    block_layout = ""
+    for sub_block in checkBlock["blocks"]:
+        block_layout += generate_sub_block(sub_block) 
+    return block_layout
+
+def write_multiline_report_info(pdf, block, ratio=1.5):
+    print(block)
+    text = generate_details(block)
+    print(text)
+    set_font_size(pdf,'', 10)
+    pdf.set_text_color(51, 51, 51)
+    pdf.multi_cell(0, 10, text, align="L", border=1  , max_line_height=pdf.font_size *ratio*SPACING)
 
 def set_font_size(pdf, weight, size):
     pdf.set_font('ArialUnicode', weight, size)
@@ -221,14 +242,15 @@ def create_pdf_report_for_project(project, block, operator):
     centred_h1(pdf, "ZQC Report : "+ block["title"])
     write_spacing(pdf,0.2)
     centred_h2(pdf, block["description"])
-    write_spacing(pdf,0.5)
-    centred_h4_with_email(pdf,operator)
-    write_spacing(pdf)
+    write_spacing(pdf,0.7)
+    h4_with_email(pdf,operator)
+    write_spacing(pdf, 7)
     write_h3(pdf,"Project tested : ")
     write_spacing(pdf)
     write_h3(pdf,project,'b')
     write_spacing(pdf)
     write_spacing(pdf)
+    write_multiline_report_info(pdf, block["list_checks"])
     return pdf
 
 def add_sub_block_execution(pdf, title, data):

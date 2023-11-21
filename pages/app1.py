@@ -84,45 +84,6 @@ def render_content_during_analysis(tab, click_run, projects, drive):
             jstr = json.dumps(QC_execution["pdf"] , default=lambda df: json.loads(df.to_json()))
             return componants.generate_result(QC_execution["dash"]), 0, 'tab-result-during_analysis', jstr, False
     return componants.generate_result(componants.emptyResult("during_analysis", projects)), 0, 'tab-result-during_analysis', None, True
-#will be delete soon
-# @app.callback(Output("notifications-container", "children"), Output("saveQC-btn-during_analysis", 'n_clicks'), Output("open-during_analysis", "n_clicks"), Output("close-during_analysis", "n_clicks"),Output("modal-during_analysis", "is_open"),
-#     [Input("open-during_analysis", "n_clicks"), 
-#     Input("close-during_analysis", "n_clicks"), 
-#     Input("saveQC-btn-during_analysis", 'n_clicks'),
-#     Input('intermediate-value-during_analysis', 'data'), 
-#     Input('operator_first_name-during_analysis', 'value'),
-#     Input('operator_email-during_analysis', 'value'),
-#     Input('operator_last_name-during_analysis', 'value'),
-#     Input('operator_first_name-during_analysis', 'pattern'),
-#     Input('operator_email-during_analysis', 'pattern'),
-#     Input('operator_last_name-during_analysis', 'pattern')],
-#     [State("modal-during_analysis", "is_open")],
-#     prevent_initial_call=True)
-# def save_report_during_analysis(n_clicks_open, n_clicks_close, n_clicks_save, jsonified_pdf_data, operator_first_name, operator_email, operator_last_name, operator_first_name_pattern, operator_email_pattern, operator_last_name_pattern, is_open):
-#     # Open and close the modal
-#     if n_clicks_open or n_clicks_close:
-#         return [], 0, 0, 0, not is_open
-#     # if missing infos
-#     if n_clicks_save == 0 or not jsonified_pdf_data:
-#         return [], 0, n_clicks_open, n_clicks_close, is_open
-#     if ctx.triggered_id == 'intermediate-value-during_analysis':
-#         return [], 0, n_clicks_open, n_clicks_close, is_open
-#     # if already saved
-#     elif n_clicks_save > 1:
-#         return [], n_clicks_save, n_clicks_open, n_clicks_close, is_open
-#     # if everything is ok for save : save
-#     elif n_clicks_save==1:
-#         if operator_first_name and operator_email and operator_last_name_pattern and re.search(operator_first_name_pattern, operator_first_name) and  re.search(operator_email_pattern, operator_email) and re.search(operator_last_name_pattern, operator_last_name) :
-#             pdf_data = json.loads(jsonified_pdf_data)
-#             for i in range(0,len(pdf_data)) :
-#                 print(i)
-#                 pdf_data[i]["operator"] = operator_last_name.upper() + " " + operator_first_name.title() + " ( " + operator_email.lower() +" )"
-#             execution_data = pdf_generator.generate(pdf_data)
-#             notif = componants.notification(execution_data)
-#             return notif, 0, n_clicks_open, n_clicks_close, False
-#         else :
-#             return "", 0, n_clicks_open, n_clicks_close, is_open
-#     return "", 0, n_clicks_open, n_clicks_close, is_open
 
 ## after_ecotaxa_classif Tabs related callbacks ##
 @app.callback([Output('tabs-content-after_ecotaxa_classif', 'children'), Output("runQC-btn-after_ecotaxa_classif", 'n_clicks'), Output("tabs-after_ecotaxa_classif", 'value'), Output('intermediate-value-after_ecotaxa_classif', 'data'),Output("open-after_ecotaxa_classif", 'hidden')],
@@ -184,7 +145,7 @@ def save_report(n_clicks_open_after_ecotaxa_classif, n_clicks_open_during_analys
             else :
                 raise(PreventUpdate)
             for i in range(0,len(pdf_data)) :
-                pdf_data[i]["operator"] = operator_last_name.upper() + " " + operator_first_name.title() + " ( " + operator_email.lower() +" )"
+                pdf_data[i]["operator"] = {"name" : operator_first_name.title(), "last_name" : operator_last_name.upper(), "email" : operator_email.lower()}
             execution_data = pdf_generator.generate(pdf_data)
             notif = componants.notification(execution_data)
             return notif, 0, 0, 0, n_clicks_close, False

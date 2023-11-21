@@ -10,8 +10,8 @@ class Lib_zooscan():
       self.lib = ChecksLib()
 
       #Create empty Blocks 
-      block_before_scan = Block("Before scan", "before_scan", "TODO ADD DESCRIPTION", 'L', Mode.HEADER)
-      block_during_analysis = Block("During analysis", "during_analysis", "TODO ADD DESCRIPTION",'L', Mode.TSV)
+      block_before_scan = Block("Before scan", "before_scan", "Control quality on ”sampling” data", 'L', Mode.HEADER)
+      block_during_analysis = Block("During analysis", "during_analysis", "Control quality on ”process and acquisition” data",'L', Mode.TSV)
       block_after_ecotaxa_classif = Block("After EcoTaxa classification", "after_ecotaxa_classif", "Control Quality on “multiples” categories", "P", Mode.TSV_2)
       
       #Create empty sub blocks

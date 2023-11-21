@@ -51,7 +51,7 @@ class Block:
         for project in projects:
             start_time = time.time()
             pdf = {"project" : project, 
-                   "block" : {"title" : self.title, "description" : self.description, "pdf_orientation" : self.pdf_orientation},
+                   "block" : {"title" : self.title, "description" : self.description, "pdf_orientation" : self.pdf_orientation, "list_checks" : self.listChecks()},
                    "subBlocks" : []}
             try :
                 # Get data
