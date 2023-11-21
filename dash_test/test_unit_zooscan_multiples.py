@@ -35,9 +35,10 @@ def test_subBlock_multiples_check_multiples(dash_duo) :
 
     # all multiples % are OK
     # all multiples % are too high 20/20/15/15/15/15
-    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["% mult"].values[0] == 9.1
-    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["%vol mult"].values[0] == 13.1
-    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["% mult (non cop)"].values[0] == "#HIGH multiples level : 33.3"
-    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["%vol mult (non cop)"].values[0] == "#HIGH multiples level : 36.8"
-    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["% mult (cop)"].values[0] == 5.5
-    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["%vol mult (cop)"].values[0] == 8.1   
+    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]['% Ab (tot mult/tot liv.)'].values[0] == 9.1
+    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["% Bv (tot mult/tot liv.)"].values[0] == 13.1
+    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["% Ab (tot mult/tot liv.) - cop"].values[0] == "#HIGH multiples level : 33.3"
+    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["% Bv (tot mult/tot liv.) - cop"].values[0] == "#HIGH multiples level : 36.8"
+    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["% Ab (cop mult/tot cop)"].values[0] == 5.5
+    assert res_3.loc[res_3["List scan ID"]=="wp2_20101025_b3_h_d2"]["% Bv (cop mult/tot cop)"].values[0] == 8.1
+    
