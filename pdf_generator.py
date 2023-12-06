@@ -58,7 +58,7 @@ def h4_with_email(pdf, operator):
 def generate_checks_block(checks):
     checks_layout = ""
     for check in checks:
-            checks_layout+= check["title"] + "\n"
+            checks_layout+= "✔ " + check["title"] + " : \n"
             checks_layout+= check["description"] + "\n"
     return checks_layout
 
