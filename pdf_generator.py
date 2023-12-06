@@ -244,7 +244,7 @@ def create_pdf_report_for_project(project, block, operator):
 
 def add_sub_block_execution(pdf, title, list_checks, data):
     """Save an execution as html (or pdf)"""
-    write_h4(pdf, title+" :  Info")
+    write_h4(pdf, title+" :  Description")
     write_spacing(pdf)
     write_multiline_report_info(pdf, list_checks)
     write_spacing(pdf)
