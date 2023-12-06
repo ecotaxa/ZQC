@@ -63,26 +63,16 @@ def generate_checks_block(checks):
     return checks_layout
 
 def generate_sub_block(sub_block):
-    sub_block_layout = ""
-    sub_block_layout += sub_block["title"] + " \n"
+    sub_block_layout = "\n"
     sub_block_layout += sub_block["description"] + " \n"+ "\n"
     sub_block_layout += generate_checks_block(sub_block["checks"])
     return sub_block_layout 
 
-
-def generate_details(checkBlock):
-    block_layout = ""
-    for sub_block in checkBlock["blocks"]:
-        block_layout += generate_sub_block(sub_block) 
-    return block_layout
-
-def write_multiline_report_info(pdf, block, ratio=1.5):
-    print(block)
-    text = generate_details(block)
-    print(text)
+def write_multiline_report_info(pdf, sub_block, ratio=1.5):
     set_font_size(pdf,'', 10)
     pdf.set_text_color(51, 51, 51)
-    pdf.multi_cell(0, 10, text, align="L", border=1  , max_line_height=pdf.font_size *ratio*SPACING)
+    text = generate_sub_block(sub_block)
+    pdf.multi_cell(0, 10, text, align="L", border=1, max_line_height=pdf.font_size * ratio * SPACING)
 
 def set_font_size(pdf, weight, size):
     pdf.set_font('ArialUnicode', weight, size)
@@ -250,12 +240,16 @@ def create_pdf_report_for_project(project, block, operator):
     write_h3(pdf,project,'b')
     write_spacing(pdf)
     write_spacing(pdf)
-    write_multiline_report_info(pdf, block["list_checks"])
     return pdf
 
-def add_sub_block_execution(pdf, title, data):
+def add_sub_block_execution(pdf, title, list_checks, data):
     """Save an execution as html (or pdf)"""
-    write_h4(pdf, title)
+    write_h4(pdf, title+" :  Info")
+    write_spacing(pdf)
+    write_multiline_report_info(pdf, list_checks)
+    write_spacing(pdf)
+    write_h4(pdf, title+" :  Execution")
+
     for result in data:
         if result["type"] == SUPPORTED_DATA_COMPONANT.DATA_TABLE :
             df = pd.DataFrame.from_dict(result["dataframe"]).reset_index()  # make sure indexes pair with number of rows
@@ -273,7 +267,7 @@ def generate(pdfs_data):
         if len(data["subBlocks"]) > 0 :
             pdf = create_pdf_report_for_project(data["project"], data["block"], data["operator"])
             for subBlock in data["subBlocks"] :
-                add_sub_block_execution(pdf, subBlock["title"], subBlock["data"])
+                add_sub_block_execution(pdf, subBlock["title"], subBlock["list_checks"] , subBlock["data"])
             save_pdf(pdf, data["path"], data["title"])
             execution_data.append({"type" : "SUCESS", "title" : "Saved file", "message" : data["path"] +"Zooscan_reports/" + data["title"] + ".pdf"})
     return execution_data

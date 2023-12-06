@@ -112,7 +112,7 @@ class SubBlock:
             result.append({"dataframe" : pd.concat(dataframe_for_fig_n).groupby([dataframe_for_fig_n[0].columns[0]]).first().reset_index(), "type" : type_for_fig_n[0]})
 
         # Save the result of the execution as html in the project folder
-        pdf["subBlocks"].append({"title" : self.title, "data" : result})
+        pdf["subBlocks"].append({"title" : self.title, "list_checks" : self.listChecks(), "data" : result})
 
         # Generate the dash layout, depending on execution result type
         resultLayout = componants.sub_block_execution_result(pdf["project"], self.title, result)
