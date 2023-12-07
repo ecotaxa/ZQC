@@ -32,7 +32,7 @@ errors = {
 
     "process.post_sep.unprocessed": "#UNPROCESSED",
     "process.post_sep.not_included": "#SEP MSK NOT INCLUDED",
-    "process.nb_lines_tsv.diff" : "#Images nb ≠ TSV lignes nb",
+    "process.nb_lines_tsv.diff" : "#Images nb ≠ TSV lines nb",
 
     "process.process_checked.not_checked" : "#NOT checked",
 

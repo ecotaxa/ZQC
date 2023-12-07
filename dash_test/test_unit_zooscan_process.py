@@ -278,11 +278,11 @@ def test_subBlock_process_check_nb_lines_tsv(dash_duo) :
     # wp_d3_1
     assert res.loc[res["List scan ID"]=="wp_d3_1"]["Nb tsv lines"].values[0] == "#MISSING ecotaxa table"
 
-    # Images nb ≠ TSV lignes nb : if the number of lines in a tsv file is différents than the number of images in the related folder
+    # Images nb ≠ TSV lines nb : if the number of lines in a tsv file is différents than the number of images in the related folder
     ## wp_d2_1
     ## wp_d4_1
-    assert res.loc[res["List scan ID"]=="wp_d2_1"]["Nb tsv lines"].values[0] == "#Images nb ≠ TSV lignes nb"
-    assert res.loc[res["List scan ID"]=="wp_d4_1"]["Nb tsv lines"].values[0] == "#Images nb ≠ TSV lignes nb"
+    assert res.loc[res["List scan ID"]=="wp_d2_1"]["Nb tsv lines"].values[0] == "#Images nb ≠ TSV lines nb"
+    assert res.loc[res["List scan ID"]=="wp_d4_1"]["Nb tsv lines"].values[0] == "#Images nb ≠ TSV lines nb"
     
     # Nb lines TSV OK : if the count of lines and images are as expected
     # wp_d1_1

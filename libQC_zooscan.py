@@ -15,11 +15,10 @@ class Lib_zooscan():
       block_after_ecotaxa_classif = Block("After EcoTaxa classification", "after_ecotaxa_classif", "Control Quality on “multiples” categories", "P", Mode.TSV_2)
       
       #Create empty sub blocks
-      subBlock_sample = SubBlock("Sample", " This feature will be available in a future release of the QC application. This quality check will gives an overview of the quality of the data related to the acquisition of the sample.", 1, "sample")
-      subBlock_acquisition = SubBlock("Acquisition", "This quality check gives an overview of the quality of the data related to the acquisition of the scan on the Zooscan.", 2, "acquisition")
-      subBlock_process = SubBlock("Process", "This quality check gives an overview and notes the quality of the steps performed by the sample during its acquisition (SCAN) at the Zooscan and its processing (PROCESS) via the Zooprocess application.", 1, "process")
-      subBlock_multiples = SubBlock("Multiples", 'This quality control identifies the effort made to separate multiple objects by measuring the abundance and biovolume of the "multiple other" and "multiple copepoda" categories in relation to the other categories.', 1, "multiples")
-      
+      subBlock_sample = SubBlock("Sample", "This functionality will be available in an upcoming release of the QC application. This quality control will offer an overview of the data quality associated with sample acquisition.", 1, "sample")
+      subBlock_acquisition = SubBlock("Acquisition", "This quality control assesses the quality of data linked to scans acquisition on the Zooscan.", 2, "acquisition")
+      subBlock_process = SubBlock("Process", "This quality control provides an overview and assesses the quality of the steps involved in both the sample acquisition (SCAN) using Zooscan and its subsequent processing (PROCESS) using the Zooprocess application.", 1, "process")
+      subBlock_multiples = SubBlock("Multiples", "This quality control assesses the effectiveness of separating multiple objects by measuring the abundance and biovolume of the 'multiple other' and 'multiple copepoda' categories in relation to the other categories.", 1, "multiples")
 
       #Create checks
       check_frame_type = Check("FRAME type", libQC_zooscan_implementation.check_frame_type.__doc__ , "frame_type", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.check_frame_type)
