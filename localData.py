@@ -160,7 +160,8 @@ def getTsv(subpath):
         'sample_net_type',
         'sample_comment',
         'sample_scan_operator',
-        'acq_sub_method'
+        'acq_sub_method',
+        'acq_id',
     ]
     try:
         for folder_name in listFolder(base_path+subpath+"/Zooscan_scan/_work/"):

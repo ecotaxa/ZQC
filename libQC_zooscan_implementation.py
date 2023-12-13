@@ -30,9 +30,10 @@ def is_not_int(value):
     return not(is_int(value))
 
 def get_frac_id(str) : 
-    '''Return the frac id from the giver str if this one is in the non exaustive list of frac type [d1, d2, d3, dN, tot, plankton] '''
-    frac_types = ["(_d){1}([1-9])+(_){1}", "(_tot_){1}", "(_plankton_){1}"]
-
+    '''Return the frac id from the given str if this one is in the non exaustive list of frac type [d1, d2, d3, dN, tot, plankton] '''
+    frac_types = ["(d){1}([1-9])", "(tot)", "(plankton)"]
+    str=str.split('_')[0]
+    
     for element in frac_types:
         m = re.search(element, str)
         if m:
@@ -519,10 +520,9 @@ def check_sieve_bug(_id, _mode, local_data):
     start_time = time.time()
 
     # Get only usefull columns
-    result = local_data.get("dataframe")[['scan_id', 'acq_min_mesh', 'sample_id', 'acq_max_mesh']].drop_duplicates()
-    result["fracID"] = [get_frac_id(e) for e in result["scan_id"]]
+    result = local_data.get("dataframe")[['scan_id', 'acq_min_mesh', 'sample_id', 'acq_max_mesh', 'acq_id']].drop_duplicates()
+    result["fracID"] = [get_frac_id(e) for e in result["acq_id"]]
     result['sieve_bug']=""
-
     # Replace by sieve OK or associated error code
     result.sieve_bug = result.acq_min_mesh.map(lambda x: x if labels.errors["global.missing_ecotaxa_table"] == x
                                                            else labels.errors["global.not_numeric"] if not is_int(x)
@@ -556,8 +556,8 @@ def check_sieve_bug(_id, _mode, local_data):
         if len(group)>1 :
             for i in range(1,len(group)) :
                 #Get d_i and d_i+1
-                d_i=group[group["fracID"]=="_d"+str(i)+"_"]
-                d_i_plus_1=group[group["fracID"]=="_d"+str(i+1)+"_"]
+                d_i=group[group["fracID"]=="d"+str(i)]
+                d_i_plus_1=group[group["fracID"]=="d"+str(i+1)]
 
                 #if not d_i and d_i+1 skip test
                 if d_i.empty or d_i_plus_1.empty : 
@@ -582,7 +582,7 @@ def check_sieve_bug(_id, _mode, local_data):
     
     # Keep only one usfull lines
     result = result.drop_duplicates()
-    result.drop(columns=["sample_id", "fracID"], inplace=True)
+    result.drop(columns=["sample_id", "fracID", "acq_id"], inplace=True)
 
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', 'acq_min_mesh': 'acq min mesh', 'acq_max_mesh': 'acq max mesh', 'sieve_bug' : 'Sieve Bug'}, inplace=True)
@@ -610,8 +610,8 @@ def check_motoda_check(_id, _mode, local_data):
     """
     start_time = time.time()
     # Get only usefull columns
-    dataToTest = local_data.get("dataframe")[['scan_id', 'acq_sub_part', 'sample_net_type']].groupby('scan_id').first().reset_index()
-    dataToTest["fracID"] = [get_frac_id(e) for e in dataToTest["scan_id"]]
+    dataToTest = local_data.get("dataframe")[['scan_id', 'acq_sub_part', 'sample_net_type', "acq_id"]].groupby('scan_id').first().reset_index()
+    dataToTest["fracID"] = [get_frac_id(e) for e in dataToTest["acq_id"]]
     result = local_data.get("dataframe")[['scan_id','acq_sub_part']].drop_duplicates()
     result["motoda_check"] = ""
 
@@ -633,11 +633,11 @@ def check_motoda_check(_id, _mode, local_data):
 
             if motoda_check == labels.sucess["acquisition.motoda.check.ok"]:
                 result.loc[result["scan_id"] == id, 'acq_sub_part'] = int(acq_sub_part) if is_int(acq_sub_part) else acq_sub_part
-                if(fracID=="_d1_" or ( fracID=="_tot_" and sample_net_type=="rg")) :
+                if(fracID=="d1" or ( fracID=="tot" and sample_net_type=="rg")) :
                     #should be (1 or )puissance de 2
                     if not is_power_of_two(int(acq_sub_part)) :
                         result.loc[result["scan_id"] == id, 'motoda_check'] = labels.errors["acquisition.motoda.check.cas1"]
-                elif (fracID.startswith("_d") or fracID=="_tot_" or fracID=="_plankton_") and sample_net_type != "rg"  :
+                elif (fracID.startswith("d") or fracID=="tot" or fracID=="plankton") and sample_net_type != "rg"  :
                     if int(acq_sub_part)==1 or not is_power_of_two(int(acq_sub_part)) :
                         #should be ^2 but not 1
                         result.loc[result["scan_id"] == id, 'motoda_check'] = labels.errors["acquisition.motoda.check.cas2"]
@@ -674,8 +674,8 @@ def check_motoda_comparaison(_id, _mode, local_data):
     """
     start_time = time.time()
     # Get only usefull columns
-    dataToTest = local_data.get("dataframe")[['scan_id', 'acq_sub_part', 'sample_id']].groupby('scan_id').first().reset_index()
-    dataToTest["fracID"] = [get_frac_id(e) for e in dataToTest["scan_id"]]
+    dataToTest = local_data.get("dataframe")[['scan_id', 'acq_sub_part', 'sample_id', 'acq_id']].groupby('scan_id').first().reset_index()
+    dataToTest["fracID"] = [get_frac_id(e) for e in dataToTest["acq_id"]]
     result = local_data.get("dataframe")[['scan_id','acq_sub_part', 'sample_comment', 'sample_id']].drop_duplicates()
     result.insert(loc=2, column='motoda_comp', value="")
     result['Observation']=""
@@ -696,8 +696,8 @@ def check_motoda_comparaison(_id, _mode, local_data):
         if len(group)>1 :
             for i in range(1,len(group)) :
                 #Get d_i and d_i+1
-                d_i=group[group["fracID"]=="_d"+str(i)+"_"]
-                d_i_plus_1=group[group["fracID"]=="_d"+str(i+1)+"_"]
+                d_i=group[group["fracID"]=="d"+str(i)]
+                d_i_plus_1=group[group["fracID"]=="d"+str(i+1)]
 
                 #if not d_i and d_i+1 skip test
                 if d_i.empty or d_i_plus_1.empty : 
@@ -771,8 +771,8 @@ def check_motoda_quality(_id, _mode, local_data):
     """
     start_time = time.time()
     # Get only usefull columns
-    result = local_data.get("dataframe")[['scan_id', 'sample_net_type', 'acq_sub_part']].drop_duplicates()
-    result["fracID"] = [get_frac_id(e) for e in result["scan_id"]]
+    result = local_data.get("dataframe")[['scan_id', 'sample_net_type', 'acq_sub_part', "acq_id"]].drop_duplicates()
+    result["fracID"] = [get_frac_id(e) for e in result["acq_id"]]
     result['motoda_quality']=""
     # Get only usefull file name : .jpg in /Zooscan_scan/_work/ folder
     fs = local_data.get("fs")
@@ -818,7 +818,7 @@ def check_motoda_quality(_id, _mode, local_data):
                     result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"]
             #For all other Nettype:
             else :
-                if frac_id=="_d1_" : 
+                if frac_id=="d1" : 
                     # When Nettype ≠ rg and FracID = d1 and motoda_frac strictly =1
                     if motoda_frac == 1 :
                         # the number of .jpg images in the _work subdirectory must not be > 1500
@@ -828,7 +828,7 @@ def check_motoda_quality(_id, _mode, local_data):
                         # the number of .jpg images in the _work subdirectory must be between 500 and 1500
                         result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 1500 else labels.sucess["acquisition.motoda.quality.ok"] 
                 
-                elif (frac_id.startswith("_d") or frac_id=="_tot_" or frac_id=="_plankton_") : 
+                elif (frac_id.startswith("d") or frac_id=="tot" or frac_id=="plankton") : 
                     # When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly =1
                     if motoda_frac == 1 :
                         # the number of .jpg images in the _work subdirectory must not be > 2500
@@ -841,7 +841,7 @@ def check_motoda_quality(_id, _mode, local_data):
                     result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"]
 
     #Remove result useless columns
-    result.drop(columns=["fracID", "sample_net_type", "acq_sub_part"], inplace=True)
+    result.drop(columns=["fracID", "sample_net_type", "acq_sub_part", "acq_id"], inplace=True)
 
     # Rename collums to match the desiered output
     result.rename(columns={'scan_id': 'List scan ID', "motoda_quality" : "Motoda quality"}, inplace=True)
