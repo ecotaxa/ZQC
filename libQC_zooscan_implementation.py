@@ -505,8 +505,8 @@ def check_sieve_bug(_id, _mode, local_data):
         This check ensures the consistency of sieve values used in scan preparation, which should remain constant within the same project and NEVER differ.
         
         Within the report table's 'sieve MIN size' and 'sieve MAX size' columns, the following details are provided:
-            - 'sieve MIN size': Displays the value of the minimum sieve size obtained from 'acq_min_mesh' CS column within the 'ecotaxa_scanID.tsv' tables located in the subdirectories of the '_work' directories.
-            - 'sieve MAX size': Displays the value of the maximum sieve size obtained from 'acq_max_mesh' CT column within the 'ecotaxa_scanID.tsv' tables located in the subdirectories of the '_work' directories.
+            - 'sieve MIN size': Displays the value of the minimum sieve size obtained from 'acq_min_mesh' column within the 'ecotaxa_scanID.tsv' tables located in the subdirectories of the '_work' directories.
+            - 'sieve MAX size': Displays the value of the maximum sieve size obtained from 'acq_max_mesh' column within the 'ecotaxa_scanID.tsv' tables located in the subdirectories of the '_work' directories.
             
         In the 'sieve BUG' column:
             - "#MISSING ecotaxa table": When no 'ecotaxa_scanID.tsv' table is available.
