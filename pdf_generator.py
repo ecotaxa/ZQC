@@ -139,11 +139,12 @@ class PDF(FPDF):
     def footer(self):
         # Position cursor at 1.5 cm from bottom:
         col_width = self.epw/10
-        self.set_y(-15)
-        self.set_font_size(8)
+        self.set_y(-5)
+        #self.set_font_size(8)
+        set_font_size(self,"" , 8)
         self.set_text_color(51, 51, 51)
         # Printing piqv adress
-        self.multi_cell(0, 10, "Quantitative Imaging Platform \nStation Zoologique - 181 chemin du Lazaret \n06230 Villefranche sur Mer - France \n\n✉ piqv@imev-mer.fr", align="C", max_line_height=self.font_size *1.1*SPACING)
+        # self.multi_cell(0, 10, "Quantitative Imaging Platform \nStation Zoologique - 181 chemin du Lazaret \n06230 Villefranche sur Mer - France \n\n✉ piqv@imev-mer.fr", align="C", max_line_height=self.font_size *1.1*SPACING)
         # Printing page number:
         self.cell(0, 1, f"Page {self.page_no()}|{{nb}}", align="R")
 
@@ -228,7 +229,8 @@ def create_pdf_report_for_project(project, block, operator):
     pdf.set_text_color(51, 51, 51)
     ##
     pdf.add_page()
-    write_images(pdf, ["assets/LOV.png", "assets/IMEV.png", "assets/PIQV.png", "assets/CNRS.png", "assets/SU.png", "assets/EMBRC.png" ])
+    write_spacing(pdf)
+    #write_images(pdf, ["assets/LOV.png", "assets/IMEV.png", "assets/PIQV.png", "assets/CNRS.png", "assets/SU.png", "assets/EMBRC.png" ])
     centred_h1(pdf, "ZQC Report : "+ block["title"])
     write_spacing(pdf,0.2)
     centred_h2(pdf, block["description"])
@@ -248,6 +250,7 @@ def add_sub_block_execution(pdf, title, list_checks, data):
     write_spacing(pdf)
     write_multiline_report_info(pdf, list_checks)
     write_spacing(pdf)
+    write_spacing(pdf)
     write_h4(pdf, title+" :  Execution")
 
     for result in data:
@@ -258,6 +261,8 @@ def add_sub_block_execution(pdf, title, list_checks, data):
             df = pd.DataFrame.from_dict(result["dataframe"]).reset_index()  # make sure indexes pair with number of rows
             write_multiline_datatable_XS(pdf, df)
     write_spacing(pdf, 2)
+    write_spacing(pdf)
+
 def save_pdf(pdf, path, title):
     localData.saveQcExecution(pdf, path, title)
 
