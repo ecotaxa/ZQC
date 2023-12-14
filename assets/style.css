@@ -334,3 +334,42 @@ button {
     outline: solid #ed433772 4px;
     border-radius: 1.5px;
 }
+
+
+/************INTRO********/
+.logos-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.logos {
+    display: flex;
+    justify-content: right;
+    align-items: top;
+}
+
+.logos>a>img {
+    width: auto;
+    height: 50px;
+    margin: 0px 10px;
+}
+
+.intro-container {
+    margin-top: 20px;
+}
+
+.intro {
+    color: #9b9b9b;
+    font-family: "IMTITLE", Sans-serif;
+    font-size: 14px;
+    font-style: bold;
+    margin: 0px 0px 5px 0px;
+}
+
+.intro-a {
+    color: #10698d;
+    font-family: "IMTITLE", Sans-serif;
+    font-size: 14px;
+    font-style: bold;
+    margin: 0px 0px 5px 0px;
+}

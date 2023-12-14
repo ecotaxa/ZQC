@@ -59,11 +59,40 @@ def get_project_icon() :
     now = datetime.now().month
     current_theme_icones = get_icons(now)
     return current_theme_icones[random.randint(0, len(current_theme_icones)-1)]
-
+def add_logos():
+    return html.Span([
+        html.A(html.Img(className="logo", src="../assets/SU.png", alt="SU", title="SU"), href='https://www.sorbonne-universite.fr/en'),
+        html.A(html.Img(className="logo", src="../assets/cnrs.png", alt="CNRS", title="CNRS"), href='https://www.cnrs.fr/fr'),
+        html.A(html.Img(className="logo", src="../assets/lov.png", alt="LOV", title="LOV"), href='https://lov.imev-mer.fr/web/'),
+        html.A(html.Img(className="logo", src="../assets/imev.png", alt="IMEV", title="IMEV"), href='https://www.imev-mer.fr/web/'),
+    ], className="logos")
 def generate_header():
     return html.Div([
-                    html.H1('Zooscan Quality Checks', className="inline"),
-                    dcc.Link(html.Img(className="help-btn", src="../assets/help.png", alt="help", title="Help"), href='/QC/zooscan/doc'),
+                    #dcc.Link(html.Img(className="help-btn", src="../assets/help.png", alt="help", title="Help"), href='/QC/zooscan/doc'),
+                    html.Div([
+                        html.H1('Zooscan Quality Checks', className="inline"),
+                        add_logos(),
+                    ], className="logos-container"),
+                    html.Span(className='elementor-divider-separator'),
+                    html.Div([
+                        html.P([
+                            html.Span("This app was developed by ", className="intro"),
+                            html.A("Complex", href='https://lov.imev-mer.fr/web/team-complex/', className="intro-a"),
+                            html.Span(" team at the Laboratoire d’Océanographie de Villefranche-sur-Mer.", className="intro")
+                        ]),
+                        html.P([
+                            html.Span("It is entirely open source and can be accessed via ", className="intro"),
+                            html.A("our github repository", href='https://github.com/ecotaxa/AQC', className="intro-a"),
+                        ]),
+                        html.P([
+                            html.Span("We are currently working on a new quality control feature called 'before scan,' which is in the development phase. This update will be released soon. Make sure to periodically check for software updates on the ", className="intro"),
+                            html.A("PIQV website", href='https://sites.google.com/view/piqv/softwares/flowcamzooscan?authuser=0', className="intro-a")
+                        ]),
+                        html.P([
+                            html.Span("If you have any questions, please don't hesitate to reach out to our team ", className="intro"),
+                            html.A("here.", href='mailto:amanda.elineau@imev-mer.fr,julie.coustenoble@imev-mer.fr', className="intro-a"),
+                        ]),
+                    ], className="intro-container"),
                     html.Span(className='elementor-divider-separator'),
                     enable_notification(),
                     generate_name_of_saver()
@@ -77,6 +106,7 @@ def generate_project_selector(drives):
         dcc.Dropdown(
             id='app-1-dropdown-drives',
             value="zooscan_lov" if "zooscan_lov" in [drive["label"] for drive in drives] else "zooscan_embrc" if "zooscan_embrc" in [drive["label"] for drive in drives] else "zooscan_test",
+            #value="zooscan_bug_laeti",
             clearable = False,
             options=[
                 {'label': drive['label'] + " 🔒" if drive['disabled'] else drive['label'], 
@@ -88,6 +118,7 @@ def generate_project_selector(drives):
         dcc.Dropdown(
             id='app-1-dropdown-projects',
             value=[],
+            #value=["Zooscan_ptb_jb_2020_sn001"],#TODO JCE : remove this default value
             multi=True
         )
     ], className="container-prj-selector")

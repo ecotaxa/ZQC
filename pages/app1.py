@@ -47,25 +47,6 @@ for checkBlock in checksBlocks:
     #             return componants.generate_result(lib_qc_zooscan.getResult(checkBlock["id"]))
 
 
-## before_scan Tabs related callbacks ##
-    
-@app.callback([Output('tabs-content-before_scan', 'children'), Output("runQC-btn-before_scan", 'n_clicks'), Output('tabs-before_scan', 'value')],
-              [Input("tabs-before_scan", 'value'), Input("runQC-btn-before_scan", 'n_clicks'), Input('app-1-dropdown-projects', "value")],
-              State('app-1-dropdown-drives', 'value'), prevent_initial_call=True)
-def render_content_before_scan(tab, click_run, projects, drive):
-    if not click_run:
-        if tab == 'tab-details-before_scan':
-            return componants.generate_details(checksBlocks[0]), 0, tab
-        elif tab == 'tab-result-before_scan':
-            return componants.generate_result("This feature will be available in a future release of the QC application."), 0, tab
-        else:
-            return [], 0, tab
-    # else:
-    #     if len(projects) > 0:
-    #         QC_execution = lib_qc_zooscan.runCallback(projects, drive, "before_scan")
-    #         return componants.generate_result(QC_execution), 0, 'tab-result-before_scan'
-    return componants.generate_result("This feature will be available in a future release of the QC application."), 0, 'tab-result-before_scan'
-
 # during_analysis Tabs related callbacks ##
 @app.callback([Output('tabs-content-during_analysis', 'children'), Output("runQC-btn-during_analysis", 'n_clicks'), Output("tabs-during_analysis", 'value'), Output('intermediate-value-during_analysis', 'data'),Output("open-during_analysis", 'hidden')],
               [Input("tabs-during_analysis", 'value'), Input("runQC-btn-during_analysis", 'n_clicks'), Input('app-1-dropdown-projects', "value")],

@@ -10,7 +10,6 @@ class Lib_zooscan():
       self.lib = ChecksLib()
 
       #Create empty Blocks 
-      block_before_scan = Block("Before scan", "before_scan", "Control quality on ”sampling” data", 'L', Mode.HEADER)
       block_during_analysis = Block("During analysis", "during_analysis", "Control quality on ”process and acquisition” data",'L', Mode.TSV)
       block_after_ecotaxa_classif = Block("After EcoTaxa classification", "after_ecotaxa_classif", "Control Quality on “multiples” categories", "P", Mode.TSV_2)
       
@@ -47,11 +46,9 @@ class Lib_zooscan():
       checks_multiples = Check("Proportion of multiples", libQC_zooscan_implementation.checks_multiples.__doc__ , "proportion_of_multiples", SUPPORTED_DATA_COMPONANT.DATA_TABLE, 1, libQC_zooscan_implementation.checks_multiples)
 
       #Fill library with blocks
-      self.lib.addBlocks(block_before_scan, block_during_analysis, block_after_ecotaxa_classif)
+      self.lib.addBlocks(block_during_analysis, block_after_ecotaxa_classif)
 
       #Fill blocks with subblocks
-      block_before_scan.addSubBlocks(subBlock_sample)
-      #block_during_analysis.addSubBlocks(subBlock_sample, subBlock_acquisition, subBlock_process)
       block_during_analysis.addSubBlocks(subBlock_acquisition, subBlock_process)
       block_after_ecotaxa_classif.addSubBlocks(subBlock_multiples)
 
