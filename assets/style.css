@@ -219,7 +219,7 @@ button {
     border-bottom: 0px !important;
     background-color: #fff;
     padding: 12px !important;
-    font-family: "system-ui";
+    font-family: "system-ui", "Helvetica Neue", Helvetica, Arial, sans-serif;
     display: flex !important;
     align-items: center;
     justify-content: center;
