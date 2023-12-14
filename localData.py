@@ -11,6 +11,7 @@ from fpdf import FPDF
 from dotenv import dotenv_values
 
 config = dotenv_values('.env')
+print(config)
 
 now = datetime.now()
 logging.basicConfig(filename="logs/"+str(now.year)+"-"+str(now.month)+".log",
