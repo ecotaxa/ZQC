@@ -22,7 +22,7 @@ jobs:
       - name: "Create env file"
         run: |
           touch .env
-          echo ROOT_FOLDER = "./dash_test/data/"" >> .env
+          echo ROOT_FOLDER = "./dash_test/data/" >> .env
           echo DASH_ENV = "TST" >> .env
           cat .env
       - uses: actions/checkout@v3
