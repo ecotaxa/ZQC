@@ -1,3 +1,4 @@
+[![CI](https://github.com/ecotaxa/AQC/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/ecotaxa/AQC/actions/workflows/main.yml)
 # AQC
 *TODO* : context and credits
 ## Technologies
