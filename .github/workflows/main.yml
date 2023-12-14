@@ -25,6 +25,7 @@ jobs:
           echo ROOT_FOLDER = "./dash_test/data/" >> .env
           echo DASH_ENV = "TST" >> .env
           cat .env
+          echo pwd
       - uses: actions/checkout@v3
       - uses: nanasess/setup-chromedriver@v2
       - run: |
