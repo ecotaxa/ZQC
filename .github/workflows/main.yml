@@ -19,13 +19,11 @@ jobs:
         python-version: ["3.8"]
     runs-on: ubuntu-latest
     steps:
-      - name: "Create env file"
+      - name: create env file
         run: |
           touch .env
-          echo ROOT_FOLDER = "./dash_test/data/" >> .env
-          echo DASH_ENV = "TST" >> .env
-          cat .env
-          pwd
+          echo ROOT_FOLDER=${{ secrets.ROOT_FOLDER }} >> .env
+          echo DASH_ENV=${{ secrets.DASH_ENV }} >> .env
       - uses: actions/checkout@v3
       - uses: nanasess/setup-chromedriver@v2
       - run: |
