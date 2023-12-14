@@ -1,5 +1,5 @@
 [![CI](https://github.com/ecotaxa/AQC/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/ecotaxa/AQC/actions/workflows/main.yml)
-# AQC
+# ZooScan Quality Control (ZQC)
 *TODO* : context and credits
 ## Technologies
 The quality checker is a Dash based application. Here you can find more information about it https://dash.plotly.com/introduction.
