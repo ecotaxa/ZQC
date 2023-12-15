@@ -8,28 +8,16 @@ from enums import SUPPORTED_DATA_COMPONANT, Mode
 import logging
 from datetime import datetime
 from fpdf import FPDF
+from dotenv import dotenv_values
+
+config = dotenv_values('.env')
+print(config)
 
 now = datetime.now()
 logging.basicConfig(filename="logs/"+str(now.year)+"-"+str(now.month)+".log",
                     level=logging.INFO, format="%(asctime)s | %(levelname)s | %(threadName)s |%(message)s")
 
-
-def get_path_from_env(env):
-    if env == "PROD":
-        return os.path.expanduser("/piqv/plankton/")
-    elif env == "DEV":
-        return os.path.expanduser("../local_plankton/zooscan/")
-    else:
-        return os.path.expanduser("./dash_test/data/")
-
-
-try:
-    env = os.environ['DASH_ENV']
-except:
-    env = "err"
-
-base_path = get_path_from_env(env)
-
+base_path = os.path.expanduser(config["ROOT_FOLDER"])
 
 def get_newest_zip(zips):
     """ Return the newest object based on the "zip" property of the array of object "zips" """
