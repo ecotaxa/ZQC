@@ -54,7 +54,7 @@ for checkBlock in checksBlocks:
 def render_content_during_analysis(tab, click_run, projects, drive):
     if not click_run:
         if tab == 'tab-details-during_analysis':
-            return componants.generate_details(checksBlocks[1]), 0, tab, None, True
+            return componants.generate_details(checksBlocks[0]), 0, tab, None, True
         elif tab == 'tab-result-during_analysis':
             return componants.generate_result(componants.emptyResult("during_analysis", projects)), 0, tab, None, True
         else:
@@ -73,7 +73,7 @@ def render_content_during_analysis(tab, click_run, projects, drive):
 def render_content_after_ecotaxa_classif(tab, click_run, projects, drive):
     if not click_run:
         if tab == 'tab-details-after_ecotaxa_classif':
-            return componants.generate_details(checksBlocks[2]), 0, tab, None, True
+            return componants.generate_details(checksBlocks[1]), 0, tab, None, True
         elif tab == 'tab-result-after_ecotaxa_classif':
             return componants.generate_result(componants.emptyResult("after_ecotaxa_classif", projects)), 0, tab, None, True
         else:
