@@ -17,7 +17,7 @@ now = datetime.now()
 logging.basicConfig(filename="logs/"+str(now.year)+"-"+str(now.month)+".log",
                     level=logging.INFO, format="%(asctime)s | %(levelname)s | %(threadName)s |%(message)s")
 
-base_path = os.path.expanduser(config["ROOT_FOLDER"])
+base_path = os.path.expanduser(config["DOCKER_FOLDER"])
 
 def get_newest_zip(zips):
     """ Return the newest object based on the "zip" property of the array of object "zips" """
@@ -43,7 +43,7 @@ def getDrives():
     logging.info("************Get drives in************")
     drives = getDir("")
     # Keep only the one that begin with Zooscan_
-    drives = [d for d in drives if d['label'].startswith('zooscan_')]
+    drives = [d for d in drives if d['label']]
     # Sort in alphabetical order
     drives = sorted(drives, key=lambda d: d['label'])
     return drives
