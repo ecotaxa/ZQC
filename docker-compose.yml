@@ -2,12 +2,7 @@ version: '3'
 services:
   app:
     build:
-      context: ./ # current directory
+      context: ./
     command: python index.py
-    env_file:
-      - .env
-    volumes:
-      - ${ROOT_FOLDER}:${DOCKER_FOLDER}/docker
     ports:
       - "8050:8050"
-    

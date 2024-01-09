@@ -20,18 +20,13 @@ availables_themes = [
     }, 
     {
         "name" : "fete_du_citron",
-        "icon"  : ["🍋", "🍊", "🌷"],
+        "icon"  : ["🍋", "🍊"],
         "month" : [3]
     }, 
     {
         "name" : "paques",
         "icon"  : ["🔔","🍫","🐇", "🥚", "🐣"],
         "month" : [4]
-    }, 
-    {
-        "name" : "Bebe",
-        "icon"  : ["🍼","🧸","🤱","👨‍🍼"],
-        "month" : [5]
     }, 
     {
         "name" : "haloween",
@@ -62,9 +57,9 @@ def get_project_icon() :
 def add_logos():
     return html.Span([
         html.A(html.Img(className="logo", src="../assets/SU.png", alt="SU", title="SU"), href='https://www.sorbonne-universite.fr/en'),
-        html.A(html.Img(className="logo", src="../assets/cnrs.png", alt="CNRS", title="CNRS"), href='https://www.cnrs.fr/fr'),
-        html.A(html.Img(className="logo", src="../assets/lov.png", alt="LOV", title="LOV"), href='https://lov.imev-mer.fr/web/'),
-        html.A(html.Img(className="logo", src="../assets/imev.png", alt="IMEV", title="IMEV"), href='https://www.imev-mer.fr/web/'),
+        html.A(html.Img(className="logo", src="../assets/CNRS.png", alt="CNRS", title="CNRS"), href='https://www.cnrs.fr/fr'),
+        html.A(html.Img(className="logo", src="../assets/LOV.png", alt="LOV", title="LOV"), href='https://lov.imev-mer.fr/web/'),
+        html.A(html.Img(className="logo", src="../assets/IMEV.png", alt="IMEV", title="IMEV"), href='https://www.imev-mer.fr/web/'),
     ], className="logos")
 def generate_header():
     return html.Div([
@@ -105,8 +100,7 @@ def generate_project_selector(drives):
         html.H2("Drive"),
         dcc.Dropdown(
             id='app-1-dropdown-drives',
-            value="zooscan_lov" if "zooscan_lov" in [drive["label"] for drive in drives] else "zooscan_embrc" if "zooscan_embrc" in [drive["label"] for drive in drives] else "zooscan_test",
-            #value="zooscan_bug_laeti",
+            value=drives[0]["label"],
             clearable = False,
             options=[
                 {'label': drive['label'] + " 🔒" if drive['disabled'] else drive['label'], 
@@ -122,7 +116,6 @@ def generate_project_selector(drives):
             multi=True
         )
     ], className="container-prj-selector")
-
 
 def generate_check_block(checkBlock):
     return html.Div([  # -- check list title --###
