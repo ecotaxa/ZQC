@@ -64,3 +64,13 @@ Local Url to zooscan QC doc : http://complex.imev-mer.fr:8050/QC/zooscan/doc
   FEATURES : *TODO*
   INTEGRATION : used tutorials : https://python.plainenglish.io/test-your-dash-app-in-python-6eb7229d40b8 https://community.plotly.com/t/how-you-can-integration-test-your-app-by-dash-testing/25002/3 *TODO*
   PERF  : *TODO*
+
+## CI 
+When a version is taged by doing :
+```shell
+git tag -a vX.X.X -m "CI balena CUSTOM MESSAGE"
+git push --follow-tags
+```
+It triggers a Github action that is going to build and push the docker image on docker hub : https://hub.docker.com/u/ecotaxa
+
+
