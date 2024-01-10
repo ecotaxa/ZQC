@@ -14,7 +14,6 @@ COPY ./*.py /usr/src/app
 COPY ./pages /usr/src/app/pages
 COPY ./assets /usr/src/app/assets
 COPY ./requirements.txt /usr/src/app
-COPY ./.env /usr/src/app
 
 # install dependencies
 RUN cd /usr/src/app
