@@ -77,7 +77,7 @@ def generate_header():
                         ]),
                         html.P([
                             html.Span("It is entirely open source and can be accessed via ", className="intro"),
-                            html.A("our github repository", href='https://github.com/ecotaxa/AQC', className="intro-a"),
+                            html.A("our github repository", href='https://github.com/ecotaxa/ZQC/tree/public', className="intro-a"),
                         ]),
                         html.P([
                             html.Span("We are currently working on a new quality control feature called 'before scan,' which is in the development phase. This update will be released soon. Make sure to periodically check for software updates on the ", className="intro"),
@@ -85,7 +85,7 @@ def generate_header():
                         ]),
                         html.P([
                             html.Span("If you have any questions, please don't hesitate to reach out to our team ", className="intro"),
-                            html.A("here.", href='mailto:amanda.elineau@imev-mer.fr,julie.coustenoble@imev-mer.fr', className="intro-a"),
+                            html.A("here.", href='mailto:zqc.contact@group.imev-mer.fr', className="intro-a"),
                         ]),
                     ], className="intro-container"),
                     html.Span(className='elementor-divider-separator'),
