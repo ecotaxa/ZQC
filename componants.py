@@ -108,7 +108,7 @@ def generate_project_selector(drives):
                 'disabled': drive['disabled']} for drive in drives
             ]
         ),
-        html.H2("Project"),
+        html.H2("Projects"),
         dcc.Dropdown(
             id='app-1-dropdown-projects',
             value=[],
