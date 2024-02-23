@@ -71,7 +71,7 @@ def generate_header():
                     html.Span(className='elementor-divider-separator'),
                     html.Div([
                         html.P([
-                            html.Span("This app was developed by ", className="intro"),
+                            html.Span("This app was designed and developed by Amanda Elineau and Julie Coustenoble for ", className="intro"),
                             html.A("Complex", href='https://lov.imev-mer.fr/web/team-complex/', className="intro-a"),
                             html.Span(" team at the Laboratoire d’Océanographie de Villefranche-sur-Mer.", className="intro")
                         ]),
