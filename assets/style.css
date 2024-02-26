@@ -384,5 +384,5 @@ button {
     text-align: center;
     padding: 10px;
     font-size: 14px;
-    >>>>>>>origin
+    z-index: 99999;
 }
