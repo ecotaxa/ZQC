@@ -13,7 +13,7 @@ import libQC_zooscan
 import pdf_generator
 from dotenv import dotenv_values
 
-config = dotenv_values('.env')
+config = dotenv_values('version.env')
 
 ######--- Generate header panel ---######
 header = componants.generate_header()
