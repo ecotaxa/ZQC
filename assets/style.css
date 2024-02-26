@@ -345,4 +345,5 @@ button {
     text-align: center;
     padding: 10px;
     font-size: 14px;
+    z-index: 99999;
 }
