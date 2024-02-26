@@ -150,6 +150,7 @@ def getTsv(subpath):
         'sample_scan_operator',
         'acq_sub_method',
         'acq_id',
+        'sample_net_mesh'
     ]
     try:
         for folder_name in listFolder(base_path+subpath+"/Zooscan_scan/_work/"):

@@ -25,6 +25,8 @@ jobs:
           touch .env
           echo ROOT_FOLDER=${{ secrets.ROOT_FOLDER }} >> .env
           echo DASH_ENV=${{ secrets.DASH_ENV }} >> .env
+          touch version.env
+          echo VERSION=test >> version.env
       - uses: nanasess/setup-chromedriver@v2
       - run: |
           export DISPLAY=:99

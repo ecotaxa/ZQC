@@ -29,6 +29,11 @@ availables_themes = [
         "month" : [4]
     }, 
     {
+        "name" : "Bebe",
+        "icon"  : ["🍼","🧸","🎂"],
+        "month" : [5]
+    }, 
+    {
         "name" : "haloween",
         "icon"  : ["🎃", "🍂"],
         "month" : [10,11]
@@ -346,6 +351,8 @@ def generate_name_of_saver():
                             id="modal-save",
                         ),
                     ])
+def generate_version_info(version):
+    return html.Div("Version : "+version,id="version", className="version_info")
 
 def enable_notification():
     return  html.Div(id="notifications-container")
