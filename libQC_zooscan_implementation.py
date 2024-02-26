@@ -610,7 +610,7 @@ def check_motoda_check(_id, _mode, local_data):
     """
     start_time = time.time()
     # Get only usefull columns
-    dataToTest = local_data.get("dataframe")[['scan_id', 'acq_sub_part', 'sample_net_type', "acq_id"]].groupby('scan_id').first().reset_index()
+    dataToTest = local_data.get("dataframe")[['scan_id', 'acq_sub_part', 'sample_net_type', "acq_id", "sample_net_mesh"]].groupby('scan_id').first().reset_index()
     dataToTest["fracID"] = [get_frac_id(e) for e in dataToTest["acq_id"]]
     result = local_data.get("dataframe")[['scan_id','acq_sub_part']].drop_duplicates()
     result["motoda_check"] = ""
@@ -630,14 +630,15 @@ def check_motoda_check(_id, _mode, local_data):
             sample_net_type = dataToTest.sample_net_type.values[i]
             fracID = dataToTest.fracID.values[i]
             acq_sub_part = dataToTest.acq_sub_part.values[i]
+            sample_net_mesh = dataToTest.sample_net_mesh.values[i]
 
             if motoda_check == labels.sucess["acquisition.motoda.check.ok"]:
                 result.loc[result["scan_id"] == id, 'acq_sub_part'] = int(acq_sub_part) if is_int(acq_sub_part) else acq_sub_part
-                if(fracID=="d1" or ( fracID=="tot" and sample_net_type=="rg")) :
+                if(fracID=="d1" or ( fracID=="tot" and sample_net_mesh>=500)) :
                     #should be (1 or )puissance de 2
                     if not is_power_of_two(int(acq_sub_part)) :
                         result.loc[result["scan_id"] == id, 'motoda_check'] = labels.errors["acquisition.motoda.check.cas1"]
-                elif (fracID.startswith("d") or fracID=="tot" or fracID=="plankton") and sample_net_type != "rg"  :
+                elif (fracID.startswith("d") or fracID=="tot" or fracID=="plankton") and sample_net_mesh < 500  :
                     if int(acq_sub_part)==1 or not is_power_of_two(int(acq_sub_part)) :
                         #should be ^2 but not 1
                         result.loc[result["scan_id"] == id, 'motoda_check'] = labels.errors["acquisition.motoda.check.cas2"]
@@ -771,7 +772,7 @@ def check_motoda_quality(_id, _mode, local_data):
     """
     start_time = time.time()
     # Get only usefull columns
-    result = local_data.get("dataframe")[['scan_id', 'sample_net_type', 'acq_sub_part', "acq_id"]].drop_duplicates()
+    result = local_data.get("dataframe")[['scan_id', 'sample_net_type', 'acq_sub_part', "acq_id", "sample_net_mesh"]].drop_duplicates()
     result["fracID"] = [get_frac_id(e) for e in result["acq_id"]]
     result['motoda_quality']=""
     # Get only usefull file name : .jpg in /Zooscan_scan/_work/ folder
@@ -794,18 +795,19 @@ def check_motoda_quality(_id, _mode, local_data):
         # count of scanID.tsv should be 1
         count_img = len(data_img_list)
         #get needed infos for that scan id
-        scan_id_data = result.loc[result["scan_id"]==id, ["sample_net_type", "fracID", "acq_sub_part", "motoda_quality"]]
+        scan_id_data = result.loc[result["scan_id"]==id, ["sample_net_type", "fracID", "acq_sub_part", "motoda_quality", "sample_net_mesh"]]
         # if no img in work, fill result with the associated error msg
         if count_img==0 :
             result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.missing"]
         elif scan_id_data["motoda_quality"].values[0]=="" :
             #get needed infos for that scan id
             net_type = scan_id_data["sample_net_type"].values[0]
+            net_mesh = scan_id_data["sample_net_mesh"].values[0]
             frac_id = scan_id_data["fracID"].values[0]
             motoda_frac = int(scan_id_data["acq_sub_part"].values[0]) if is_int(scan_id_data["acq_sub_part"].values[0]) else scan_id_data["acq_sub_part"].values[0]
 
             #start testing
-            if net_type=="rg" :
+            if net_mesh>=500 :
                 # When Nettype = rg and motoda_frac strictly =1
                 if motoda_frac==1 :
                     # the number of .jpg images in the _work subdirectory must not be > 1500
@@ -816,7 +818,7 @@ def check_motoda_quality(_id, _mode, local_data):
                     result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 1500 else labels.sucess["acquisition.motoda.quality.ok"] 
                 else : 
                     result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"]
-            #For all other Nettype:
+            #For net_mesh < 500
             else :
                 if frac_id=="d1" : 
                     # When Nettype ≠ rg and FracID = d1 and motoda_frac strictly =1
