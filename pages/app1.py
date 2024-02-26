@@ -11,6 +11,9 @@ import localData as ad
 import componants
 import libQC_zooscan
 import pdf_generator
+from dotenv import dotenv_values
+
+config = dotenv_values('.env')
 
 ######--- Generate header panel ---######
 header = componants.generate_header()
@@ -160,13 +163,19 @@ checksSelector = html.Div([
     html.Div(checksBlocks_layout, className="QC-types")],
     className="container-checks-selector")
 
+
+######--- Generate the project selector panel ---######
+version = config["VERSION"]
+versionInfo = componants.generate_version_info(version)
+
 ######--- Generate main layout ---######
 layout = dmc.MantineProvider(
             dmc.NotificationsProvider([
                 html.Div([html.Div([
                     header,
                     projectSelector,
-                    checksSelector
+                    checksSelector,
+                    versionInfo,
                 ], className="container-qc")], 
                 className="parent-container")
             ],

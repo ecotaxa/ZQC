@@ -334,3 +334,15 @@ button {
     outline: solid #ed433772 4px;
     border-radius: 1.5px;
 }
+
+/************VERSION********/
+.version_info {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(82, 117, 233, 0.496);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+}
