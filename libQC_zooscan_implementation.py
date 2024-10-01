@@ -75,7 +75,7 @@ def check_frame_type(_id, _mode, local_data):
             - "narrow": When the 'process_img_background_img' in the 'ecotaxa.tsv' tables contains 'narrow' and the corresponding .ini file name in the 'Zooscan_config' folder also contains 'narrow'.
             - "#MISSING ecotaxa table": When no 'ecotaxa_scanID.tsv' table is available.
             - "#MISSING column": When the 'process_img_background_img' column is missing from the 'ecotaxa.tsv' table.
-            - "#Frame NOT OK" : When everything is consistent.
+            - "#Frame NOT OK" : When everything isn't consistent.
     """
     start_time = time.time()
 
@@ -632,8 +632,6 @@ def check_motoda_check(_id, _mode, local_data):
             acq_sub_part = dataToTest.acq_sub_part.values[i]
             net_mesh = int(dataToTest.sample_net_mesh.values[i]) if is_int(dataToTest.sample_net_mesh.values[i]) else dataToTest.sample_net_mesh.values[i]
 
-            print("net_mesh :", net_mesh, " motoda_check : ", motoda_check, " acq_sub_part : ", acq_sub_part)
-
             if motoda_check == labels.sucess["acquisition.motoda.check.ok"] and is_int(net_mesh) :
                 result.loc[result["scan_id"] == id, 'acq_sub_part'] = int(acq_sub_part) if is_int(acq_sub_part) else acq_sub_part
                 if(fracID=="d1" or ( fracID=="tot" and net_mesh>=500)) :
@@ -940,12 +938,10 @@ def checks_multiples(_id, _mode, local_data) :
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("Insecta")== False]
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("wing")== False]
     dataToTest = dataToTest[dataToTest['object_annotation_category'].str.contains("seaweed")== False]
-
     # Compute scan id and biovolume
     # The math.pi constant returns the value of PI: 3.141592653589793. The python pi const returns the value of PI : 3.141593 
     dataToTest["vol"]= [4/3 * 3.141593 * math.sqrt(float(area) / 3.141593) for area in dataToTest.object_area]#maybe here
     dataToTest["scan_id"]=dataToTest.object_id.str.replace("_1_[0-9]+$", "", regex=True)
-
     # Compute statistics by scan id  # missing means not counted = 0
     result = dataToTest.drop_duplicates().groupby("scan_id").agg( vol_tot=('vol', 'sum'), n_tot=('object_id', np.size)
         ).join(dataToTest[dataToTest["object_annotation_category"].str.contains("multiple")].groupby("scan_id").agg( vol_mult=('vol', 'sum'), n_mult=('object_id', np.size))
@@ -953,33 +949,36 @@ def checks_multiples(_id, _mode, local_data) :
         ).join(dataToTest[dataToTest["object_annotation_hierarchy"].str.contains("Copepoda>multiple")].groupby("scan_id").agg( vol_mult_cop=('vol', 'sum'), n_mult_cop=('object_id', np.size))
         ).join( dataToTest[dataToTest["object_annotation_hierarchy"].str.contains("other>multiple")].groupby("scan_id").agg( vol_mult_other=('vol', 'sum'), n_mult_other=('object_id', np.size))
         ).fillna(0)
-
-
-    # Compute percent multiples
+    # Compute percent multiples with division by zero checks
     result['p_mult'] = result.apply(lambda row: 
-                                        labels.errors["multiples.level.high"]+str(round(row.n_mult / row.n_tot * 100, 1)) 
-                                        if (row.n_mult / row.n_tot) > 0.2 
-                                        else round(row.n_mult / row.n_tot * 100, 1), axis=1)
+                                            labels.errors["multiples.level.high"]+str(round(row.n_mult / row.n_tot * 100, 1)) 
+                                            if row.n_tot != 0 and (row.n_mult / row.n_tot) > 0.2 
+                                            else round(row.n_mult / row.n_tot * 100, 1) if row.n_tot != 0 else 0, axis=1)
+
     result['p_vol_mult'] = result.apply(lambda row: 
-                                        labels.errors["multiples.level.high"]+str( round(row.vol_mult / row.vol_tot * 100, 1)) 
-                                        if (row.vol_mult / row.vol_tot) > 0.2 
-                                        else round(row.vol_mult / row.vol_tot * 100, 1), axis=1)
+                                            labels.errors["multiples.level.high"]+str( round(row.vol_mult / row.vol_tot * 100, 1)) 
+                                            if row.vol_tot != 0 and (row.vol_mult / row.vol_tot) > 0.2 
+                                            else round(row.vol_mult / row.vol_tot * 100, 1) if row.vol_tot != 0 else 0, axis=1)
+
     result['p_mult_non_cop'] = result.apply(lambda row: 
-                                        labels.errors["multiples.level.high"]+str(round(row.n_mult_other /(row.n_tot - row.n_cop) * 100, 1)) 
-                                        if (row.n_mult_other /(row.n_tot - row.n_cop)) > 0.15 
-                                        else round(row.n_mult_other /(row.n_tot - row.n_cop) * 100, 1), axis=1)
+                                            labels.errors["multiples.level.high"]+str(round(row.n_mult_other /(row.n_tot - row.n_cop) * 100, 1)) 
+                                            if (row.n_tot - row.n_cop) != 0 and (row.n_mult_other /(row.n_tot - row.n_cop)) > 0.15 
+                                            else round(row.n_mult_other /(row.n_tot - row.n_cop) * 100, 1) if (row.n_tot - row.n_cop) != 0 else 0, axis=1)
+
     result['p_vol_mult_non_cop'] = result.apply(lambda row: 
-                                        labels.errors["multiples.level.high"]+str(round(row.vol_mult_other / (row.vol_tot - row.vol_cop) * 100, 1)) 
-                                        if (row.vol_mult_other / (row.vol_tot - row.vol_cop)) > 0.15 
-                                        else round(row.vol_mult_other / (row.vol_tot - row.vol_cop) * 100, 1), axis=1)
+                                            labels.errors["multiples.level.high"]+str(round(row.vol_mult_other / (row.vol_tot - row.vol_cop) * 100, 1)) 
+                                            if (row.vol_tot - row.vol_cop) != 0 and (row.vol_mult_other / (row.vol_tot - row.vol_cop)) > 0.15 
+                                            else round(row.vol_mult_other / (row.vol_tot - row.vol_cop) * 100, 1) if (row.vol_tot - row.vol_cop) != 0 else 0, axis=1)
+
     result['p_mult_cop'] = result.apply(lambda row: 
-                                        labels.errors["multiples.level.high"]+str(round(row.n_mult_cop / row.n_cop * 100, 1)) 
-                                        if (row.n_mult_cop / row.n_cop) > 0.15 
-                                        else round(row.n_mult_cop / row.n_cop * 100, 1), axis=1)
+                                            labels.errors["multiples.level.high"]+str(round(row.n_mult_cop / row.n_cop * 100, 1)) 
+                                            if row.n_cop != 0 and (row.n_mult_cop / row.n_cop) > 0.15 
+                                            else round(row.n_mult_cop / row.n_cop * 100, 1) if row.n_cop != 0 else 0, axis=1)
+
     result['p_vol_mult_cop'] = result.apply(lambda row: 
-                                        labels.errors["multiples.level.high"]+str(round(row.vol_mult_cop / row.vol_cop * 100, 1)) 
-                                        if (row.vol_mult_cop / row.vol_cop) > 0.15 
-                                        else round(row.vol_mult_cop / row.vol_cop * 100, 1), axis=1)
+                                            labels.errors["multiples.level.high"]+str(round(row.vol_mult_cop / row.vol_cop * 100, 1)) 
+                                            if row.vol_cop != 0 and (row.vol_mult_cop / row.vol_cop) > 0.15 
+                                            else round(row.vol_mult_cop / row.vol_cop * 100, 1) if row.vol_cop != 0 else 0, axis=1)
 
     # Clean cols
     result = result.reset_index()
