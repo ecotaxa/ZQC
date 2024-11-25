@@ -1,5 +1,6 @@
 from datetime import datetime
 import componants
+from enums import SUPPORTED_DATA_COMPONANT
 import localData
 import pandas as pd
 import time
@@ -109,7 +110,12 @@ class SubBlock:
             frames_for_fig_n = [d for d in frames if d['fig_number'] == nb]
             type_for_fig_n=list(set([frame["type"] for frame in frames_for_fig_n]))
             dataframe_for_fig_n=[frame["data"] for frame in frames_for_fig_n]
-            result.append({"dataframe" : pd.concat(dataframe_for_fig_n).groupby([dataframe_for_fig_n[0].columns[0]]).first().reset_index(), "type" : type_for_fig_n[0]})
+            if type_for_fig_n[0] == SUPPORTED_DATA_COMPONANT.DATA_TABLE_XS:
+                # small unlinked tables
+                result.append({"dataframe" : pd.concat(dataframe_for_fig_n), "type" : type_for_fig_n[0]})
+            if type_for_fig_n[0] == SUPPORTED_DATA_COMPONANT.DATA_TABLE:
+                # linked tables
+                result.append({"dataframe" : pd.concat(dataframe_for_fig_n).groupby([dataframe_for_fig_n[0].columns[0]]).first().reset_index(), "type" : type_for_fig_n[0]})
 
         # Save the result of the execution as html in the project folder
         pdf["subBlocks"].append({"title" : self.title, "list_checks" : self.listChecks(), "data" : result})

@@ -43,17 +43,25 @@ def get_frac_id(str) :
 def is_power_of_two(n):
     return (n & (n-1) == 0) and n != 0
 
-def independent_concat(df1_max, col1, df2_min, col2): 
-    ''' set the df2_min size of a collumn in order to integrate it into de bigger df'''
-    tmp_min = []
-
-    for e in df2_min[col2].values : 
-        tmp_min.append(e)
-    for i in range(len(df2_min[col2].values),len(df1_max[col1].values)) : 
-        tmp_min.append(" ")
+def independent_concat(df1, col1, df2, col2): 
+    """
+    Extend df2_min[col2] to match the length of df1_max[col1] by appending empty strings, 
+    and add it as a new column to df1_max.
+    """
+    # Determine the maximum length between the two DataFrames
+    max_length = max(len(df1), len(df2))
     
-    df1_max[col2]=tmp_min
-    return df1_max
+    # Reset indices to avoid reindexing issues
+    df1 = df1.reset_index(drop=True)
+    df2 = df2.reset_index(drop=True)
+    
+    # Resize both DataFrames to the maximum length, filling missing values with empty strings
+    df1 = df1.reindex(range(max_length), fill_value="")
+    df2 = df2.reindex(range(max_length), fill_value="")
+    
+    # Add the column from df2_min to df1_max
+    df1[col2] = df2[col2].fillna("")
+    return df1
 
 #### CALLBACKS
 
@@ -866,8 +874,7 @@ def check_spelling(_id, _mode, local_data):
     result_acq_sub_method = local_data.get("dataframe")[['acq_sub_method']].drop_duplicates()
 
     #set same len to both col
-    result = independent_concat(result_sample_scan_operator, "sample_scan_operator",result_acq_sub_method, "acq_sub_method") if len(result_sample_scan_operator["sample_scan_operator"])>len(result_acq_sub_method["acq_sub_method"]) else independent_concat(result_sample_scan_operator, "sample_scan_operator", result_acq_sub_method, "acq_sub_method") 
-
+    result = independent_concat(result_sample_scan_operator, "sample_scan_operator",result_acq_sub_method, "acq_sub_method") 
     # Rename collums to match the desiered output
     result.rename(columns={'sample_scan_operator': 'Scan op.', "acq_sub_method" : "Submethod"}, inplace=True)
 
