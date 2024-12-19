@@ -45,7 +45,7 @@ pip3 install -r requirements.txt
 ```shell
 cd AQC/
 source venvQC/bin/activate
-nohup DASH_ENV=PROD python index.py
+nohup sh -c 'DASH_ENV=PROD python index.py' &
 ```
 
 Local Url to zooscan QC app : http://complex.imev-mer.fr:8050/QC/zooscan
