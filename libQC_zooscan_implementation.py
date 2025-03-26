@@ -741,7 +741,11 @@ def check_motoda_comparaison(_id, _mode, local_data):
                 result.loc[result["scan_id"] == id, "sample_comment"] = meta_sample_comment[0] if len(meta_sample_comment)>0 else labels.errors["global.missing_column"]+" in meta.txt"
             
             #get and set Observation
-            meta_observation =  meta_for_scan_id if meta_for_scan_id[0] == labels.errors["global.bad_meta_txt_file"] or meta_for_scan_id[0] == labels.errors["global.unicode_decode_error"] else [a.replace("Observation= ", "") for a in meta_for_scan_id if a.startswith("Observation= ")]
+            # if meta is empty
+            if(len(meta_for_scan_id)==0) :
+                meta_observation = []
+            else :
+                meta_observation =  meta_for_scan_id if meta_for_scan_id[0] == labels.errors["global.bad_meta_txt_file"] or meta_for_scan_id[0] == labels.errors["global.unicode_decode_error"] else [a.replace("Observation= ", "") for a in meta_for_scan_id if a.startswith("Observation= ")]
             result.loc[result["scan_id"] == id, "Observation"] = meta_observation[0] if len(meta_observation)>0 else labels.errors["global.missing_column"]+"  in meta.txt"
 
     # Keep only one line by couples : id / motoda fraction
