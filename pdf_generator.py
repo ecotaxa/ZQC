@@ -1,14 +1,12 @@
 # coding: utf-8
 from datetime import datetime
-from fpdf import FPDF
+
 import pandas as pd
 from PIL import Image
-from datetime import datetime
+from fpdf import FPDF
 
-  
-
-from enums import SUPPORTED_DATA_COMPONANT
 import localData
+from enums import SUPPORTED_DATA_COMPONANT
 
 SPACING = 1
 

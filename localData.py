@@ -1,14 +1,14 @@
-import pandas as pd
-import numpy as np
-import os
-import labels
-from zipfile import ZipFile
-from zipfile import BadZipFile
-from enums import SUPPORTED_DATA_COMPONANT, Mode
 import logging
+import os
 from datetime import datetime
-from fpdf import FPDF
+from zipfile import BadZipFile
+from zipfile import ZipFile
+
+import pandas as pd
 from dotenv import dotenv_values
+
+import labels
+from enums import Mode
 
 config = dotenv_values('.env')
 

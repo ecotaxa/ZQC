@@ -65,7 +65,6 @@ def generate_header():
                     html.H1('Zooscan Quality Checks', className="inline"),
                     dcc.Link(html.Img(className="help-btn", src="../assets/help.png", alt="help", title="Help"), href='/QC/zooscan/doc'),
                     html.Span(className='elementor-divider-separator'),
-                    enable_notification(),
                     generate_name_of_saver()
                     ],
                     className="container-header")
@@ -325,20 +324,17 @@ def generate_name_of_saver():
 def generate_version_info(version):
     return html.Div("Version : "+version,id="version", className="version_info")
 
-def enable_notification():
-    return  html.Div(id="notifications-container")
-
 def notification(data_array):
 
     tmp=[]
     for execution_data in data_array :
-        tmp.append(dmc.Notification(
-                        title=execution_data["title"],
-                        id="sucess-pdf-saved-notify-"+execution_data["message"],
-                        action="show",
-                        message=execution_data["message"],
-                        color="green",
+        tmp.append({
+                        "title":execution_data["title"],
+                        "id":"sucess-pdf-saved-notify-"+execution_data["message"],
+                        "action":"show",
+                        "message":execution_data["message"],
+                        "color":"green"
                         #autoClose=False,
-                        icon=DashIconify(icon="akar-icons:circle-check")
-                    ))
+                        # icon=DashIconify(icon="akar-icons:circle-check")
+        })
     return tmp
