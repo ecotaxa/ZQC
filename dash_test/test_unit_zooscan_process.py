@@ -1,5 +1,4 @@
 # 1. imports of dash app
-from dash.testing.application_runners import import_app
 import libQC_zooscan_implementation as impl
 from enums import Mode
 import localData
@@ -268,7 +267,7 @@ import localData
 #     assert res.loc[res["List scan ID"]=="wp220210621_d2_1"]["POST SEP"].values[0] == "process OK"
 
 
-def test_subBlock_process_check_nb_lines_tsv(dash_duo) : 
+def test_subBlock_process_check_nb_lines_tsv() :
     project="zooscan_test/Zooscan_test_subBlock_process_check_nb_lines_tsv_1/" 
 
     data = localData.getdata(Mode.TSV, project)
@@ -288,7 +287,7 @@ def test_subBlock_process_check_nb_lines_tsv(dash_duo) :
     # wp_d1_1
     assert res.loc[res["List scan ID"]=="wp_d1_1"]["Nb tsv lines"].values[0] == "Nb lines TSV OK"
 
-def test_subBlock_process_check_nb_process_CHECK(dash_duo) : 
+def test_subBlock_process_check_nb_process_CHECK() :
     project_ok="zooscan_test/Zooscan_test_subBlock_process_check_process_check_1/" 
     project_ko="zooscan_test/Zooscan_test_subBlock_process_check_process_check_2/" 
 

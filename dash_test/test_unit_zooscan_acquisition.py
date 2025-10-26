@@ -1,5 +1,4 @@
 # 1. imports of dash app
-from dash.testing.application_runners import import_app
 import libQC_zooscan_implementation as impl
 from enums import Mode
 import localData
@@ -7,7 +6,7 @@ import localData
 
 
 #TODO JCE
-def test_subBlock_acquisition_check_sieve_bug(dash_duo) : 
+def test_subBlock_acquisition_check_sieve_bug() :
     # In the columns 'sieve MIN size' and 'sieve MAX size' of the report table, are reported respectively :
     #     - the minimum sieve size, column CS acq_min_mesh of the ecotaxa_scanID.tsv tables of the subdirectories of the _work directories
     #     - the maximum size, column CT acq_max_mesh of the tables ecotaxa_scanID.tsv of the sub-directories of the directories _work
@@ -97,7 +96,7 @@ def test_subBlock_acquisition_check_sieve_bug(dash_duo) :
     assert res_7.loc[res_7["List scan ID"]=="wp_d2_1"]["Sieve Bug"].values[0] == "#ACQ MIN (d1) ≠ ACQ MAX (d2)"
     
 
-def test_subBlock_acquisition_check_motoda_check(dash_duo) : 
+def test_subBlock_acquisition_check_motoda_check() :
     # In the column 'MOTODA Fraction' of the report table, is reported :
     # the fraction acq_sub_part of the tables ecotaxa_scanID.tsv of the subdirectories of the _work directories.
     

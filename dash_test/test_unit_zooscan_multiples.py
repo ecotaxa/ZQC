@@ -26,7 +26,7 @@ def test_subBlock_multiples_check_multiples(dash_duo) :
     # MULTIPLES ZIP => should take the newest
     project_2 = "zooscan_test/Zooscan_test_subBlock_multiples_check_multiples_2"
     data_2 = localData.getdata(Mode.TSV_2, project_2)
-    assert data_2.get("dataframe")["scan_id"][1] == './dash_test/data/zooscan_test/Zooscan_test_subBlock_multiples_check_multiples_2/ecotaxa/export_436_20221107_1723.zip'
+    assert data_2.get("dataframe")["scan_id"][1] == './data/zooscan_test/Zooscan_test_subBlock_multiples_check_multiples_2/ecotaxa/export_436_20221107_1723.zip'
 
     # Test values
     project_3 = "zooscan_test/Zooscan_test_subBlock_multiples_check_multiples_3" 

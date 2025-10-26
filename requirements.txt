@@ -1,4 +1,4 @@
-dash==3.2.0
+dash[testing]==3.2.0 # Add a few deps e.g. selenium, psutil, multiprocess, etc.
 dash_mantine_components
 dash-bootstrap-components
 dash_iconify
