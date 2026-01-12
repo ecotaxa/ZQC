@@ -952,7 +952,7 @@ def checks_multiples(_id, _mode, local_data) :
     # Compute scan id and biovolume
     # The math.pi constant returns the value of PI: 3.141592653589793. The python pi const returns the value of PI : 3.141593 
     dataToTest["vol"]= [4/3 * 3.141593 * math.sqrt(float(area) / 3.141593) for area in dataToTest.object_area]#maybe here
-    dataToTest["scan_id"]=dataToTest.object_id.str.replace("_1_[0-9]+$", "", regex=True)
+    dataToTest["scan_id"]=dataToTest.object_id.str.replace("_1_\w+$", "", regex=True)
     # Compute statistics by scan id  # missing means not counted = 0
     result = dataToTest.drop_duplicates().groupby("scan_id").agg( vol_tot=('vol', 'sum'), n_tot=('object_id', np.size)
         ).join(dataToTest[dataToTest["object_annotation_category"].str.contains("multiple")].groupby("scan_id").agg( vol_mult=('vol', 'sum'), n_mult=('object_id', np.size))
