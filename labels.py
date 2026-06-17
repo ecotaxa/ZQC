@@ -74,7 +74,7 @@ sucess = {
     "acquisition.sieve.bug.ok": "sieve OK",
     "acquisition.motoda.check.ok": "Motoda OK",
     "acquisition.motoda.comparaison.ok": "Motoda comparison OK",
-    "acquisition.motoda.quality.ok": "Motoda OK",
+    "acquisition.motoda.quality.ok": "Motoda OK : ",
     #error but this caracter can appear in correct strings that musn't marked as error (put in red)
     "acquisition.sieve.bug.min_dn_dif_max_dn+1_3": ")",
 }
