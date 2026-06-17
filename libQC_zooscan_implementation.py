@@ -780,7 +780,7 @@ def check_motoda_quality(_id, _mode, local_data):
                         → The number of .jpg images in the '_work' subdirectory must not exceed 2500.
                     When 'sample_net_mesh' < 500 and 'FracID' = d1+N or 'FracID' = tot or 'FracID' = plankton and motoda_frac is strictly above 1:
                         → The number of .jpg images in the '_work' subdirectory must be between 1000 and 2500.
-            - "Motoda OK": When all conditions are met, indicating consistency.
+            - "Motoda OK : N": When all conditions are met, indicating consistency. N is the number of vignettes obtained after processing.
     """
     start_time = time.time()
     # Get only usefull columns
@@ -826,36 +826,36 @@ def check_motoda_quality(_id, _mode, local_data):
                     # When Nettype = rg and motoda_frac strictly =1
                     if motoda_frac==1 :
                         # the number of .jpg images in the _work subdirectory must not be > 1500
-                        result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"] if count_img <= 1500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img)
+                        result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"]+str(count_img) if count_img <= 1500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img)
                     # When Nettype = rg and motoda_frac strictly >1
                     elif motoda_frac>1 :
                         # the number of .jpg images in the _work subdirectory must be between 500 and 1500
-                        result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 1500 else labels.sucess["acquisition.motoda.quality.ok"] 
+                        result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 1500 else labels.sucess["acquisition.motoda.quality.ok"]+str(count_img) 
                     else : 
-                        result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"]
+                        result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"]+str(count_img)
                 #For net_mesh < 500
                 else :
                     if frac_id=="d1" : 
                         # When Nettype ≠ rg and FracID = d1 and motoda_frac strictly =1
                         if motoda_frac == 1 :
                             # the number of .jpg images in the _work subdirectory must not be > 1500
-                            result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"] if count_img <= 1500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img)
+                            result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"]+str(count_img) if count_img <= 1500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img)
                         # When Nettype ≠ rg and FracID = d1 and the motoda_frac strictly >1 
                         elif motoda_frac > 1 :
                             # the number of .jpg images in the _work subdirectory must be between 500 and 1500
-                            result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 1500 else labels.sucess["acquisition.motoda.quality.ok"] 
+                            result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 1500 else labels.sucess["acquisition.motoda.quality.ok"]+str(count_img) 
                     
                     elif (frac_id.startswith("d") or frac_id=="tot" or frac_id=="plankton") : 
                         # When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly =1
                         if motoda_frac == 1 :
                             # the number of .jpg images in the _work subdirectory must not be > 2500
-                            result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"] if count_img <= 2500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img)
+                            result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"]+str(count_img) if count_img <= 2500 else labels.errors["acquisition.motoda.quality.high"]+str(count_img)
                         # When Nettype ≠ rg and FracID = d1+N or = tot or =plankton and motoda_frac strictly >1
                         elif motoda_frac > 1 :
                             # the number of .jpg images in the _work subdirectory must be between 1000 and 2500
-                            result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 1000 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 2500 else labels.sucess["acquisition.motoda.quality.ok"] 
+                            result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.errors["acquisition.motoda.quality.low"]+str(count_img) if count_img < 1000 else labels.errors["acquisition.motoda.quality.high"]+str(count_img) if count_img > 2500 else labels.sucess["acquisition.motoda.quality.ok"]+str(count_img) 
                     else : 
-                        result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"]
+                        result.loc[result["scan_id"] == id, 'motoda_quality'] = labels.sucess["acquisition.motoda.quality.ok"]+str(count_img)
 
     #Remove result useless columns
     result.drop(columns=["fracID", "sample_net_mesh", "acq_sub_part", "acq_id"], inplace=True)
