@@ -780,7 +780,7 @@ def check_motoda_quality(_id, _mode, local_data):
                         → The number of .jpg images in the '_work' subdirectory must not exceed 2500.
                     When 'sample_net_mesh' < 500 and 'FracID' = d1+N or 'FracID' = tot or 'FracID' = plankton and motoda_frac is strictly above 1:
                         → The number of .jpg images in the '_work' subdirectory must be between 1000 and 2500.
-            - "Motoda OK : N": When all conditions are met, indicating consistency. N is the number of vignettes obtained after process.
+            - "Motoda OK : N": When all conditions are met, indicating consistency. N is the number of vignettes obtained after processing.
     """
     start_time = time.time()
     # Get only usefull columns
